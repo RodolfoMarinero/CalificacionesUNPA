@@ -2,7 +2,9 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="#C8E9BE">
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,7 +18,8 @@
             android:text="Calificaciones Actuales"
             android:textSize="24sp"
             android:textStyle="bold"
-            android:paddingBottom="8dp" />
+            android:paddingBottom="8dp"
+            android:textColor="#2F6C4D" />
 
         <TableLayout
             android:id="@+id/tableLayoutCalificacionesActuales"
@@ -24,20 +27,72 @@
             android:layout_height="wrap_content"
             android:stretchColumns="*"
             android:shrinkColumns="*"
-            android:background="#CCCCCC">
+            android:background="#C8E9BE"
+            android:divider="#C8E9BE"
+            android:dividerHeight="1dp">
 
             <!-- Encabezados de la tabla -->
-            <TableRow android:background="#333333">
-                <TextView android:text="Materia" android:textStyle="bold" android:textColor="#FFFFFF" android:padding="8dp" />
-                <TextView android:text="Parcial 1" android:textStyle="bold" android:textColor="#FFFFFF" android:padding="8dp" />
-                <TextView android:text="Parcial 2" android:textStyle="bold" android:textColor="#FFFFFF" android:padding="8dp" />
-                <TextView android:text="Parcial 3" android:textStyle="bold" android:textColor="#FFFFFF" android:padding="8dp" />
-                <TextView android:text="Promedio" android:textStyle="bold" android:textColor="#FFFFFF" android:padding="8dp" />
-                <TextView android:text="Ex. Final" android:textStyle="bold" android:textColor="#FFFFFF" android:padding="8dp" />
-                <TextView android:text="Cal. Final" android:textStyle="bold" android:textColor="#FFFFFF" android:padding="8dp" />
-                <TextView android:text="Extra 1" android:textStyle="bold" android:textColor="#FFFFFF" android:padding="8dp" />
-                <TextView android:text="Extra 2" android:textStyle="bold" android:textColor="#FFFFFF" android:padding="8dp" />
-                <TextView android:text="Especial" android:textStyle="bold" android:textColor="#FFFFFF" android:padding="8dp" />
+            <TableRow android:background="#2F6C4D">
+                <TextView
+                    android:text="Materia"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:padding="10dp"
+                    android:gravity="center" />
+                <TextView
+                    android:text="Parcial 1"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:padding="10dp"
+                    android:gravity="center" />
+                <TextView
+                    android:text="Parcial 2"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:padding="10dp"
+                    android:gravity="center" />
+                <TextView
+                    android:text="Parcial 3"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:padding="10dp"
+                    android:gravity="center" />
+                <TextView
+                    android:text="Promedio"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:padding="10dp"
+                    android:gravity="center" />
+                <TextView
+                    android:text="Ex. Final"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:padding="10dp"
+                    android:gravity="center" />
+                <TextView
+                    android:text="Cal. Final"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:padding="10dp"
+                    android:gravity="center" />
+                <TextView
+                    android:text="Extra 1"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:padding="10dp"
+                    android:gravity="center" />
+                <TextView
+                    android:text="Extra 2"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:padding="10dp"
+                    android:gravity="center" />
+                <TextView
+                    android:text="Especial"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:padding="10dp"
+                    android:gravity="center" />
             </TableRow>
 
         </TableLayout>

@@ -38,7 +38,7 @@ public class FragmentCalificacionesActuales extends Fragment {
                 TextView textView = new TextView(getContext());
                 textView.setText(dato);
                 textView.setPadding(8, 8, 8, 8);
-                //textView.setBackgroundResource(R.drawable.cell_border);  // Agregar borde a cada celda
+                //textView.setBackgroundResource(R.drawable.cell_border);
                 tableRow.addView(textView);
             }
 

@@ -33,6 +33,9 @@
             android:theme="@style/Theme.CalificacionesUNPA.NoActionBar">
             <!-- Esta actividad debe ser accesible después de que el usuario haya iniciado sesión -->
         </activity>
+        <activity android:name=".ui.register.Register" />
+        <activity android:name=".ui.recuperarContrasena.RecuperarContrasena" />
+
 
     </application>
 

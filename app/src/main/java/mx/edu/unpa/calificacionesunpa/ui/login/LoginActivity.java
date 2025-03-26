@@ -5,51 +5,73 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import mx.edu.unpa.calificacionesunpa.MainActivity;
 import mx.edu.unpa.calificacionesunpa.R;
+import mx.edu.unpa.calificacionesunpa.ui.recuperarContrasena.RecuperarContrasena;
+import mx.edu.unpa.calificacionesunpa.ui.register.Register;
 
 public class LoginActivity extends AppCompatActivity {
-
     private EditText etMatricula, etPassword;
-    private Button btnLogin;
+    private Button btnLogin, btnRegistro;
+    private TextView tvForgotPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // Inicializar vistas
+        // Asignación de vistas a variables
         etMatricula = findViewById(R.id.et_matricula);
         etPassword = findViewById(R.id.et_password);
         btnLogin = findViewById(R.id.btn_login);
+        btnRegistro = findViewById(R.id.btn_registro);
+        tvForgotPassword = findViewById(R.id.tv_recuperar_contrasena);
 
-        // Configurar el botón de inicio de sesión
-        btnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String matricula = etMatricula.getText().toString();
-                String password = etPassword.getText().toString();
+        // Evento para el botón de iniciar sesión
+        btnLogin.setOnClickListener(view -> {
+            String matricula = etMatricula.getText().toString().trim();
+            String password = etPassword.getText().toString().trim();
 
-                if (validarCredenciales(matricula, password)) {
-                    // Si las credenciales son correctas, iniciar la actividad principal
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    finish(); // Finaliza la actividad de login para que no se quede en el historial
-                } else {
-                    // Si las credenciales son incorrectas, mostrar un mensaje
-                    Toast.makeText(LoginActivity.this, "Matrícula o contraseña incorrectos", Toast.LENGTH_SHORT).show();
-                }
+            // Verificar que la matrícula tenga exactamente 8 dígitos
+            if (!matricula.matches("\\d{8}")) {
+                etMatricula.setError("La matrícula debe tener exactamente 8 dígitos");
+                etMatricula.requestFocus();
+                return;
+            }
+
+            // Validación de autenticación simulada
+            if ("12345678".equals(matricula) && "password".equals(password)) {
+                // Autenticación exitosa: Limpiar campos
+                etMatricula.setText("");
+                etPassword.setText("");
+
+                // Transición animada y cambio de actividad
+                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+
+                // Cierra la actividad actual para que no regrese con el botón "atrás"
+                finish();
+            } else {
+                // Manejo de error de autenticación
+                etPassword.setError("Matrícula o contraseña incorrecta");
+                etPassword.requestFocus();
             }
         });
-    }
 
-    // Método para validar las credenciales
-    private boolean validarCredenciales(String matricula, String password) {
-        // Aquí puedes colocar la lógica para validar las credenciales, por ejemplo, con una base de datos o API.
-        // Para este ejemplo, vamos a suponer que la matrícula es "123456" y la contraseña es "password".
-        return matricula.equals("123456") && password.equals("password");
+
+
+        // Evento para el botón de registro
+        btnRegistro.setOnClickListener(view -> {
+            startActivity(new Intent(LoginActivity.this, Register.class));
+        });
+
+        // Evento para el enlace de recuperar contraseña
+        tvForgotPassword.setOnClickListener(view -> {
+            // Aquí iría la lógica para recuperar la contraseña
+            startActivity(new Intent(LoginActivity.this, RecuperarContrasena.class));
+        });
     }
 }
