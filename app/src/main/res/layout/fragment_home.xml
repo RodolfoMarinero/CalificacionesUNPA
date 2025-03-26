@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.home.HomeFragment"
+    android:background="#C8E9BE"
+    android:padding="16dp">
+
+    <!-- Logo de la universidad -->
+    <ImageView
+        android:id="@+id/logo_universidad"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/ic_logo"
+    android:contentDescription="Logo de la Universidad del Papaloapan"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    android:layout_marginTop="32dp"/>
+
+    <!-- Frase motivacional -->
+    <TextView
+        android:id="@+id/tv_frase_motivacional"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="¡El conocimiento es la clave para abrir todas las puertas!"
+        android:textSize="20sp"
+        android:textStyle="italic"
+        android:textAlignment="center"
+        android:textColor="#2E7D32"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/logo_universidad"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Imagen decorativa de libros o estudiantes -->
+    <ImageView
+        android:id="@+id/img_estudiantes"
+        android:layout_width="400dp"
+        android:layout_height="200dp"
+        android:src="@drawable/ic_estudiantes"
+    android:contentDescription="Estudiantes estudiando"
+    app:layout_constraintTop_toBottomOf="@id/tv_frase_motivacional"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    android:layout_marginTop="24dp"/>
+
+    <!-- Mensaje de bienvenida más detallado -->
+    <TextView
+        android:id="@+id/tv_bienvenida"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Bienvenido a la plataforma educativa de la Universidad del Papaloapan.\nAquí podrás consultar toda la información relevante de tu desempeño académico."
+        android:textSize="16sp"
+        android:textAlignment="center"
+        android:textColor="#2E7D32"
+        app:layout_constraintTop_toBottomOf="@id/img_estudiantes"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

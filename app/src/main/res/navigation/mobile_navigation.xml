@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_home">
+
+    <!-- Fragmento de Home -->
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="mx.edu.unpa.calificacionesunpa.ui.home.HomeFragment"
+        android:label="@string/menu_home"
+        tools:layout="@layout/fragment_home" />
+
+    <!-- Fragmento de Gallery -->
+    <fragment
+        android:id="@+id/nav_gallery"
+        android:name="mx.edu.unpa.calificacionesunpa.ui.gallery.GalleryFragment"
+        android:label="@string/menu_gallery"
+        tools:layout="@layout/fragment_gallery" />
+
+    <!-- Fragmento de Slideshow -->
+    <fragment
+        android:id="@+id/nav_slideshow"
+        android:name="mx.edu.unpa.calificacionesunpa.ui.slideshow.SlideshowFragment"
+        android:label="@string/menu_slideshow"
+        tools:layout="@layout/fragment_slideshow" />
+
+    <!-- Fragmento de Calificaciones Actuales -->
+    <fragment
+        android:id="@+id/nav_calificaciones_actuales"
+        android:name="mx.edu.unpa.calificacionesunpa.ui.calificacionesactuales.FragmentCalificacionesActuales"
+        android:label="Calificaciones Actuales"
+        tools:layout="@layout/fragment_calificaciones_actuales" />
+
+    <!-- Fragmento de Calificaciones Anteriores -->
+    <fragment
+        android:id="@+id/nav_calificaciones_anteriores"
+        android:name="mx.edu.unpa.calificacionesunpa.ui.calificacionesanteriores.FragmentCalificacionesAnteriores"
+        android:label="Calificaciones Anteriores"
+        tools:layout="@layout/fragment_calificaciones_anteriores" />
+
+    <!-- Fragmento de Notificaciones -->
+    <fragment
+        android:id="@+id/nav_notificaciones"
+        android:name="mx.edu.unpa.calificacionesunpa.ui.notificaciones.FragmentNotificaciones"
+        android:label="Notificaciones"
+        tools:layout="@layout/fragment_notificaciones" />
+</navigation>
