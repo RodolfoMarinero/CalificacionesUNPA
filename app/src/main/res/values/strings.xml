@@ -10,4 +10,10 @@
     <string name="menu_home">Home</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
+    <string name="descripcionApp">Bienvenido a la App de Calificaciones de la Universidad del Papaloapan. Consulta tus calificaciones de manera rápida y sencilla.</string>
+    <string name="login">Iniciar sesión</string>
+    <string name="matricula">Matricula</string>
+    <string name="password">Contraseña</string>
+    <string name="passwordOlvidada">¿Olvidaste tu contraseña?</string>
+    <string name="singup">Crear una cuenta</string>
 </resources>

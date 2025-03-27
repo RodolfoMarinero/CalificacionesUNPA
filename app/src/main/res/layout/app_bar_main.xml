@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:background="#C8E9BE">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -15,8 +16,11 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/Theme.CalificacionesUNPA.PopupOverlay" />
+            android:background="#C8E9BE"
+            app:popupTheme="@style/Theme.CalificacionesUNPA.PopupOverlay"
+            app:title="UNIVERSIDAD DEL PAPALOAPAN"
+
+            app:titleTextColor="#000000" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
