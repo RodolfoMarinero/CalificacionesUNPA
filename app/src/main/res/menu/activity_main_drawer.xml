@@ -7,14 +7,11 @@
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_menu_camera"
             android:title="@string/menu_home" />
-        <item
-            android:id="@+id/nav_calificaciones_actuales"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Calificaciones Actuales" />
+
         <item
             android:id="@+id/nav_calificaciones_anteriores"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="Calificaciones Anteriores" />
+            android:title="Calificaciones" />
         <item
             android:id="@+id/nav_notificaciones"
             android:icon="@drawable/ic_menu_gallery"

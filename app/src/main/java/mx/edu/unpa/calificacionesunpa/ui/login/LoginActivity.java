@@ -24,11 +24,11 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         // Asignación de vistas a variables
-        etMatricula = findViewById(R.id.et_matricula);
-        etPassword = findViewById(R.id.et_password);
-        btnLogin = findViewById(R.id.btn_login);
-        btnRegistro = findViewById(R.id.btn_registro);
-        tvForgotPassword = findViewById(R.id.tv_recuperar_contrasena);
+        etMatricula = findViewById(R.id.txtMatricula);
+        etPassword = findViewById(R.id.txtPassword);
+        btnLogin = findViewById(R.id.btnLogin);
+        btnRegistro = findViewById(R.id.btnRegistro);
+        tvForgotPassword = findViewById(R.id.btnRecuperar_contrasena);
 
         // Evento para el botón de iniciar sesión
         btnLogin.setOnClickListener(view -> {
@@ -48,11 +48,9 @@ public class LoginActivity extends AppCompatActivity {
                 etMatricula.setText("");
                 etPassword.setText("");
 
-                // Transición animada y cambio de actividad
                 startActivity(new Intent(LoginActivity.this, MainActivity.class));
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
 
-                // Cierra la actividad actual para que no regrese con el botón "atrás"
                 finish();
             } else {
                 // Manejo de error de autenticación

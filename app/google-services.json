@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "589635624243",
+    "project_id": "califunpa",
+    "storage_bucket": "califunpa.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:589635624243:android:6dbf4f576ef9090b1b3246",
+        "android_client_info": {
+          "package_name": "mx.edu.unpa.calificacionesunpa"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRsOdbf-cigpQJUYEYj-mO5ZJqxHOs0p4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

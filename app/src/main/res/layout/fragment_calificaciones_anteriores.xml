@@ -1,99 +1,41 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    android:background="#C8E9BE">
+    android:orientation="vertical"
+    android:padding="16dp">
 
-    <LinearLayout
+    <!-- Spinner para Semestres -->
+    <Spinner
+        android:id="@+id/spinnerSemestres"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_marginBottom="16dp"
+        android:background="@android:drawable/btn_dropdown"
+        android:padding="8dp" />
 
-        <TextView
-            android:id="@+id/tvTituloCalificacionesAnteriores"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Calificaciones Anteriores"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:paddingBottom="8dp"
-            android:textColor="#2F6C4D" />
+    <!-- Spinner para Tipo de Calificación o Materia -->
+    <Spinner
+        android:id="@+id/spinnerFiltro"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:background="@android:drawable/btn_dropdown"
+        android:padding="8dp" />
 
-        <TableLayout
-            android:id="@+id/tableLayoutCalificacionesAnteriores"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:stretchColumns="*"
-            android:shrinkColumns="*"
-            android:background="#C8E9BE"
-            android:divider="#C8E9BE"
-            android:dividerHeight="1dp">
+    <!-- ExpandableListView para mostrar las calificaciones -->
+    <ExpandableListView
+        android:id="@+id/expandableListView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
-            <!-- Encabezados de la tabla -->
-            <TableRow android:background="#2F6C4D">
-                <TextView
-                    android:text="Materia"
-                    android:textStyle="bold"
-                    android:textColor="#FFFFFF"
-                    android:padding="10dp"
-                    android:gravity="center" />
-                <TextView
-                    android:text="Parcial 1"
-                    android:textStyle="bold"
-                    android:textColor="#FFFFFF"
-                    android:padding="10dp"
-                    android:gravity="center" />
-                <TextView
-                    android:text="Parcial 2"
-                    android:textStyle="bold"
-                    android:textColor="#FFFFFF"
-                    android:padding="10dp"
-                    android:gravity="center" />
-                <TextView
-                    android:text="Parcial 3"
-                    android:textStyle="bold"
-                    android:textColor="#FFFFFF"
-                    android:padding="10dp"
-                    android:gravity="center" />
-                <TextView
-                    android:text="Promedio"
-                    android:textStyle="bold"
-                    android:textColor="#FFFFFF"
-                    android:padding="10dp"
-                    android:gravity="center" />
-                <TextView
-                    android:text="Ex. Final"
-                    android:textStyle="bold"
-                    android:textColor="#FFFFFF"
-                    android:padding="10dp"
-                    android:gravity="center" />
-                <TextView
-                    android:text="Cal. Final"
-                    android:textStyle="bold"
-                    android:textColor="#FFFFFF"
-                    android:padding="10dp"
-                    android:gravity="center" />
-                <TextView
-                    android:text="Extra 1"
-                    android:textStyle="bold"
-                    android:textColor="#FFFFFF"
-                    android:padding="10dp"
-                    android:gravity="center" />
-                <TextView
-                    android:text="Extra 2"
-                    android:textStyle="bold"
-                    android:textColor="#FFFFFF"
-                    android:padding="10dp"
-                    android:gravity="center" />
-                <TextView
-                    android:text="Especial"
-                    android:textStyle="bold"
-                    android:textColor="#FFFFFF"
-                    android:padding="10dp"
-                    android:gravity="center" />
-            </TableRow>
+    <!-- TextView para mostrar el promedio general -->
+    <TextView
+        android:id="@+id/txtPromedioGeneral"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Tu promedio general es: "
+        android:textSize="18sp" />
 
-        </TableLayout>
-    </LinearLayout>
-</ScrollView>
+</LinearLayout>

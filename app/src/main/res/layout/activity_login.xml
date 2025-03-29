@@ -49,7 +49,7 @@
 
         <!-- Campo para la matrícula -->
         <EditText
-            android:id="@+id/et_matricula"
+            android:id="@+id/txtMatricula"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/matricula"
@@ -60,7 +60,7 @@
 
         <!-- Campo para la contraseña -->
         <EditText
-            android:id="@+id/et_password"
+            android:id="@+id/txtPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/password"
@@ -71,7 +71,7 @@
 
         <!-- Botón de inicio de sesión -->
         <Button
-            android:id="@+id/btn_login"
+            android:id="@+id/btnLogin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/login"
@@ -84,7 +84,7 @@
 
         <!-- Opción para recuperar contraseña -->
         <TextView
-            android:id="@+id/tv_recuperar_contrasena"
+            android:id="@+id/btnRecuperar_contrasena"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/passwordOlvidada"
@@ -97,7 +97,7 @@
 
         <!-- Botón para registrarse -->
         <Button
-            android:id="@+id/btn_registro"
+            android:id="@+id/btnRegistro"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/singup"
