@@ -40,6 +40,11 @@ class MainActivity : AppCompatActivity() {
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_content_main)
+        val destino = intent.getStringExtra("navigateTo")
+        if (destino == "calificaciones") {
+            navController.navigate(R.id.nav_calificaciones_anteriores)
+        }
+
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(

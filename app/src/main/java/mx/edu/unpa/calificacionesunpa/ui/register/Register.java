@@ -4,18 +4,26 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.Collections;
+import java.util.List;
+
 import mx.edu.unpa.calificacionesunpa.R;
+import mx.edu.unpa.calificacionesunpa.models.Materia;
+import mx.edu.unpa.calificacionesunpa.models.Student;
+import mx.edu.unpa.calificacionesunpa.providers.AuthProvider;
+import mx.edu.unpa.calificacionesunpa.providers.StudentProvider;
 
 public class Register extends AppCompatActivity {
 
-    private EditText txtNombre,txtMatricula,txtCorreo,txtPass;
+    private EditText txtNombre, txtMatricula, txtCorreo, txtPass;
     private Button btnRegistrarse;
+
+    private final AuthProvider authProvider = new AuthProvider();
+    private final StudentProvider studentProvider = new StudentProvider();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,53 +37,49 @@ public class Register extends AppCompatActivity {
 
         btnRegistrarse.setOnClickListener(view -> {
             String nombre = txtNombre.getText().toString().trim();
-            String matricula = txtMatricula.getText().toString().trim();
+            String matricula = txtMatricula.getText().toString().trim(); // Se usará como studentID
             String correo = txtCorreo.getText().toString().trim();
             String pass = txtPass.getText().toString().trim();
 
-            // Validación básica de campos
             if (correo.isEmpty() || pass.isEmpty()) {
-                Toast.makeText(Register.this, "El correo y la contraseña son obligatorios", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "El correo y la contraseña son obligatorios", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Instancia de FirebaseAuth
-            FirebaseAuth auth = FirebaseAuth.getInstance();
+            authProvider.register(correo, pass).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    Toast.makeText(this, "Usuario autenticado", Toast.LENGTH_SHORT).show();
 
-            // Intento de registro
-            auth.createUserWithEmailAndPassword(correo, pass)
-                    .addOnCompleteListener(Register.this, task -> {
-                        if (task.isSuccessful()) {
-                            // Registro exitoso
-                            FirebaseUser user = auth.getCurrentUser();
-                            Toast.makeText(Register.this, "Usuario registrado correctamente", Toast.LENGTH_SHORT).show();
+                    List<Materia> materias = Collections.singletonList(
+                            new Materia(
+                                    "5",
+                                    "Cálculo Diferencial",
+                                    "SEGUNDO",
+                                    "2021-2022B",
+                                    "/Calificaciones/QkQPXnQnkalDPG4gZlXn",
+                                    true
+                            )
+                    );
 
-                            // Opcional: guardar datos adicionales en Firestore o Realtime Database
-                            // Por ejemplo, utilizando FirebaseFirestore:
-                    /*
-                    FirebaseFirestore db = FirebaseFirestore.getInstance();
-                    Map<String, Object> usuario = new HashMap<>();
-                    usuario.put("nombre", nombre);
-                    usuario.put("matricula", matricula);
-                    usuario.put("correo", correo);
+                    Student alumno = new Student(
+                            matricula,
+                            nombre,
+                            "Marinero",
+                            "Cruz",
+                            true,
+                            materias
+                    );
 
-                    db.collection("usuarios")
-                      .document(user.getUid())
-                      .set(usuario)
-                      .addOnSuccessListener(aVoid -> Log.d("Register", "Datos guardados correctamente"))
-                      .addOnFailureListener(e -> Log.w("Register", "Error al guardar los datos", e));
-                    */
-
-                        } else {
-                            // Registro fallido. Mostrar el mensaje de error.
-                            Toast.makeText(Register.this, "Error de registro: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                        }
+                    studentProvider.create(alumno).addOnSuccessListener(unused -> {
+                        Toast.makeText(this, "Alumno registrado en Firestore", Toast.LENGTH_SHORT).show();
+                    }).addOnFailureListener(e -> {
+                        Toast.makeText(this, "Error al guardar alumno: " + e.getMessage(), Toast.LENGTH_LONG).show();
                     });
+
+                } else {
+                    Toast.makeText(this, "Error de registro: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
         });
-
     }
-
-
-
-
 }
