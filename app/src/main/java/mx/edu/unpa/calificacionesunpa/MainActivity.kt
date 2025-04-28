@@ -16,45 +16,55 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.ui.NavigationUI
 import mx.edu.unpa.calificacionesunpa.databinding.ActivityMainBinding
+import mx.edu.unpa.calificacionesunpa.providers.AuthProvider
+import mx.edu.unpa.calificacionesunpa.ui.calificacionesanteriores.FragmentCalificacionesAnteriores
 import mx.edu.unpa.calificacionesunpa.ui.login.LoginActivity
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
+    private lateinit var authProvider: AuthProvider
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        authProvider = AuthProvider()
+
 
         setSupportActionBar(binding.appBarMain.toolbar)
-
         supportActionBar?.title = "UNIVERSIDAD DEL PAPALOAPAN"
-//        binding.appBarMain.fab.setOnClickListener { view ->
-//            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                .setAction("Action", null)
-//                .setAnchorView(R.id.fab).show()
-//        }
-        val drawerLayout: DrawerLayout = binding.drawerLayout
-        val navView: NavigationView = binding.navView
+
+        val drawerLayout: DrawerLayout   = binding.drawerLayout
+        val navView: NavigationView       = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_content_main)
-        val destino = intent.getStringExtra("navigateTo")
-        if (destino == "calificaciones") {
-            navController.navigate(R.id.nav_calificaciones_anteriores)
+
+        // Navegación desde Login
+        intent.getStringExtra("navigateTo")?.let { destino ->
+            if (destino == "calificaciones") {
+                navController.navigate(R.id.nav_calificaciones_anteriores)
+            }
         }
 
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
+        // ① Defino los destinos top‑level de mi Drawer
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow
-            ), drawerLayout
+                R.id.nav_home,
+                R.id.nav_calificaciones_anteriores,
+                R.id.nav_notificaciones
+            ),
+            drawerLayout
         )
+
+        // ② Conecto la Toolbar con NavController + AppBarConfig
         setupActionBarWithNavController(navController, appBarConfiguration)
+
+        // ③ Conecto el NavigationView con NavController
         navView.setupWithNavController(navController)
 
+        // ④ Manejo “Cerrar sesión” manualmente
         navView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.nav_logout -> {
@@ -62,14 +72,15 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 else -> {
+                    // Para el resto de items, que NavController haga la navegación
                     NavigationUI.onNavDestinationSelected(menuItem, navController)
                     drawerLayout.closeDrawers()
                     true
                 }
             }
         }
-
     }
+
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -96,7 +107,7 @@ class MainActivity : AppCompatActivity() {
     // Método para el cierre de sesión
     private fun logout() {
         // Limpia cualquier sesión guardada o SharedPreferences aquí si es necesario
-
+        authProvider.exitSession()
         // Redirige a la actividad de Login
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
@@ -104,4 +115,11 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+//    override fun onStart(){
+//        super.onStart()
+//        if (authProvider.exitsSession()){
+//            val intent = Intent(this, FragmentCalificacionesAnteriores::class.java)
+//            startActivity(intent)
+//        }
+//    }
 }

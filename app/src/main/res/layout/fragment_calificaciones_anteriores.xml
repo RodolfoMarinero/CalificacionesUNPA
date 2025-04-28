@@ -8,58 +8,69 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_horizontal">
+        android:orientation="vertical">
 
-        <!-- Encabezado: Usuario y matrícula -->
+        <!-- Encabezado: Saludo izquierda, matrícula y foto derecha -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center_horizontal|center_vertical"
+            android:gravity="center_vertical"
             android:layout_marginBottom="16dp">
 
+            <!-- Saludo usuario -->
             <TextView
-                android:layout_width="wrap_content"
+                android:id="@+id/tvHolaUsuario"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:text="Hola, Usuario!"
                 android:textStyle="bold"
                 android:textSize="16sp"
                 android:textColor="#000000" />
 
+            <!-- Matrícula y foto -->
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="end">
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:gravity="end|center_vertical">
 
-                <TextView
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Matrícula"
-                    android:textSize="14sp"
-                    android:textColor="#000000" />
+                    android:orientation="vertical"
+                    android:gravity="end"
+                    android:layout_marginEnd="8dp">
 
-                <TextView
-                    android:id="@+id/txtMatricula"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="123456789"
-                    android:textStyle="bold"
-                    android:textColor="#4A148C"
-                    android:textSize="14sp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Matrícula"
+                        android:textSize="14sp"
+                        android:textColor="#000000" />
+
+                    <TextView
+                        android:id="@+id/txtMatricula"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="123456789"
+                        android:textStyle="bold"
+                        android:textSize="14sp"
+                        android:textColor="#000000" />
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_perfil"
+                    android:background="@drawable/bg_circle"
+                    android:padding="4dp" />
             </LinearLayout>
-
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/ic_perfil"
-                android:layout_marginStart="8dp"
-                android:background="@drawable/bg_circle"
-                android:padding="4dp" />
         </LinearLayout>
 
-        <!-- Logo -->
+        <!-- Logo centrado -->
         <ImageView
             android:layout_width="80dp"
             android:layout_height="80dp"
@@ -67,38 +78,41 @@
             android:layout_gravity="center"
             android:layout_marginBottom="8dp" />
 
-        <!-- Título -->
+        <!-- Título sección -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="CALIFICACIONES"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:layout_marginBottom="12dp"
             android:textColor="#000000"
-            android:gravity="center" />
+            android:layout_gravity="center"
+            android:layout_marginBottom="12dp" />
 
-        <!-- Spinner Semestre -->
+        <!-- Selector de semestre -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginBottom="16dp">
+            android:layout_marginBottom="16dp"
+            android:layout_gravity="center">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Semestre"
-                android:textColor="#000000"
                 android:textSize="16sp"
+                android:textColor="#000000"
                 android:layout_marginEnd="8dp" />
 
             <Spinner
                 android:id="@+id/spinnerSemestres"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_spinner" />
+                android:background="@drawable/bg_spinner"
+                android:popupBackground="#FFFFFF"
+                android:spinnerMode="dropdown" />
         </LinearLayout>
 
         <!-- Tabla de calificaciones -->
@@ -112,17 +126,18 @@
 
             <!-- Cabecera -->
             <TableRow>
-                <TextView style="@style/CalifHeader" android:text="Materia" />
-                <TextView style="@style/CalifHeader" android:text="1er." />
-                <TextView style="@style/CalifHeader" android:text="2o." />
-                <TextView style="@style/CalifHeader" android:text="3er." />
-                <TextView style="@style/CalifHeader" android:text="P.P" />
-                <TextView style="@style/CalifHeader" android:text="E.F" />
-                <TextView style="@style/CalifHeader" android:text="CAL.DEF" />
+                <TextView style="@style/CalifHeader" android:text="Materia" android:textColor="#000000" />
+                <TextView style="@style/CalifHeader" android:text="1er."    android:textColor="#000000" />
+                <TextView style="@style/CalifHeader" android:text="2o."     android:textColor="#000000" />
+                <TextView style="@style/CalifHeader" android:text="3er."    android:textColor="#000000" />
+                <TextView style="@style/CalifHeader" android:text="P.P"      android:textColor="#000000" />
+                <TextView style="@style/CalifHeader" android:text="E.F"      android:textColor="#000000" />
+                <TextView style="@style/CalifHeader" android:text="CAL.DEF"  android:textColor="#000000" />
             </TableRow>
 
-            <!-- Las filas se agregan desde Java -->
         </TableLayout>
+
+
 
         <!-- Extraordinarios -->
         <TextView
@@ -133,8 +148,12 @@
             android:textSize="16sp"
             android:textColor="#000000"
             android:layout_marginTop="24dp"
-            android:gravity="center" />
+            android:gravity="center"
+            android:layout_gravity="center" />
 
+
+
+        <!-- Tabla Extraordinarios -->
         <TableLayout
             android:id="@+id/tablaExtraordinarios"
             android:layout_width="match_parent"
@@ -144,17 +163,57 @@
             android:padding="8dp"
             android:layout_marginBottom="24dp">
 
-            <!-- Cabecera -->
+            <!-- Cabecera Extraordinarios -->
             <TableRow>
-                <TextView style="@style/CalifHeader" android:text="Materia" />
-                <TextView style="@style/CalifHeader" android:text="1er" />
-                <TextView style="@style/CalifHeader" android:text="2o" />
+                <TextView style="@style/CalifHeader" android:text="Materia" android:textColor="#000000" />
+                <TextView style="@style/CalifHeader" android:text="1er"     android:textColor="#000000" />
+                <TextView style="@style/CalifHeader" android:text="2o"      android:textColor="#000000" />
+                <TextView style="@style/CalifHeader" android:text="E.E"      android:textColor="#000000" />
             </TableRow>
-
-            <!-- Filas dinámicas -->
         </TableLayout>
+        <!-- Tipo de calificación -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="8dp"
+            android:padding="8dp"
+            android:background="@drawable/bg_card_light">
 
-        <!-- Ver promedio -->
+            <TextView
+                android:id="@+id/tvTipoCalificacionLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tipo de calificación:"
+                android:textSize="14sp"
+                android:textColor="#000000" />
+
+            <TextView
+                android:id="@+id/tvTipoCalificacion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:textColor="#000000"
+                android:layout_marginStart="4dp" />
+        </LinearLayout>
+
+        <!-- Promedio general -->
+        <TextView
+            android:id="@+id/txtPromedioGeneral"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:visibility="gone"
+            android:layout_marginTop="16dp"
+            android:layout_gravity="center" />
+
+        <!-- Botón Ver Promedio -->
         <Button
             android:id="@+id/btnVerPromedio"
             android:layout_width="wrap_content"
@@ -163,6 +222,7 @@
             android:backgroundTint="#D1C4E9"
             android:textColor="#000000"
             android:layout_gravity="center"
-            android:elevation="4dp" />
+            android:elevation="4dp"
+            android:layout_marginTop="8dp" />
     </LinearLayout>
 </ScrollView>

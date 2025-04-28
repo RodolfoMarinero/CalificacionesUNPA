@@ -4,107 +4,79 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
-import android.widget.TableLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Button;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import java.util.ArrayList;
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.util.List;
 
 import mx.edu.unpa.calificacionesunpa.R;
+import mx.edu.unpa.calificacionesunpa.models.StudentBasic;
+import mx.edu.unpa.calificacionesunpa.providers.StudentProviderJ;
 
 public class FragmentCalificacionesAnteriores extends Fragment {
 
-    private Spinner spinnerSemestres;
-    private TableLayout tablaCalificaciones;
-    private TextView txtPromedioGeneral;
-    private Button btnVerPromedio;
+    private StudentProviderJ studentProviderJ;
+    private TextView tvHolaUsuario;
+    private TextView txtMatricula;
 
-    public FragmentCalificacionesAnteriores() {
-        // Constructor vacío requerido
-    }
+    @Nullable @Override
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        View root = inflater.inflate(
+                R.layout.fragment_calificaciones_anteriores,
+                container,
+                false
+        );
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_calificaciones_anteriores, container, false);
+        // 1) Vistas del encabezado
+        tvHolaUsuario = root.findViewById(R.id.tvHolaUsuario);
+        txtMatricula  = root.findViewById(R.id.txtMatricula);
 
-        spinnerSemestres = rootView.findViewById(R.id.spinnerSemestres);
-        tablaCalificaciones = rootView.findViewById(R.id.tablaCalificaciones);
-        btnVerPromedio = rootView.findViewById(R.id.btnVerPromedio);
+        // 2) Inicializa el provider
+        studentProviderJ = new StudentProviderJ();
 
-        // Semestres disponibles
-        String[] semestres = {"Semestre actual", "Semestre 1", "Semestre 2", "Semestre 3"};
-        ArrayAdapter<String> semestreAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, semestres);
-        semestreAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerSemestres.setAdapter(semestreAdapter);
-
-        // Acción al cambiar de semestre
-        spinnerSemestres.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
-                mostrarCalificaciones(position);
-            }
-
-            @Override
-            public void onNothingSelected(android.widget.AdapterView<?> parent) {
-                // Nada
-            }
-        });
-
-        // Acción al presionar "Ver Promedio"
-        btnVerPromedio.setOnClickListener(v -> {
-            txtPromedioGeneral.setVisibility(View.VISIBLE);
-        });
-
-        return rootView;
-    }
-
-    private void mostrarCalificaciones(int semestreSeleccionado) {
-        tablaCalificaciones.removeViews(1, Math.max(0, tablaCalificaciones.getChildCount() - 1)); // Limpia menos la cabecera
-
-        List<String[]> datos = new ArrayList<>();
-        double suma = 0;
-        int cantidad = 0;
-
-        switch (semestreSeleccionado) {
-            case 1:
-                datos.add(new String[]{"Matemáticas", "9", "8.5", "9.2", "9", "8", "8.9"});
-                datos.add(new String[]{"Historia", "8", "8.2", "8.8", "9", "8", "8.4"});
-                break;
-            case 2:
-                datos.add(new String[]{"Física", "7", "8", "8.5", "8", "9", "8.3"});
-                datos.add(new String[]{"Química", "9.5", "9", "8.8", "9", "9", "9.0"});
-                break;
-            default:
-                datos.add(new String[]{"Programación", "10", "9", "9.5", "10", "9", "9.5"});
-                datos.add(new String[]{"Bases de Datos", "9", "9", "9", "9", "9", "9.0"});
-                break;
+        // 3) Obtén el email (argumento o FirebaseAuth)
+        String email = null;
+        if (getArguments() != null) {
+            email = getArguments().getString("email");
+        }
+        if (email == null && FirebaseAuth.getInstance().getCurrentUser() != null) {
+            email = FirebaseAuth.getInstance()
+                    .getCurrentUser()
+                    .getEmail();
         }
 
-        for (String[] fila : datos) {
-            TableRow tableRow = new TableRow(getContext());
+        // 4) Lanza la consulta
+        if (email != null) {
+            studentProviderJ.fetchBasicByEmail(email, new StudentProviderJ.StudentBasicCallback() {
+                @Override
+                public void onSuccess(@NonNull StudentBasic student) {
+                    // Coloca nombre y matrícula en la UI
+                    String nombre = student.getNombre() != null
+                            ? student.getNombre()
+                            : "Usuario";
+                    String matricula = student.getMatricula() != null
+                            ? student.getMatricula()
+                            : "";
+                    tvHolaUsuario.setText("Hola, " + nombre + "!");
+                    txtMatricula .setText(matricula);
+                }
 
-            for (String celda : fila) {
-                TextView textView = new TextView(getContext());
-                textView.setText(celda);
-                textView.setPadding(8, 8, 8, 8);
-                textView.setGravity(android.view.Gravity.CENTER);
-                tableRow.addView(textView);
-            }
-
-            tablaCalificaciones.addView(tableRow);
-
-            try {
-                suma += Double.parseDouble(fila[6]);
-                cantidad++;
-            } catch (NumberFormatException ignored) {}
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    tvHolaUsuario.setText("Error cargando alumno");
+                }
+            });
+        } else {
+            tvHolaUsuario.setText("Email no disponible");
         }
 
-        double promedio = (cantidad > 0) ? suma / cantidad : 0;    }
+        return root;
+    }
 }

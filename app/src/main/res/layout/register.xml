@@ -2,14 +2,14 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#C8E9BE"
+    android:background="@drawable/bg_gradient"
     android:padding="16dp">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center">
+        android:gravity="center_horizontal">
 
         <!-- Logo de la universidad -->
         <ImageView
@@ -18,61 +18,86 @@
             android:layout_height="100dp"
             android:src="@drawable/ic_logo"
             android:contentDescription="Logo de la Universidad del Papaloapan"
-            android:layout_marginBottom="24dp"/>
+            android:layout_marginBottom="24dp" />
 
-        <!-- Título de la vista -->
-        <TextView
-            android:id="@+id/tv_registro_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Registro de Usuario"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="#2E7D32"
-            android:layout_marginBottom="16dp"/>
-
-        <!-- Campos de registro -->
-        <EditText
-            android:id="@+id/et_nombre"
+        <!-- Card de registro -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Nombre completo"
-            android:inputType="textPersonName"
-            android:layout_marginBottom="12dp"/>
+            android:background="@drawable/bg_card"
+            android:orientation="vertical"
+            android:padding="24dp"
+            android:layout_margin="16dp"
+            android:elevation="6dp">
 
-        <EditText
-            android:id="@+id/et_matricula"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Matrícula"
-            android:inputType="text"
-            android:layout_marginBottom="12dp"/>
+            <!-- Título de la vista -->
+            <TextView
+                android:id="@+id/tv_registro_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Registro de Usuario"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="16dp" />
 
-        <EditText
-            android:id="@+id/et_correo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Correo electrónico"
-            android:inputType="textEmailAddress"
-            android:layout_marginBottom="12dp"/>
+            <!-- Campos de registro -->
+            <EditText
+                android:id="@+id/et_nombre"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:hint="Nombre completo"
+                android:inputType="textPersonName"
+                android:background="@drawable/bg_edittext"
+                android:padding="12dp"
+                android:layout_marginBottom="12dp"
+                android:textColor="#000" />
 
-        <EditText
-            android:id="@+id/et_contrasena"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Contraseña"
-            android:inputType="textPassword"
-            android:layout_marginBottom="16dp"/>
+            <EditText
+                android:id="@+id/et_matricula"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:hint="Matrícula"
+                android:inputType="text"
+                android:background="@drawable/bg_edittext"
+                android:padding="12dp"
+                android:layout_marginBottom="12dp"
+                android:textColor="#000" />
 
-        <!-- Botón de registro -->
-        <Button
-            android:id="@+id/btn_registrarse"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Registrarse"
-            android:backgroundTint="#2E7D32"
-            android:textColor="#FFFFFF"
-            android:layout_marginTop="16dp"/>
+            <EditText
+                android:id="@+id/et_correo"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:hint="Correo electrónico"
+                android:inputType="textEmailAddress"
+                android:background="@drawable/bg_edittext"
+                android:padding="12dp"
+                android:layout_marginBottom="12dp"
+                android:textColor="#000" />
+
+            <EditText
+                android:id="@+id/et_contrasena"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:hint="Contraseña"
+                android:inputType="textPassword"
+                android:background="@drawable/bg_edittext"
+                android:padding="12dp"
+                android:layout_marginBottom="16dp"
+                android:textColor="#000" />
+
+            <!-- Botón de registro -->
+            <Button
+                android:id="@+id/btn_registrarse"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="Registrarse"
+                android:background="@drawable/bg_button"
+                android:textColor="#FFFFFF"
+                android:layout_marginTop="8dp" />
+
+        </LinearLayout>
 
     </LinearLayout>
 </ScrollView>

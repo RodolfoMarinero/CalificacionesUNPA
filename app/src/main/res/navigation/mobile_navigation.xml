@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/nav_home">
+    app:startDestination="@+id/nav_calificaciones_anteriores"
+    >
 
     <!-- Fragmento de Home -->
     <fragment
@@ -37,7 +38,7 @@
     <fragment
         android:id="@+id/nav_calificaciones_anteriores"
         android:name="mx.edu.unpa.calificacionesunpa.ui.calificacionesanteriores.FragmentCalificacionesAnteriores"
-        android:label="Calificaciones Anteriores"
+        android:label="Calificaciones"
         tools:layout="@layout/fragment_calificaciones_anteriores" />
 
     <!-- Fragmento de Notificaciones -->

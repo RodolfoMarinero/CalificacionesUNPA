@@ -66,6 +66,7 @@ public class Register extends AppCompatActivity {
                             nombre,
                             "Marinero",
                             "Cruz",
+                            "",
                             true,
                             materias
                     );

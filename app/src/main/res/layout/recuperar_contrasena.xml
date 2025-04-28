@@ -1,59 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#C8E9BE"
-    android:padding="16dp"
-    android:gravity="center">
+    android:background="@drawable/bg_gradient"
+    android:padding="16dp">
 
-    <!-- Logo de la universidad -->
-    <ImageView
-        android:id="@+id/logo_universidad"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:src="@drawable/ic_logo"
-        android:contentDescription="Logo de la Universidad del Papaloapan"
-        android:layout_marginBottom="24dp"/>
-
-    <!-- Título de la vista -->
-    <TextView
-        android:id="@+id/tv_forgot_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Recuperar Contraseña"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:textColor="#2E7D32"
-        android:layout_marginBottom="16dp"/>
-
-    <!-- Instrucciones -->
-    <TextView
-        android:id="@+id/tv_instrucciones"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Introduce tu correo electrónico para recibir instrucciones de recuperación."
-        android:textSize="16sp"
-        android:textColor="#2E7D32"
-        android:layout_marginBottom="16dp"/>
+        android:gravity="center_horizontal">
 
-    <!-- Campo para el correo -->
-    <EditText
-        android:id="@+id/et_correo_recuperacion"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Correo electrónico"
-        android:inputType="textEmailAddress"
-        android:layout_marginBottom="16dp"/>
+        <!-- Logo de la universidad -->
+        <ImageView
+            android:id="@+id/logo_universidad"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/he_logo_unpa"
+            android:contentDescription="Logo de la Universidad del Papaloapan"
+            android:layout_marginBottom="24dp" />
 
-    <!-- Botón para recuperar contraseña -->
-    <Button
-        android:id="@+id/btn_recuperar_contrasena"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Enviar instrucciones"
-        android:backgroundTint="#2E7D32"
-        android:textColor="#FFFFFF"
-        android:layout_marginTop="16dp"/>
+        <!-- Card de recuperación de contraseña -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_card"
+            android:orientation="vertical"
+            android:padding="24dp"
+            android:layout_marginHorizontal="16dp"
+            android:elevation="6dp">
 
-</LinearLayout>
+            <!-- Título de la vista -->
+            <TextView
+                android:id="@+id/tv_forgot_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Recuperar Contraseña"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Instrucciones -->
+            <TextView
+                android:id="@+id/tv_instrucciones"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Introduce tu correo electrónico para recibir instrucciones de recuperación."
+                android:textSize="16sp"
+                android:textColor="#333333"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Campo para el correo -->
+            <EditText
+                android:id="@+id/et_correo_recuperacion"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:hint="Correo electrónico"
+                android:inputType="textEmailAddress"
+                android:background="@drawable/bg_edittext"
+                android:padding="12dp"
+                android:layout_marginBottom="12dp"
+                android:textColor="#000" />
+
+            <!-- Botón para recuperar contraseña -->
+            <Button
+                android:id="@+id/btn_recuperar_contrasena"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="Enviar instrucciones"
+                android:background="@drawable/bg_button"
+                android:textColor="#FFFFFF"
+                android:layout_marginTop="8dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

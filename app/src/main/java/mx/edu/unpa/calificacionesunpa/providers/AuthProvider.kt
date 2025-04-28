@@ -3,6 +3,9 @@ package mx.edu.unpa.calificacionesunpa.providers
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
+import mx.edu.unpa.calificacionesunpa.models.Student
+import com.google.firebase.firestore.FirebaseFirestore
+
 
 
 class AuthProvider {
@@ -19,4 +22,18 @@ class AuthProvider {
     fun getId(): String{
         return auth.currentUser?.uid ?: ""
     }
+
+    fun exitsSession(): Boolean{
+        var exits = false
+        if (auth.currentUser!=null){
+            exits=true
+        }
+        return exits
+    }
+
+    fun exitSession(){
+        auth.signOut()
+    }
+
+
 }
