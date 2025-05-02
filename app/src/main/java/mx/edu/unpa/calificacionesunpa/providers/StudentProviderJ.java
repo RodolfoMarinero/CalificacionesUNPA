@@ -1,10 +1,8 @@
-// StudentProvider.java
 package mx.edu.unpa.calificacionesunpa.providers;
 
 import androidx.annotation.NonNull;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -34,40 +32,34 @@ public class StudentProviderJ {
                     if (!query.isEmpty()) {
                         DocumentSnapshot doc = query.getDocuments().get(0);
 
-                        // Extrae campos sencillos
-                        String nombre     = doc.getString("nombre");
-                        String apeP       = doc.getString("apePaterno");
-                        String apeM       = doc.getString("apeMaterno");
-                        String correo     = doc.getString("correo");
-                        String matricula  = doc.getString("matricula");
+                        String nombre    = doc.getString("nombre");
+                        String apeP      = doc.getString("apePaterno");
+                        String apeM      = doc.getString("apeMaterno");
+                        String correo    = doc.getString("correo");
+                        String matricula = doc.getString("matricula");
                         Boolean activoObj = doc.getBoolean("activo");
-                        boolean activo    = activoObj != null && activoObj;
+                        boolean activo   = activoObj != null && activoObj;
 
-                        // Extrae el arreglo de rutas de materias
+                        // Extrae el arreglo de rutas de materias (DocumentReference o String)
                         List<String> materiasPaths = new ArrayList<>();
                         Object raw = doc.get("materias");
                         if (raw instanceof List<?>) {
                             for (Object o : (List<?>) raw) {
                                 if (o instanceof String) {
                                     materiasPaths.add((String) o);
+                                } else if (o instanceof DocumentReference) {
+                                    materiasPaths.add(((DocumentReference) o).getPath());
                                 }
                             }
                         }
 
-                        // Construye el modelo y llama al callback
                         StudentBasic student = new StudentBasic(
-                                nombre,
-                                apeP,
-                                apeM,
-                                correo,
-                                matricula,
-                                activo,
-                                materiasPaths
+                                nombre, apeP, apeM, correo, matricula, activo, materiasPaths
                         );
                         callback.onSuccess(student);
 
                     } else {
-                        // Ningún alumno con ese correo: devolvemos lista vacía
+                        // alumno no existe → devolvemos objeto vacío
                         StudentBasic empty = new StudentBasic(
                                 "", "", "", "", "", false, new ArrayList<>()
                         );
