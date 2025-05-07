@@ -38,7 +38,7 @@
     <fragment
         android:id="@+id/nav_calificaciones_anteriores"
         android:name="mx.edu.unpa.calificacionesunpa.ui.calificacionesanteriores.FragmentCalificacionesAnteriores"
-        android:label="Calificaciones"
+        android:label="Bienvenido"
         tools:layout="@layout/fragment_calificaciones_anteriores" />
 
     <!-- Fragmento de Notificaciones -->

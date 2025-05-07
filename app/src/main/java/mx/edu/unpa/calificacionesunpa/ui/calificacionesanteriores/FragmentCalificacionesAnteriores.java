@@ -23,14 +23,14 @@ import mx.edu.unpa.calificacionesunpa.providers.*;
 public class FragmentCalificacionesAnteriores extends Fragment {
     private static final String TAG = "CalifFrag";
 
-    private TextView tvHolaUsuario;
     private TextView txtMatricula;
     private Spinner spinnerSemestres;
     private TableLayout tablaCalificaciones;
     private TableLayout tablaExtraordinarios;
     private TextView txtPromedioGeneral;
     private TextView tvTipoCalificacion;
-    private Button btnVerPromedio;
+    private TextView tvExtraordinariosLabel;
+
 
     private StudentProviderJ studentProviderJ;
     private MateriaProvider materiaProvider;
@@ -48,14 +48,14 @@ public class FragmentCalificacionesAnteriores extends Fragment {
         View root = inflater.inflate(R.layout.fragment_calificaciones_anteriores, container, false);
 
         // 1) Referencias UI
-        tvHolaUsuario        = root.findViewById(R.id.tvHolaUsuario);
         txtMatricula         = root.findViewById(R.id.txtMatricula);
         spinnerSemestres     = root.findViewById(R.id.spinnerSemestres);
         tablaCalificaciones  = root.findViewById(R.id.tablaCalificaciones);
         tablaExtraordinarios = root.findViewById(R.id.tablaExtraordinarios);
         txtPromedioGeneral   = root.findViewById(R.id.txtPromedioGeneral);
         tvTipoCalificacion   = root.findViewById(R.id.tvTipoCalificacion);
-        btnVerPromedio       = root.findViewById(R.id.btnVerPromedio);
+        tvExtraordinariosLabel   = root.findViewById(R.id.tvExtraordinariosLabel);
+
 
         txtPromedioGeneral.setVisibility(View.GONE);
         tvTipoCalificacion.setText("");
@@ -83,7 +83,6 @@ public class FragmentCalificacionesAnteriores extends Fragment {
                     Log.d(TAG, "Alumno obtenido: " + student.getNombre() +
                             ", matrícula: " + student.getMatricula() +
                             ", materias paths: " + student.getMaterias());
-                    tvHolaUsuario.setText("Hola, " + student.getNombre() + "!");
                     txtMatricula.setText(student.getMatricula());
                     if (!materiasYaCargadas) {
                         materiasYaCargadas = true;
@@ -108,13 +107,6 @@ public class FragmentCalificacionesAnteriores extends Fragment {
                     "Correo no disponible para consulta",
                     Toast.LENGTH_LONG).show();
         }
-
-        // 5) Botón “Ver Promedio”
-        btnVerPromedio.setOnClickListener(v -> {
-            int pos = spinnerSemestres.getSelectedItemPosition();
-            Log.d(TAG, "Botón Ver Promedio pulsado, posición spinner: " + pos);
-            spinnerSemestres.setSelection(pos);
-        });
 
         return root;
     }
@@ -183,13 +175,16 @@ public class FragmentCalificacionesAnteriores extends Fragment {
         Log.d(TAG, "setupSpinner → currentSemester=" + currentSemester +
                 ", total materias=" + todasMaterias.size());
 
+        // Construye la lista de ítems
         List<String> items = new ArrayList<>();
         for (int i = 1; i < currentSemester; i++) {
             items.add("Semestre " + i);
         }
-        items.add("Semestre actual");
+        items.add("Semestre actual");  // Siempre el último
+
         Log.d(TAG, "Spinner items: " + items);
 
+        // Crea el adapter y lo asocia
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 requireContext(),
                 android.R.layout.simple_spinner_item,
@@ -198,19 +193,25 @@ public class FragmentCalificacionesAnteriores extends Fragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerSemestres.setAdapter(adapter);
 
+        // Listener
         spinnerSemestres.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 int semElegido = position < currentSemester - 1
                         ? position + 1
                         : currentSemester;
                 Log.d(TAG, "Spinner posición=" + position + ", semestre=" + semElegido);
                 loadGradesForSemester(semElegido);
             }
-            @Override public void onNothingSelected(AdapterView<?> parent) {
-                Log.d(TAG, "Spinner onNothingSelected");
-            }
+            @Override public void onNothingSelected(AdapterView<?> parent) { }
         });
+
+        // ➡️ Selecciona por defecto el último elemento (Semestre actual)
+        int lastIndex = items.size() - 1;
+        Log.d(TAG, "Seleccionando semestre actual en posición " + lastIndex);
+        spinnerSemestres.setSelection(lastIndex);
     }
+
 
     private void loadGradesForSemester(int semestre) {
         Log.d(TAG, "loadGradesForSemester semestre=" + semestre);
@@ -220,6 +221,8 @@ public class FragmentCalificacionesAnteriores extends Fragment {
         if (tablaExtraordinarios.getChildCount() > 1)
             tablaExtraordinarios.removeViews(1, tablaExtraordinarios.getChildCount() - 1);
 
+        tablaExtraordinarios.setVisibility(View.GONE);
+        tvExtraordinariosLabel.setVisibility(View.GONE);
         List<Materia> filtradas = new ArrayList<>();
         for (Materia m : todasMaterias) {
             if (semestreToInt(m.getSemestre()) == semestre) {
@@ -233,6 +236,8 @@ public class FragmentCalificacionesAnteriores extends Fragment {
                     Toast.LENGTH_SHORT).show();
             return;
         }
+
+        final boolean[] hasExtra = { false };
 
         List<Double> definitivas = new ArrayList<>();
         for (Materia mat : filtradas) {
@@ -275,15 +280,17 @@ public class FragmentCalificacionesAnteriores extends Fragment {
                                 tablaCalificaciones.addView(row);
                             }
 
-                            // ¿tiene datos extraordinarios?
+                            //  🚩 EXTRAORDINARIOS 🚩
                             boolean tieneExtra = cal != null && (
-                                    cal.getExtra_1() != null ||
-                                            cal.getExtra_2() != null ||
-                                            cal.getEspecial() != null
+                                    (cal.getExtra_1() != null && cal.getExtra_1() > 0) ||
+                                            (cal.getExtra_2() != null && cal.getExtra_2() > 0) ||
+                                            (cal.getEspecial() != null && cal.getEspecial() > 0)
                             );
                             if (tieneExtra) {
+                                hasExtra[0] = true;
                                 TableRow rowEx = new TableRow(requireContext());
                                 rowEx.setGravity(Gravity.CENTER);
+                                // reutiliza addCell, lo mejoraremos abajo
                                 addCell(rowEx, mat.getNombre());
                                 addCell(rowEx, format(cal.getExtra_1()));
                                 addCell(rowEx, format(cal.getExtra_2()));
@@ -304,6 +311,13 @@ public class FragmentCalificacionesAnteriores extends Fragment {
                                 tvTipoCalificacion.setText(
                                         avg >= 9.0 ? "Regular" : "Irregular"
                                 );
+                                if (hasExtra[0]) {
+                                    tvExtraordinariosLabel.setVisibility(View.VISIBLE);
+                                    tablaExtraordinarios.setVisibility(View.VISIBLE);
+                                } else {
+                                    tvExtraordinariosLabel.setVisibility(View.GONE);
+                                    tablaExtraordinarios.setVisibility(View.GONE);
+                                }
                             }
                         }
                     });
@@ -314,8 +328,26 @@ public class FragmentCalificacionesAnteriores extends Fragment {
         TextView tv = new TextView(requireContext());
         tv.setText(texto);
         tv.setPadding(8, 8, 8, 8);
+
+        // 1) Centrado completo
+        tv.setGravity(Gravity.CENTER);
+        tv.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+
+        // 2) Multi‐línea
+        tv.setSingleLine(false);
+        tv.setMaxLines(3);
+
+        // 3) LayoutParams con “peso” para ancho fijo
+        TableRow.LayoutParams lp = new TableRow.LayoutParams(
+                0,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                1f
+        );
+        tv.setLayoutParams(lp);
+
         row.addView(tv);
     }
+
 
     private String format(Double v) {
         return v != null

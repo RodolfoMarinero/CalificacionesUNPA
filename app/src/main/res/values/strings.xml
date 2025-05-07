@@ -16,4 +16,9 @@
     <string name="password">Contraseña</string>
     <string name="passwordOlvidada">¿Olvidaste tu contraseña?</string>
     <string name="singup">Crear una cuenta</string>
+
+    <string name="cd_matricula">Matrícula</string>
+    <string name="cd_carrera">Carrera</string>
+    <string name="cd_promedio">Promedio general</string>
+    <string name="cd_barcode">Código de barras</string>
 </resources>

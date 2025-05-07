@@ -19,15 +19,15 @@
             android:layout_marginBottom="16dp">
 
             <!-- Saludo usuario -->
-            <TextView
-                android:id="@+id/tvHolaUsuario"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Hola, Usuario!"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:textColor="#000000" />
+<!--            <TextView-->
+<!--                android:id="@+id/tvHolaUsuario"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_weight="1"-->
+<!--                android:text="Hola, Usuario!"-->
+<!--                android:textStyle="bold"-->
+<!--                android:textSize="16sp"-->
+<!--                android:textColor="#000000" />-->
 
             <!-- Matrícula y foto -->
             <LinearLayout
@@ -72,8 +72,8 @@
 
         <!-- Logo centrado -->
         <ImageView
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
             android:src="@drawable/he_logo_unpa"
             android:layout_gravity="center"
             android:layout_marginBottom="8dp" />
@@ -121,7 +121,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:stretchColumns="*"
-            android:background="@drawable/bg_table"
+            android:background="@drawable/bg_table_light"
             android:padding="8dp">
 
             <!-- Cabecera -->
@@ -141,6 +141,7 @@
 
         <!-- Extraordinarios -->
         <TextView
+            android:id="@+id/tvExtraordinariosLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Extraordinarios"
@@ -214,15 +215,15 @@
             android:layout_gravity="center" />
 
         <!-- Botón Ver Promedio -->
-        <Button
-            android:id="@+id/btnVerPromedio"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Ver Promedio 👁️"
-            android:backgroundTint="#D1C4E9"
-            android:textColor="#000000"
-            android:layout_gravity="center"
-            android:elevation="4dp"
-            android:layout_marginTop="8dp" />
+<!--        <Button-->
+<!--            android:id="@+id/btnVerPromedio"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Ver Promedio 👁️"-->
+<!--            android:backgroundTint="#D1C4E9"-->
+<!--            android:textColor="#000000"-->
+<!--            android:layout_gravity="center"-->
+<!--            android:elevation="4dp"-->
+<!--            android:layout_marginTop="8dp" />-->
     </LinearLayout>
 </ScrollView>
