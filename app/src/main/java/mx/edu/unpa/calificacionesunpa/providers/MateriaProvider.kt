@@ -25,8 +25,9 @@ class MateriaProvider {
                 val id           = snap.id
                 val nombre       = snap.getString("nombre")
                 val semestre     = snap.getString("semestre")
-                val cicloEscolar = snap.getString("cicloEscolar")
                 val activo       = snap.getBoolean("activo") ?: true
+                val cicloEscolar = snap.getString("cicloEscolar")
+                val planDeEstudio = snap.getString("planDeEstudio")
 
                 // DocumentReference → path
                 val calRef = snap.get("calificaciones")
@@ -40,9 +41,10 @@ class MateriaProvider {
                     id           = id,
                     nombre       = nombre,
                     semestre     = semestre,
-                    cicloEscolar = cicloEscolar,
                     calificaciones = calPath,
-                    activo       = activo
+                    activo       = activo,
+                    planDeEstudio = planDeEstudio,
+                    cicloEscolar = cicloEscolar
                 )
                 callback(materia)
             }

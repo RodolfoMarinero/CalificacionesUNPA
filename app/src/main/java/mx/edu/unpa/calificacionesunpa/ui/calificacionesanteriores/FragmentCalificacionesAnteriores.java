@@ -12,6 +12,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import com.google.firebase.auth.FirebaseAuth;
 import java.util.*;
+import java.util.stream.Collectors;
+
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import mx.edu.unpa.calificacionesunpa.R;
@@ -37,7 +39,7 @@ public class FragmentCalificacionesAnteriores extends Fragment {
     private CalificacionesProvider califProvider;
 
     private final List<Materia> todasMaterias = new ArrayList<>();
-    private int currentSemester = 1;
+//    private int currentSemester = 1;
 
     private boolean materiasYaCargadas = false;
 
@@ -167,49 +169,198 @@ public class FragmentCalificacionesAnteriores extends Fragment {
     }
 
     private void setupSpinner() {
-        currentSemester = 1;
-        for (Materia m : todasMaterias) {
-            int sem = semestreToInt(m.getSemestre());
-            if (sem > currentSemester) currentSemester = sem;
-        }
-        Log.d(TAG, "setupSpinner → currentSemester=" + currentSemester +
-                ", total materias=" + todasMaterias.size());
-
-        // Construye la lista de ítems
-        List<String> items = new ArrayList<>();
-        for (int i = 1; i < currentSemester; i++) {
-            items.add("Semestre " + i);
-        }
-        items.add("Semestre actual");  // Siempre el último
-
-        Log.d(TAG, "Spinner items: " + items);
-
-        // Crea el adapter y lo asocia
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                requireContext(),
-                android.R.layout.simple_spinner_item,
-                items
-        );
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerSemestres.setAdapter(adapter);
-
-        // Listener
-        spinnerSemestres.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                int semElegido = position < currentSemester - 1
-                        ? position + 1
-                        : currentSemester;
-                Log.d(TAG, "Spinner posición=" + position + ", semestre=" + semElegido);
-                loadGradesForSemester(semElegido);
+            // Extraer ciclos escolares únicos
+            Set<String> ciclosUnicos = new HashSet<>();
+            for (Materia m : todasMaterias) {
+                if (m.getCicloEscolar() != null && !m.getCicloEscolar().isEmpty()) {
+                    ciclosUnicos.add(m.getCicloEscolar());
+                }
             }
-            @Override public void onNothingSelected(AdapterView<?> parent) { }
-        });
 
-        // ➡️ Selecciona por defecto el último elemento (Semestre actual)
-        int lastIndex = items.size() - 1;
-        Log.d(TAG, "Seleccionando semestre actual en posición " + lastIndex);
-        spinnerSemestres.setSelection(lastIndex);
+            // Convertir a lista y ordenar (opcional)
+            List<String> items = new ArrayList<>(ciclosUnicos);
+            Collections.sort(items); // Opcional: orden alfabético
+
+            Log.d(TAG, "Ciclos en el Spinner: " + items);
+
+            // Crear y asociar adapter
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                    requireContext(),
+                    android.R.layout.simple_spinner_item,
+                    items
+            );
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinnerSemestres.setAdapter(adapter);
+
+            // Listener de selección
+            spinnerSemestres.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    String cicloSeleccionado = items.get(position);
+                    Log.d(TAG, "Ciclo escolar seleccionado: " + cicloSeleccionado);
+                    loadGradesForCycle(cicloSeleccionado);
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {}
+            });
+
+            // Selección por defecto: último (opcional)
+            if (!items.isEmpty()) {
+                spinnerSemestres.setSelection(items.size() - 1);
+            }
+
+
+
+
+
+//        currentSemester = 1;
+//        for (Materia m : todasMaterias) {
+//            int sem = semestreToInt(m.getSemestre());
+//            if (sem > currentSemester) currentSemester = sem;
+//        }
+//        Log.d(TAG, "setupSpinner → currentSemester=" + currentSemester +
+//                ", total materias=" + todasMaterias.size());
+//
+//        // Construye la lista de ítems
+//        List<String> items = new ArrayList<>();
+//        for (int i = 1; i < currentSemester; i++) {
+//            items.add("Semestre " + i);
+//        }
+//        items.add("Semestre actual");  // Siempre el último
+//
+//        Log.d(TAG, "Spinner items: " + items);
+//
+//        // Crea el adapter y lo asocia
+//        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+//                requireContext(),
+//                android.R.layout.simple_spinner_item,
+//                items
+//        );
+//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        spinnerSemestres.setAdapter(adapter);
+//
+//        // Listener
+//        spinnerSemestres.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                int semElegido = position < currentSemester - 1
+//                        ? position + 1
+//                        : currentSemester;
+//                Log.d(TAG, "Spinner posición=" + position + ", semestre=" + semElegido);
+//                loadGradesForSemester(semElegido);
+//            }
+//            @Override public void onNothingSelected(AdapterView<?> parent) { }
+//        });
+//
+//        // ➡️ Selecciona por defecto el último elemento (Semestre actual)
+//        int lastIndex = items.size() - 1;
+//        Log.d(TAG, "Seleccionando semestre actual en posición " + lastIndex);
+//        spinnerSemestres.setSelection(lastIndex);
+    }
+
+    private void loadGradesForCycle(String cicloEscolar) {
+        Log.d(TAG, "loadGradesForCycle ciclo=" + cicloEscolar);
+
+        // Limpia las tablas
+        if (tablaCalificaciones.getChildCount() > 1)
+            tablaCalificaciones.removeViews(1, tablaCalificaciones.getChildCount() - 1);
+        if (tablaExtraordinarios.getChildCount() > 1)
+            tablaExtraordinarios.removeViews(1, tablaExtraordinarios.getChildCount() - 1);
+
+        tablaExtraordinarios.setVisibility(View.GONE);
+        tvExtraordinariosLabel.setVisibility(View.GONE);
+
+        List<Materia> filtradas = new ArrayList<>();
+        for (Materia m : todasMaterias) {
+            if (cicloEscolar.equals(m.getCicloEscolar())) {
+                filtradas.add(m);
+            }
+        }
+
+        Log.d(TAG, "Materias filtradas por ciclo: " + filtradas.size());
+        if (filtradas.isEmpty()) {
+            Toast.makeText(requireContext(),
+                    "No hay materias para este ciclo escolar",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        final boolean[] hasExtra = { false };
+        List<Double> definitivas = new ArrayList<>();
+
+        for (Materia mat : filtradas) {
+            califProvider.getCalificacionesByPath(mat.getCalificaciones(),
+                    new CalificacionesProvider.CalificacionesCallback() {
+                        @Override
+                        public void onCallback(Calificaciones cal) {
+                            double def = 0;
+                            if (cal != null) {
+                                if (cal.getCalificacionDefinitiva() != null) def = cal.getCalificacionDefinitiva();
+                                else if (cal.getEspecial() != null) def = cal.getEspecial();
+                                else if (cal.getPromedioParciales() != null) def = cal.getPromedioParciales();
+                            }
+                            definitivas.add(def);
+
+                            // Regular
+                            boolean tieneRegular = cal != null && (
+                                    cal.getParcial_1() != null ||
+                                            cal.getParcial_2() != null ||
+                                            cal.getParcial_3() != null ||
+                                            cal.getPromedioParciales() != null ||
+                                            cal.getExamenFinal() != null
+                            );
+                            if (tieneRegular) {
+                                TableRow row = new TableRow(requireContext());
+                                row.setGravity(Gravity.CENTER);
+                                addCell(row, mat.getNombre());
+                                addCell(row, format(cal != null ? cal.getParcial_1() : null));
+                                addCell(row, format(cal != null ? cal.getParcial_2() : null));
+                                addCell(row, format(cal != null ? cal.getParcial_3() : null));
+                                addCell(row, format(cal != null ? cal.getPromedioParciales() : null));
+                                addCell(row, format(cal != null ? cal.getExamenFinal() : null));
+                                addCell(row, String.format(Locale.getDefault(), "%.1f", def));
+                                tablaCalificaciones.addView(row);
+                            }
+
+                            // Extraordinarios
+                            boolean tieneExtra = cal != null && (
+                                    (cal.getExtra_1() != null && cal.getExtra_1() > 0) ||
+                                            (cal.getExtra_2() != null && cal.getExtra_2() > 0) ||
+                                            (cal.getEspecial() != null && cal.getEspecial() > 0)
+                            );
+                            if (tieneExtra) {
+                                hasExtra[0] = true;
+                                TableRow rowEx = new TableRow(requireContext());
+                                rowEx.setGravity(Gravity.CENTER);
+                                addCell(rowEx, mat.getNombre());
+                                addCell(rowEx, format(cal.getExtra_1()));
+                                addCell(rowEx, format(cal.getExtra_2()));
+                                addCell(rowEx, format(cal.getEspecial()));
+                                tablaExtraordinarios.addView(rowEx);
+                            }
+
+                            // Calcular promedio general
+                            if (definitivas.size() == filtradas.size()) {
+                                double sum = 0;
+                                for (Double d : definitivas) sum += d;
+                                double avg = sum / definitivas.size();
+                                Log.d(TAG, "Promedio general = " + avg);
+                                txtPromedioGeneral.setText(String.format(Locale.getDefault(), "Promedio: %.2f", avg));
+                                txtPromedioGeneral.setVisibility(View.VISIBLE);
+                                tvTipoCalificacion.setText(avg >= 6.0 ? "Regular" : "Irregular");
+
+                                if (hasExtra[0]) {
+                                    tvExtraordinariosLabel.setVisibility(View.VISIBLE);
+                                    tablaExtraordinarios.setVisibility(View.VISIBLE);
+                                } else {
+                                    tvExtraordinariosLabel.setVisibility(View.GONE);
+                                    tablaExtraordinarios.setVisibility(View.GONE);
+                                }
+                            }
+                        }
+                    });
+        }
     }
 
 
@@ -309,7 +460,7 @@ public class FragmentCalificacionesAnteriores extends Fragment {
                                 );
                                 txtPromedioGeneral.setVisibility(View.VISIBLE);
                                 tvTipoCalificacion.setText(
-                                        avg >= 9.0 ? "Regular" : "Irregular"
+                                        avg >= 6.0 ? "Regular" : "Irregular"
                                 );
                                 if (hasExtra[0]) {
                                     tvExtraordinariosLabel.setVisibility(View.VISIBLE);
