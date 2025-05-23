@@ -59,5 +59,7 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore:25.1.3")
     implementation("com.google.firebase:firebase-firestore-ktx")
 
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
+
     implementation("com.beust:klaxon:5.5")
 }
