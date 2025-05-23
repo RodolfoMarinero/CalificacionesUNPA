@@ -12,8 +12,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import com.google.firebase.auth.FirebaseAuth;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import kotlin.Unit;
@@ -48,30 +46,52 @@ public class FragmentCalificacionesAnteriores extends Fragment {
 
     private ImageView ivPerfil;
 
-    private StudentBasic alumno;
-
     @Nullable @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_calificaciones_anteriores, container, false);
 
-        txtMatricula = root.findViewById(R.id.txtMatricula);
-        spinnerSemestres = root.findViewById(R.id.spinnerSemestres);
-        tablaCalificaciones = root.findViewById(R.id.tablaCalificaciones);
+        // 1) Referencias UI
+        txtMatricula         = root.findViewById(R.id.txtMatricula);
+        spinnerSemestres     = root.findViewById(R.id.spinnerSemestres);
+        tablaCalificaciones  = root.findViewById(R.id.tablaCalificaciones);
         tablaExtraordinarios = root.findViewById(R.id.tablaExtraordinarios);
-        txtPromedioGeneral = root.findViewById(R.id.txtPromedioGeneral);
-        tvTipoCalificacion = root.findViewById(R.id.tvTipoCalificacion);
-        tvExtraordinariosLabel = root.findViewById(R.id.tvExtraordinariosLabel);
-        ivPerfil = root.findViewById(R.id.ivPerfil);
+        txtPromedioGeneral   = root.findViewById(R.id.txtPromedioGeneral);
+        tvTipoCalificacion   = root.findViewById(R.id.tvTipoCalificacion);
+        tvExtraordinariosLabel   = root.findViewById(R.id.tvExtraordinariosLabel);
+
+        ivPerfil = root.findViewById(R.id.ivPerfil); // asegúrate que tenga este ID en tu layout
+        ivPerfil.setOnClickListener(v -> {
+            Bundle bundle = new Bundle();
+            bundle.putString("nombre", "Nina Salas"); // Reemplaza con datos reales
+            bundle.putString("matricula", txtMatricula.getText().toString());
+            bundle.putString("carrera", "Ingeniería en Computación");
+            bundle.putString("promedio", txtPromedioGeneral.getText().toString().replace("Promedio: ", ""));
+            bundle.putString("codigo", txtMatricula.getText().toString());
+
+            FragmentPerfil fragment = new FragmentPerfil();
+            fragment.setArguments(bundle);
+
+            requireActivity()
+                    .getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.nav_host_fragment_content_main, fragment) // Usa el contenedor correcto
+                    .addToBackStack(null)
+                    .commit();
+        });
+
+
 
         txtPromedioGeneral.setVisibility(View.GONE);
         tvTipoCalificacion.setText("");
 
+        // 2) Inicializar providers
         studentProviderJ = new StudentProviderJ();
-        materiaProvider = new MateriaProvider();
-        califProvider = new CalificacionesProvider();
+        materiaProvider  = new MateriaProvider();
+        califProvider    = new CalificacionesProvider();
 
+        // 3) Obtener email
         String email = null;
         if (getArguments() != null) {
             email = getArguments().getString("email");
@@ -81,86 +101,40 @@ public class FragmentCalificacionesAnteriores extends Fragment {
         }
         Log.d(TAG, "Email para consulta: " + email);
 
+        // 4) Traer alumno básico
         if (email != null) {
             studentProviderJ.fetchBasicByEmail(email, new StudentProviderJ.StudentBasicCallback() {
                 @Override
                 public void onSuccess(@NonNull StudentBasic student) {
-                    alumno = student;
+                    Log.d(TAG, "Alumno obtenido: " + student.getNombre() +
+                            ", matrícula: " + student.getMatricula() +
+                            ", materias paths: " + student.getMaterias());
                     txtMatricula.setText(student.getMatricula());
-
-                    ivPerfil.setOnClickListener(v -> {
-                        calcularPromedioGeneral(promedio -> {
-                            Bundle bundle = new Bundle();
-                            String nombreCompleto = alumno.getNombre() + " " + alumno.getApePaterno() + " " + alumno.getApeMaterno();
-
-                            bundle.putString("nombre", nombreCompleto.trim());
-                            bundle.putString("matricula", alumno.getMatricula());
-                            bundle.putString("carrera", "Ingeniería en Computación");
-                            bundle.putString("promedio", String.format(Locale.getDefault(), "%.2f", promedio));
-                            bundle.putString("codigo", alumno.getMatricula());
-
-                            FragmentPerfil fragment = new FragmentPerfil();
-                            fragment.setArguments(bundle);
-
-                            requireActivity().getSupportFragmentManager()
-                                    .beginTransaction()
-                                    .replace(R.id.nav_host_fragment_content_main, fragment)
-                                    .addToBackStack(null)
-                                    .commit();
-                        });
-                    });
-
                     if (!materiasYaCargadas) {
                         materiasYaCargadas = true;
                         todasMaterias.clear();
                         loadAllMaterias(student.getMaterias(), 0);
                     } else {
+                        Log.d(TAG, "Materias ya cargadas, omitiendo recarga");
                         setupSpinner();
                     }
                 }
-
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     Log.e(TAG, "Error fetchBasicByEmail", e);
-                    Toast.makeText(requireContext(), "Error al obtener alumno: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(requireContext(),
+                            "Error al obtener alumno: " + e.getMessage(),
+                            Toast.LENGTH_LONG).show();
                 }
             });
         } else {
-            Toast.makeText(requireContext(), "Correo no disponible para consulta", Toast.LENGTH_LONG).show();
+            Log.w(TAG, "Email nulo, no se puede consultar");
+            Toast.makeText(requireContext(),
+                    "Correo no disponible para consulta",
+                    Toast.LENGTH_LONG).show();
         }
 
         return root;
-    }
-
-    private void calcularPromedioGeneral(Consumer<Double> callback) {
-        List<Materia> materias = todasMaterias;
-        List<Double> definitivas = new ArrayList<>();
-
-        if (materias.isEmpty()) {
-            callback.accept(0.0);
-            return;
-        }
-
-        AtomicInteger loadedCount = new AtomicInteger(0);
-
-        for (Materia mat : materias) {
-            califProvider.getCalificacionesByPath(mat.getCalificaciones(), cal -> {
-                double def = 0;
-                if (cal != null) {
-                    if (cal.getCalificacionDefinitiva() != null) def = cal.getCalificacionDefinitiva();
-                    else if (cal.getEspecial() != null) def = cal.getEspecial();
-                    else if (cal.getPromedioParciales() != null) def = cal.getPromedioParciales();
-                }
-                definitivas.add(def);
-
-                if (loadedCount.incrementAndGet() == materias.size()) {
-                    double sum = 0;
-                    for (Double d : definitivas) sum += d;
-                    double avg = definitivas.isEmpty() ? 0 : sum / definitivas.size();
-                    callback.accept(avg);
-                }
-            });
-        }
     }
 
     private void loadAllMaterias(List<String> paths, int index) {
