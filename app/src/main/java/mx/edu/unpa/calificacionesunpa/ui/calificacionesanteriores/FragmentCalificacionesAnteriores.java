@@ -34,6 +34,8 @@ public class FragmentCalificacionesAnteriores extends Fragment {
     private TextView tvTipoCalificacion;
     private TextView tvExtraordinariosLabel;
 
+    private TextView nombre;
+
 
     private StudentProviderJ studentProviderJ;
     private MateriaProvider materiaProvider;
@@ -64,7 +66,7 @@ public class FragmentCalificacionesAnteriores extends Fragment {
         ivPerfil = root.findViewById(R.id.ivPerfil); // asegúrate que tenga este ID en tu layout
         ivPerfil.setOnClickListener(v -> {
             Bundle bundle = new Bundle();
-            bundle.putString("nombre", "Nina Salas"); // Reemplaza con datos reales
+            bundle.putString("nombre", nombre.getText().toString()); // Reemplaza con datos reales
             bundle.putString("matricula", txtMatricula.getText().toString());
             bundle.putString("carrera", "Ingeniería en Computación");
             bundle.putString("promedio", txtPromedioGeneral.getText().toString().replace("Promedio: ", ""));
@@ -110,6 +112,7 @@ public class FragmentCalificacionesAnteriores extends Fragment {
                             ", matrícula: " + student.getMatricula() +
                             ", materias paths: " + student.getMaterias());
                     txtMatricula.setText(student.getMatricula());
+                    nombre.setText(student.getNombre());
                     if (!materiasYaCargadas) {
                         materiasYaCargadas = true;
                         todasMaterias.clear();
