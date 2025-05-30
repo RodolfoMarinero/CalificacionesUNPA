@@ -11,16 +11,22 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+
+import org.w3c.dom.Document;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import mx.edu.unpa.calificacionesunpa.R;
+import mx.edu.unpa.calificacionesunpa.models.Alumno;
 import mx.edu.unpa.calificacionesunpa.models.Calificaciones;
 import mx.edu.unpa.calificacionesunpa.models.Materia;
 import mx.edu.unpa.calificacionesunpa.models.StudentBasic;
 import mx.edu.unpa.calificacionesunpa.providers.*;
+import mx.edu.unpa.calificacionesunpa.service.UsuarioService;
 import mx.edu.unpa.calificacionesunpa.ui.perfil.FragmentPerfil;
 
 public class FragmentCalificacionesAnteriores extends Fragment {
@@ -33,20 +39,10 @@ public class FragmentCalificacionesAnteriores extends Fragment {
     private TextView txtPromedioGeneral;
     private TextView tvTipoCalificacion;
     private TextView tvExtraordinariosLabel;
-
-
-
-
-    private StudentProviderJ studentProviderJ;
-    private MateriaProvider materiaProvider;
-    private CalificacionesProvider califProvider;
-
-    private final List<Materia> todasMaterias = new ArrayList<>();
-//    private int currentSemester = 1;
-
-    private boolean materiasYaCargadas = false;
-
+    private UsuarioService usuarioService;
+    private List<Materia> todasMaterias = new ArrayList<>();
     private ImageView ivPerfil;
+    private Alumno alumnoActual;
 
     @Nullable @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -89,85 +85,14 @@ public class FragmentCalificacionesAnteriores extends Fragment {
         tvTipoCalificacion.setText("");
 
         // 2) Inicializar providers
-        studentProviderJ = new StudentProviderJ();
-        materiaProvider  = new MateriaProvider();
-        califProvider    = new CalificacionesProvider();
-
-        // 3) Obtener email
-        String email = null;
-        if (getArguments() != null) {
-            email = getArguments().getString("email");
-        }
-        if (email == null && FirebaseAuth.getInstance().getCurrentUser() != null) {
-            email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-        }
-        Log.d(TAG, "Email para consulta: " + email);
-
+        usuarioService = UsuarioService.INSTANCE;
         // 4) Traer alumno básico
-        if (email != null) {
-            studentProviderJ.fetchBasicByEmail(email, new StudentProviderJ.StudentBasicCallback() {
-                @Override
-                public void onSuccess(@NonNull StudentBasic student) {
-                    Log.d(TAG, "Alumno obtenido: " + student.getNombre() +
-                            ", matrícula: " + student.getMatricula() +
-                            ", materias paths: " + student.getMaterias());
-                    txtMatricula.setText(student.getMatricula());
-                    if (!materiasYaCargadas) {
-                        materiasYaCargadas = true;
-                        todasMaterias.clear();
-                        loadAllMaterias(student.getMaterias(), 0);
-                    } else {
-                        Log.d(TAG, "Materias ya cargadas, omitiendo recarga");
-                        setupSpinner();
-                    }
-                }
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.e(TAG, "Error fetchBasicByEmail", e);
-                    Toast.makeText(requireContext(),
-                            "Error al obtener alumno: " + e.getMessage(),
-                            Toast.LENGTH_LONG).show();
-                }
-            });
-        } else {
-            Log.w(TAG, "Email nulo, no se puede consultar");
-            Toast.makeText(requireContext(),
-                    "Correo no disponible para consulta",
-                    Toast.LENGTH_LONG).show();
-        }
+        alumnoActual = usuarioService.getAlumnoActual();
+        todasMaterias = alumnoActual.getMaterias();
 
+        setupSpinner();
         return root;
     }
-
-    private void loadAllMaterias(List<String> paths, int index) {
-        Log.d(TAG, "loadAllMaterias index=" + index + " de " + paths.size());
-        if (index >= paths.size()) {
-            Log.d(TAG, "Todas materias cargadas: " + todasMaterias.size());
-            setupSpinner();
-            return;
-        }
-        String fullPath = paths.get(index);
-        String materiaId = fullPath.contains("/") ?
-                fullPath.substring(fullPath.lastIndexOf('/') + 1) : fullPath;
-        Log.d(TAG, "→ cargando materiaId: " + materiaId);
-
-        materiaProvider.getMateriaById(materiaId, new Function1<Materia, Unit>() {
-            @Override
-            public Unit invoke(Materia materia) {
-                if (materia != null) {
-                    Log.d(TAG, "Materia recuperada: id=" + materia.getId() +
-                            ", nombre=" + materia.getNombre() +
-                            ", semestre=" + materia.getSemestre());
-                    todasMaterias.add(materia);
-                } else {
-                    Log.w(TAG, "Materia NULL para id=" + materiaId);
-                }
-                loadAllMaterias(paths, index + 1);
-                return Unit.INSTANCE;
-            }
-        });
-    }
-
     private int semestreToInt(@Nullable String sem) {
         if (sem == null) return 1;
         try {
@@ -195,96 +120,58 @@ public class FragmentCalificacionesAnteriores extends Fragment {
     }
 
     private void setupSpinner() {
-            // Extraer ciclos escolares únicos
-            Set<String> ciclosUnicos = new HashSet<>();
-            for (Materia m : todasMaterias) {
-                if (m.getCicloEscolar() != null && !m.getCicloEscolar().isEmpty()) {
-                    ciclosUnicos.add(m.getCicloEscolar());
-                }
+        Set<DocumentReference> ciclosUnicos = new LinkedHashSet<>();
+        for (Materia m : todasMaterias) {
+            if (m.getCiclo() != null) {
+                ciclosUnicos.add(m.getCiclo());
+            }
+        }
+
+        // Extraer solo los IDs de los ciclos (último segmento del path)
+        List<String> items = new ArrayList<>();
+        for (DocumentReference ref : ciclosUnicos) {
+            String path = ref.getPath();
+            // Dividir el path y obtener el último segmento
+            String[] partes = path.split("/");
+            if (partes.length > 0) {
+                String cicloId = partes[partes.length - 1];
+                items.add(cicloId);
+            }
+        }
+
+        // Ordenar alfabéticamente
+        Collections.sort(items);
+
+        Log.d(TAG, "Ciclos en el Spinner: " + items);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                requireContext(),
+                android.R.layout.simple_spinner_item,
+                items
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerSemestres.setAdapter(adapter);
+
+        spinnerSemestres.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String cicloId = items.get(position);
+                Log.d(TAG, "Ciclo seleccionado: " + cicloId);
+
+                // Reconstruir la referencia completa
+                String fullPath = "ciclosEscolares/" + cicloId;
+                loadGradesForCycle(fullPath);
             }
 
-            // Convertir a lista y ordenar (opcional)
-            List<String> items = new ArrayList<>(ciclosUnicos);
-            Collections.sort(items); // Opcional: orden alfabético
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
 
-            Log.d(TAG, "Ciclos en el Spinner: " + items);
-
-            // Crear y asociar adapter
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                    requireContext(),
-                    android.R.layout.simple_spinner_item,
-                    items
-            );
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            spinnerSemestres.setAdapter(adapter);
-
-            // Listener de selección
-            spinnerSemestres.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    String cicloSeleccionado = items.get(position);
-                    Log.d(TAG, "Ciclo escolar seleccionado: " + cicloSeleccionado);
-                    loadGradesForCycle(cicloSeleccionado);
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {}
-            });
-
-            // Selección por defecto: último (opcional)
-            if (!items.isEmpty()) {
-                spinnerSemestres.setSelection(items.size() - 1);
-            }
-
-
-
-
-
-//        currentSemester = 1;
-//        for (Materia m : todasMaterias) {
-//            int sem = semestreToInt(m.getSemestre());
-//            if (sem > currentSemester) currentSemester = sem;
-//        }
-//        Log.d(TAG, "setupSpinner → currentSemester=" + currentSemester +
-//                ", total materias=" + todasMaterias.size());
-//
-//        // Construye la lista de ítems
-//        List<String> items = new ArrayList<>();
-//        for (int i = 1; i < currentSemester; i++) {
-//            items.add("Semestre " + i);
-//        }
-//        items.add("Semestre actual");  // Siempre el último
-//
-//        Log.d(TAG, "Spinner items: " + items);
-//
-//        // Crea el adapter y lo asocia
-//        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-//                requireContext(),
-//                android.R.layout.simple_spinner_item,
-//                items
-//        );
-//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        spinnerSemestres.setAdapter(adapter);
-//
-//        // Listener
-//        spinnerSemestres.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                int semElegido = position < currentSemester - 1
-//                        ? position + 1
-//                        : currentSemester;
-//                Log.d(TAG, "Spinner posición=" + position + ", semestre=" + semElegido);
-//                loadGradesForSemester(semElegido);
-//            }
-//            @Override public void onNothingSelected(AdapterView<?> parent) { }
-//        });
-//
-//        // ➡️ Selecciona por defecto el último elemento (Semestre actual)
-//        int lastIndex = items.size() - 1;
-//        Log.d(TAG, "Seleccionando semestre actual en posición " + lastIndex);
-//        spinnerSemestres.setSelection(lastIndex);
+        if (!items.isEmpty()) {
+            spinnerSemestres.setSelection(items.size() - 1);
+        }
+        spinnerSemestres.setVisibility(View.VISIBLE);
     }
-
     private void loadGradesForCycle(String cicloEscolar) {
         Log.d(TAG, "loadGradesForCycle ciclo=" + cicloEscolar);
 
@@ -299,11 +186,11 @@ public class FragmentCalificacionesAnteriores extends Fragment {
 
         List<Materia> filtradas = new ArrayList<>();
         for (Materia m : todasMaterias) {
-            if (cicloEscolar.equals(m.getCicloEscolar())) {
+            if (cicloEscolar.equals(Objects.requireNonNull(m.getCiclo()).getPath())) {
                 filtradas.add(m);
             }
         }
-
+        
         Log.d(TAG, "Materias filtradas por ciclo: " + filtradas.size());
         if (filtradas.isEmpty()) {
             Toast.makeText(requireContext(),
@@ -311,196 +198,40 @@ public class FragmentCalificacionesAnteriores extends Fragment {
                     Toast.LENGTH_SHORT).show();
             return;
         }
-
-        final boolean[] hasExtra = { false };
-        List<Double> definitivas = new ArrayList<>();
-
+        boolean[] hasExtra = { false };
         for (Materia mat : filtradas) {
-            califProvider.getCalificacionesByPath(mat.getCalificaciones(),
-                    new CalificacionesProvider.CalificacionesCallback() {
-                        @Override
-                        public void onCallback(Calificaciones cal) {
-                            double def = 0;
-                            if (cal != null) {
-                                if (cal.getCalificacionDefinitiva() != null) def = cal.getCalificacionDefinitiva();
-                                else if (cal.getEspecial() != null) def = cal.getEspecial();
-                                else if (cal.getPromedioParciales() != null) def = cal.getPromedioParciales();
-                            }
-                            definitivas.add(def);
+            Log.d(TAG, "Materia: " + mat.getMateria() + ", calificaciones: " + mat.getCalificaciones());
+            if (alumnoActual.getEsRegular()) {
+                TableRow row = new TableRow(requireContext());
+                row.setGravity(Gravity.CENTER);
+                addCell(row, mat.getMateria());
+                addCell(row, format(mat.getCalificaciones().getParcial1() != null ? mat.getCalificaciones().getParcial1() : null));
+                addCell(row, format(mat.getCalificaciones().getParcial2() != null ? mat.getCalificaciones().getParcial2() : null));
+                addCell(row, format(mat.getCalificaciones().getParcial3() != null ? mat.getCalificaciones().getParcial3() : null));
+                addCell(row, format(mat.getPromedioParciales() != 0.0 ? mat.getPromedioParciales() : null));
+                addCell(row, format(mat.getCalificaciones().getOrdinario() != null ? mat.getCalificaciones().getOrdinario() : null));
+                addCell(row, String.format(Locale.getDefault(), "%.1f", mat.getCalificaciones().getPFinal()));
+                tablaCalificaciones.addView(row);
+            }
 
-                            // Regular
-                            boolean tieneRegular = cal != null && (
-                                    cal.getParcial_1() != null ||
-                                            cal.getParcial_2() != null ||
-                                            cal.getParcial_3() != null ||
-                                            cal.getPromedioParciales() != null ||
-                                            cal.getExamenFinal() != null
-                            );
-                            if (tieneRegular) {
-                                TableRow row = new TableRow(requireContext());
-                                row.setGravity(Gravity.CENTER);
-                                addCell(row, mat.getNombre());
-                                addCell(row, format(cal != null ? cal.getParcial_1() : null));
-                                addCell(row, format(cal != null ? cal.getParcial_2() : null));
-                                addCell(row, format(cal != null ? cal.getParcial_3() : null));
-                                addCell(row, format(cal != null ? cal.getPromedioParciales() : null));
-                                addCell(row, format(cal != null ? cal.getExamenFinal() : null));
-                                addCell(row, String.format(Locale.getDefault(), "%.1f", def));
-                                tablaCalificaciones.addView(row);
-                            }
-
-                            // Extraordinarios
-                            boolean tieneExtra = cal != null && (
-                                    (cal.getExtra_1() != null && cal.getExtra_1() > 0) ||
-                                            (cal.getExtra_2() != null && cal.getExtra_2() > 0) ||
-                                            (cal.getEspecial() != null && cal.getEspecial() > 0)
-                            );
-                            if (tieneExtra) {
-                                hasExtra[0] = true;
-                                TableRow rowEx = new TableRow(requireContext());
-                                rowEx.setGravity(Gravity.CENTER);
-                                addCell(rowEx, mat.getNombre());
-                                addCell(rowEx, format(cal.getExtra_1()));
-                                addCell(rowEx, format(cal.getExtra_2()));
-                                addCell(rowEx, format(cal.getEspecial()));
-                                tablaExtraordinarios.addView(rowEx);
-                            }
-
-                            // Calcular promedio general
-                            if (definitivas.size() == filtradas.size()) {
-                                double sum = 0;
-                                for (Double d : definitivas) sum += d;
-                                double avg = sum / definitivas.size();
-                                Log.d(TAG, "Promedio general = " + avg);
-                                txtPromedioGeneral.setText(String.format(Locale.getDefault(), "Promedio: %.2f", avg));
-                                txtPromedioGeneral.setVisibility(View.VISIBLE);
-                                tvTipoCalificacion.setText(avg >= 6.0 ? "Regular" : "Irregular");
-
-                                if (hasExtra[0]) {
-                                    tvExtraordinariosLabel.setVisibility(View.VISIBLE);
-                                    tablaExtraordinarios.setVisibility(View.VISIBLE);
-                                } else {
-                                    tvExtraordinariosLabel.setVisibility(View.GONE);
-                                    tablaExtraordinarios.setVisibility(View.GONE);
-                                }
-                            }
-                        }
-                    });
-        }
-    }
-
-
-    private void loadGradesForSemester(int semestre) {
-        Log.d(TAG, "loadGradesForSemester semestre=" + semestre);
-        // Limpia las tablas
-        if (tablaCalificaciones.getChildCount() > 1)
-            tablaCalificaciones.removeViews(1, tablaCalificaciones.getChildCount() - 1);
-        if (tablaExtraordinarios.getChildCount() > 1)
-            tablaExtraordinarios.removeViews(1, tablaExtraordinarios.getChildCount() - 1);
-
-        tablaExtraordinarios.setVisibility(View.GONE);
-        tvExtraordinariosLabel.setVisibility(View.GONE);
-        List<Materia> filtradas = new ArrayList<>();
-        for (Materia m : todasMaterias) {
-            if (semestreToInt(m.getSemestre()) == semestre) {
-                filtradas.add(m);
+            // Extraordinarios
+            boolean tieneExtra = (
+                    mat.getCalificaciones().getExtraOrdinario1() != null||
+                            mat.getCalificaciones().getExtraOrdinario2() != null ||
+                            mat.getCalificaciones().getEspecial() != null
+            );
+            if (tieneExtra) {
+                hasExtra[0] = true;
+                TableRow rowEx = new TableRow(requireContext());
+                rowEx.setGravity(Gravity.CENTER);
+                addCell(rowEx, mat.getMateria());
+                addCell(rowEx, format(mat.getCalificaciones().getExtraOrdinario1()));
+                addCell(rowEx, format(mat.getCalificaciones().getExtraOrdinario2()));
+                addCell(rowEx, format(mat.getCalificaciones().getEspecial()));
+                tablaExtraordinarios.addView(rowEx);
             }
         }
-        Log.d(TAG, "Materias filtradas: " + filtradas.size());
-        if (filtradas.isEmpty()) {
-            Toast.makeText(requireContext(),
-                    "No hay materias para este semestre",
-                    Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        final boolean[] hasExtra = { false };
-
-        List<Double> definitivas = new ArrayList<>();
-        for (Materia mat : filtradas) {
-            califProvider.getCalificacionesByPath(mat.getCalificaciones(),
-                    new CalificacionesProvider.CalificacionesCallback() {
-                        @Override
-                        public void onCallback(Calificaciones cal) {
-                            Log.d(TAG, "Calificaciones de " + mat.getNombre() + ": " + cal);
-                            // calcular definitiva
-                            double def = 0;
-                            if (cal != null) {
-                                if (cal.getCalificacionDefinitiva() != null) {
-                                    def = cal.getCalificacionDefinitiva();
-                                } else if (cal.getEspecial() != null) {
-                                    def = cal.getEspecial();
-                                } else if (cal.getPromedioParciales() != null) {
-                                    def = cal.getPromedioParciales();
-                                }
-                            }
-                            definitivas.add(def);
-
-                            // ¿tiene datos regulares?
-                            boolean tieneRegular = cal != null && (
-                                    cal.getParcial_1() != null ||
-                                            cal.getParcial_2() != null ||
-                                            cal.getParcial_3() != null ||
-                                            cal.getPromedioParciales() != null ||
-                                            cal.getExamenFinal() != null
-                            );
-                            if (tieneRegular) {
-                                TableRow row = new TableRow(requireContext());
-                                row.setGravity(Gravity.CENTER);
-                                addCell(row, mat.getNombre());
-                                addCell(row, format(cal != null ? cal.getParcial_1() : null));
-                                addCell(row, format(cal != null ? cal.getParcial_2() : null));
-                                addCell(row, format(cal != null ? cal.getParcial_3() : null));
-                                addCell(row, format(cal != null ? cal.getPromedioParciales() : null));
-                                addCell(row, format(cal != null ? cal.getExamenFinal() : null));
-                                addCell(row, String.format(Locale.getDefault(), "%.1f", def));
-                                tablaCalificaciones.addView(row);
-                            }
-
-                            //  🚩 EXTRAORDINARIOS 🚩
-                            boolean tieneExtra = cal != null && (
-                                    (cal.getExtra_1() != null && cal.getExtra_1() > 0) ||
-                                            (cal.getExtra_2() != null && cal.getExtra_2() > 0) ||
-                                            (cal.getEspecial() != null && cal.getEspecial() > 0)
-                            );
-                            if (tieneExtra) {
-                                hasExtra[0] = true;
-                                TableRow rowEx = new TableRow(requireContext());
-                                rowEx.setGravity(Gravity.CENTER);
-                                // reutiliza addCell, lo mejoraremos abajo
-                                addCell(rowEx, mat.getNombre());
-                                addCell(rowEx, format(cal.getExtra_1()));
-                                addCell(rowEx, format(cal.getExtra_2()));
-                                addCell(rowEx, format(cal.getEspecial()));
-                                tablaExtraordinarios.addView(rowEx);
-                            }
-
-                            // cuando todas llegaron, calculamos promedio
-                            if (definitivas.size() == filtradas.size()) {
-                                double sum = 0;
-                                for (Double d : definitivas) sum += d;
-                                double avg = sum / definitivas.size();
-                                Log.d(TAG, "Promedio general = " + avg);
-                                txtPromedioGeneral.setText(
-                                        String.format(Locale.getDefault(), "Promedio: %.2f", avg)
-                                );
-                                txtPromedioGeneral.setVisibility(View.VISIBLE);
-                                tvTipoCalificacion.setText(
-                                        avg >= 6.0 ? "Regular" : "Irregular"
-                                );
-                                if (hasExtra[0]) {
-                                    tvExtraordinariosLabel.setVisibility(View.VISIBLE);
-                                    tablaExtraordinarios.setVisibility(View.VISIBLE);
-                                } else {
-                                    tvExtraordinariosLabel.setVisibility(View.GONE);
-                                    tablaExtraordinarios.setVisibility(View.GONE);
-                                }
-                            }
-                        }
-                    });
-        }
     }
-
     private void addCell(TableRow row, String texto) {
         TextView tv = new TextView(requireContext());
         tv.setText(texto);

@@ -41,13 +41,6 @@ class MainActivity : AppCompatActivity() {
         val navView: NavigationView       = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_content_main)
 
-        // Navegación desde Login
-        intent.getStringExtra("navigateTo")?.let { destino ->
-            if (destino == "calificaciones") {
-                navController.navigate(R.id.nav_calificaciones_anteriores)
-            }
-        }
-
         // ① Defino los destinos top‑level de mi Drawer
         appBarConfiguration = AppBarConfiguration(
             setOf(
