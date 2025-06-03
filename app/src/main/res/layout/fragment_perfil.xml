@@ -132,26 +132,31 @@
 
         <TextView
             android:id="@+id/tvGoogle"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Conectar con google"
             android:textStyle="bold"
             android:textSize="14sp"
             android:textColor="#000000"
-            android:layout_marginStart="4dp"/>
-
-        <TextView
-            android:id="@+id/tvFacebook"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Conectar con facebook"
-            android:textStyle="bold"
-            android:textSize="14sp"
-            android:textColor="#000000"
+            android:gravity="center"
+            android:background="@drawable/bg_button_google"
             android:layout_marginStart="4dp"/>
 
 
         <!-- Código de barras -->
+
+        <TextView
+            android:id="@+id/tvFacebook"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:background="@drawable/bg_button_google"
+            android:gravity="center"
+            android:text="Conectar con facebook"
+            android:textColor="#000000"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="338dp"

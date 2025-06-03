@@ -58,6 +58,7 @@ dependencies {
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore:25.1.3")
     implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation("com.google.android.gms:play-services-auth:21.3.0")
 
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 

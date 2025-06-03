@@ -14,7 +14,11 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.credentials.Credential
+import androidx.credentials.CustomCredential
 import androidx.navigation.ui.NavigationUI
+//import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+//import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.Companion.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
 import mx.edu.unpa.calificacionesunpa.databinding.ActivityMainBinding
 import mx.edu.unpa.calificacionesunpa.providers.AuthProvider
 import mx.edu.unpa.calificacionesunpa.ui.calificacionesanteriores.FragmentCalificacionesAnteriores
@@ -118,4 +122,19 @@ class MainActivity : AppCompatActivity() {
 //            startActivity(intent)
 //        }
 //    }
+
+
+    private fun handleSignIn(credential: Credential) {
+        // Check if credential is of type Google ID
+        //if (credential is CustomCredential && credential.type == TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
+            // Create Google ID Token
+          //  val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
+
+            // Sign in to Firebase with using the token
+            //firebaseAuthWithGoogle(googleIdTokenCredential.idToken)
+        //} else {
+           // Log.w(TAG, "Credential is not of type Google ID!")
+        }
+    //}
+
 }
