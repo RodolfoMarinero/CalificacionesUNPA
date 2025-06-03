@@ -39,10 +39,13 @@ public class FragmentCalificacionesAnteriores extends Fragment {
     private TextView txtPromedioGeneral;
     private TextView tvTipoCalificacion;
     private TextView tvExtraordinariosLabel;
+    private TextView tvNombre;
     private UsuarioService usuarioService;
     private List<Materia> todasMaterias = new ArrayList<>();
     private ImageView ivPerfil;
     private Alumno alumnoActual;
+
+    private String nombre,carrera;
 
     @Nullable @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -58,13 +61,14 @@ public class FragmentCalificacionesAnteriores extends Fragment {
         txtPromedioGeneral   = root.findViewById(R.id.txtPromedioGeneral);
         tvTipoCalificacion   = root.findViewById(R.id.tvTipoCalificacion);
         tvExtraordinariosLabel   = root.findViewById(R.id.tvExtraordinariosLabel);
+        tvNombre             = root.findViewById(R.id.tvNombre);
 
         ivPerfil = root.findViewById(R.id.ivPerfil); // asegúrate que tenga este ID en tu layout
         ivPerfil.setOnClickListener(v -> {
             Bundle bundle = new Bundle();
-            bundle.putString("nombre", "Rodolfo Marinero Cruz"); // Reemplaza con datos reales
+            bundle.putString("nombre", nombre);
             bundle.putString("matricula", txtMatricula.getText().toString());
-            bundle.putString("carrera", "Ingeniería en Computación");
+            bundle.putString("carrera", carrera);
             bundle.putString("promedio", txtPromedioGeneral.getText().toString().replace("Promedio: ", ""));
             bundle.putString("codigo", txtMatricula.getText().toString());
 
@@ -89,7 +93,10 @@ public class FragmentCalificacionesAnteriores extends Fragment {
         // 4) Traer alumno básico
         alumnoActual = usuarioService.getAlumnoActual();
         todasMaterias = alumnoActual.getMaterias();
-
+        txtMatricula.setText(alumnoActual.getMatricula());
+        nombre=alumnoActual.getNombre()+" "+alumnoActual.getApPaterno()+" "+alumnoActual.getApMaterno();
+        carrera=alumnoActual.getNombreCarrera();
+        tvNombre.setText(nombre);
         setupSpinner();
         return root;
     }
