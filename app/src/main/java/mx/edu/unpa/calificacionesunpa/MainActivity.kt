@@ -54,6 +54,9 @@ class MainActivity : AppCompatActivity() {
         // ② Conecto la Toolbar con NavController + AppBarConfig
         setupActionBarWithNavController(navController, appBarConfiguration)
 
+        // Cambiar color del ícono hamburguesa a negro
+        binding.appBarMain.toolbar.navigationIcon?.setTint(resources.getColor(android.R.color.black, theme))
+
         // ③ Conecto el NavigationView con NavController
         navView.setupWithNavController(navController)
 

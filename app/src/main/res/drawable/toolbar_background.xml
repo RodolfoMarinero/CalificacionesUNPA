@@ -7,8 +7,8 @@
 
             <!-- Gradiente de izquierda a derecha -->
             <gradient
-                android:startColor="#F8EAFB"
-                android:endColor="#D9D4FF"
+                android:startColor="#D9F0EA"
+                android:endColor="#D9F0EA"
                 android:angle="0"/>
         </shape>
     </item>

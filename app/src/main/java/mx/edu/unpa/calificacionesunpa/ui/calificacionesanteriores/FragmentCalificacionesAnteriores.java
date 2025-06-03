@@ -221,6 +221,8 @@ public class FragmentCalificacionesAnteriores extends Fragment {
                             mat.getCalificaciones().getEspecial() != null
             );
             if (tieneExtra) {
+                tablaExtraordinarios.setVisibility(View.VISIBLE);
+                tvExtraordinariosLabel.setVisibility(View.VISIBLE);
                 hasExtra[0] = true;
                 TableRow rowEx = new TableRow(requireContext());
                 rowEx.setGravity(Gravity.CENTER);
