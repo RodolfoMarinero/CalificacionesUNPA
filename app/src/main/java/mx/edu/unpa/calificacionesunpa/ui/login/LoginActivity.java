@@ -17,11 +17,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseNetworkException;
 
+import java.util.Objects;
+
+import kotlin.Unit;
+import kotlin.jvm.internal.Intrinsics;
 import mx.edu.unpa.calificacionesunpa.MainActivity;
 import mx.edu.unpa.calificacionesunpa.R;
+import mx.edu.unpa.calificacionesunpa.providers.AlumnoProvider;
 import mx.edu.unpa.calificacionesunpa.providers.AuthProvider;
+import mx.edu.unpa.calificacionesunpa.service.UsuarioService;
 import mx.edu.unpa.calificacionesunpa.ui.recuperarContrasena.RecuperarContrasena;
-import mx.edu.unpa.calificacionesunpa.ui.register.Register;
+//import mx.edu.unpa.calificacionesunpa.ui.register.Register;
 
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
@@ -31,6 +37,8 @@ public class LoginActivity extends AppCompatActivity {
     private Button btnLogin, btnRegistro;
     private TextView tvForgotPassword;
     private AuthProvider authProvider;
+    private AlumnoProvider alumnoProvider;
+    private UsuarioService usuarioService = UsuarioService.INSTANCE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +72,7 @@ public class LoginActivity extends AppCompatActivity {
             String password  = etPassword.getText().toString().trim();
 
             // Generamos el correo de Firebase a partir de la matrícula
-            String email = matricula + "@gmail.com";
+            String email = matricula + "@unpaloma.com";
 
             authProvider.login(email, password)
                     .addOnCompleteListener(task -> {
@@ -72,15 +80,22 @@ public class LoginActivity extends AppCompatActivity {
                             // Limpia los campos
                             etMatricula.setText("");
                             etPassword.setText("");
+                            //solicita el alumno
+                            alumnoProvider = new AlumnoProvider();
+                            alumnoProvider.obtenerAlumnoConMateriasDeUsuario(
+                                    authProvider.getId(),
+                                    alumno -> {
+                                        usuarioService.setAlumnoActual(alumno);
+                                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                        intent.putExtra("navigateTo", "calificaciones");
+                                        startActivity(intent);
+                                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                                        finish();
+                                        return Unit.INSTANCE;
+                                    }
+                            );
 
-                            // Pasamos la matrícula (y si lo necesitas, el e-mail generado)
-                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                            intent.putExtra("email", email);
-                            intent.putExtra("matricula", matricula);
-                            intent.putExtra("navigateTo", "calificaciones");
-                            startActivity(intent);
-                            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                            finish();
+
                         } else {
                             String err = task.getException() != null
                                     ? task.getException().getMessage()
@@ -98,11 +113,6 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     });
         });
-
-        btnRegistro.setOnClickListener(v ->
-                startActivity(new Intent(LoginActivity.this, Register.class))
-        );
-
         tvForgotPassword.setOnClickListener(v ->
                 startActivity(new Intent(LoginActivity.this, RecuperarContrasena.class))
         );
