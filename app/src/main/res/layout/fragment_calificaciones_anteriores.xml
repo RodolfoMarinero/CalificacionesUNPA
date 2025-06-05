@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -22,9 +23,17 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:layout_marginBottom="16dp">
+                android:layout_marginBottom="16dp"
+                android:paddingHorizontal="8dp">
 
-                <!-- Matrícula y foto -->
+                <!-- Logo UNPA a la izquierda -->
+                <ImageView
+                    android:layout_width="62dp"
+                    android:layout_height="72dp"
+                    android:src="@drawable/he_logo_unpa"
+                    android:layout_marginEnd="16dp" />
+
+                <!-- Contenedor para nombre, matrícula y foto a la derecha -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -32,18 +41,18 @@
                     android:orientation="horizontal"
                     android:gravity="end|center_vertical">
 
+                    <!-- Nombre y matrícula -->
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:gravity="end"
                         android:layout_marginEnd="8dp">
 
                         <TextView
                             android:id="@+id/tvNombre"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Matrícula"
+                            android:text="Nombre completo"
                             android:textSize="14sp"
                             android:textColor="#000000" />
 
@@ -57,23 +66,16 @@
                             android:textColor="#000000" />
                     </LinearLayout>
 
+                    <!-- Imagen perfil -->
                     <ImageView
                         android:id="@+id/ivPerfil"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:src="@drawable/ic_perfil"
+                        android:layout_width="59dp"
+                        android:layout_height="61dp"
                         android:background="@drawable/bg_circle"
-                        android:padding="4dp" />
+                        android:padding="4dp"
+                        android:src="@drawable/ic_perfil" />
                 </LinearLayout>
             </LinearLayout>
-
-            <!-- Logo -->
-            <ImageView
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:src="@drawable/he_logo_unpa"
-                android:layout_gravity="center"
-                android:layout_marginBottom="8dp" />
 
             <!-- Título -->
             <TextView
@@ -96,20 +98,22 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnIzquierdo"
-                    android:layout_width="48dp"
-                    android:layout_height="43dp"
+                    android:layout_width="54dp"
+                    android:layout_height="45dp"
                     app:backgroundTint="@color/white"
                     app:icon="@drawable/ic_back"
                     app:iconTint="@color/black"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/btnSemestre"
+                    app:layout_constraintHorizontal_bias="0.333"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnSemestre"
-                    android:layout_width="226dp"
-                    android:layout_height="41dp"
+                    android:layout_width="217dp"
+                    android:layout_height="44dp"
                     android:gravity="center"
                     android:text="Semestre"
                     android:textColor="#000000"
@@ -122,16 +126,18 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnDerecho"
-                    android:layout_width="47dp"
-                    android:layout_height="38dp"
+                    android:layout_width="54dp"
+                    android:layout_height="45dp"
                     android:gravity="center"
                     app:backgroundTint="@color/white"
                     app:icon="@drawable/ic_next"
                     app:iconTint="@color/black"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.578"
                     app:layout_constraintStart_toEndOf="@+id/btnSemestre"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="1.0" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <!-- Tabla de calificaciones -->
@@ -215,7 +221,7 @@
         android:layout_height="393dp"
         android:layout_gravity="bottom"
         android:background="#CCFFFFFF"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvSemestres"
