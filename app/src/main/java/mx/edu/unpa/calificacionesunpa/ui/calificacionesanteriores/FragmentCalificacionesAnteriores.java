@@ -10,8 +10,14 @@ import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
+import com.unpa.calificaciones.adapters.SemestreAdapter;
 
 import org.w3c.dom.Document;
 
@@ -27,13 +33,13 @@ import mx.edu.unpa.calificacionesunpa.models.Materia;
 import mx.edu.unpa.calificacionesunpa.models.StudentBasic;
 import mx.edu.unpa.calificacionesunpa.providers.*;
 import mx.edu.unpa.calificacionesunpa.service.UsuarioService;
+import mx.edu.unpa.calificacionesunpa.ui.dd.SelectorSemestre;
 import mx.edu.unpa.calificacionesunpa.ui.perfil.FragmentPerfil;
 
 public class FragmentCalificacionesAnteriores extends Fragment {
     private static final String TAG = "CalifFrag";
 
     private TextView txtMatricula;
-    private Spinner spinnerSemestres;
     private TableLayout tablaCalificaciones;
     private TableLayout tablaExtraordinarios;
     private TextView txtPromedioGeneral;
@@ -47,6 +53,10 @@ public class FragmentCalificacionesAnteriores extends Fragment {
 
     private String nombre,carrera;
 
+    private RecyclerView contenedorSpinner ;
+    private FrameLayout containerSpinner ;
+    private View sombra ;
+
     @Nullable @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
@@ -55,11 +65,9 @@ public class FragmentCalificacionesAnteriores extends Fragment {
 
         // 1) Referencias UI
         txtMatricula         = root.findViewById(R.id.txtMatricula);
-        spinnerSemestres     = root.findViewById(R.id.spinnerSemestres);
         tablaCalificaciones  = root.findViewById(R.id.tablaCalificaciones);
         tablaExtraordinarios = root.findViewById(R.id.tablaExtraordinarios);
         txtPromedioGeneral   = root.findViewById(R.id.txtPromedioGeneral);
-        tvTipoCalificacion   = root.findViewById(R.id.tvTipoCalificacion);
         tvExtraordinariosLabel   = root.findViewById(R.id.tvExtraordinariosLabel);
         tvNombre             = root.findViewById(R.id.tvNombre);
 
@@ -97,36 +105,21 @@ public class FragmentCalificacionesAnteriores extends Fragment {
         nombre=alumnoActual.getNombre()+" "+alumnoActual.getApPaterno()+" "+alumnoActual.getApMaterno();
         carrera=alumnoActual.getNombreCarrera();
         tvNombre.setText(nombre);
-        setupSpinner();
+
+
+        MaterialButton btnAnterior = root.findViewById(R.id.btnIzquierdo);
+        MaterialButton btnSiguiente = root.findViewById(R.id.btnDerecho) ;
+        MaterialButton btnSemestreActual = root.findViewById(R.id.btnSemestre);
+        contenedorSpinner = root.findViewById(R.id.rvSemestres);
+        containerSpinner =  root.findViewById(R.id.contenedorSpinner);
+        sombra = root.findViewById(R.id.blurOverlaySpinner);
+        // 5) Listener para mostrar/ocultar el spinner
+        btnSemestreActual.setOnClickListener(v -> {
+            llamarFragmento();
+        });
         return root;
     }
-    private int semestreToInt(@Nullable String sem) {
-        if (sem == null) return 1;
-        try {
-            return Integer.parseInt(sem);
-        } catch (NumberFormatException e) {
-            String s = sem.trim().toUpperCase(Locale.ROOT);
-            switch (s) {
-                case "PRIMERO":   return 1;
-                case "SEGUNDO":   return 2;
-                case "TERCERO":   return 3;
-                case "CUARTO":    return 4;
-                case "QUINTO":    return 5;
-                case "SEXTO":     return 6;
-                case "SÉPTIMO":
-                case "SEPTIMO":   return 7;
-                case "OCTAVO":    return 8;
-                case "NOVENO":    return 9;
-                case "DÉCIMO":
-                case "DECIMO":    return 10;
-                default:
-                    Log.w(TAG, "semestreToInt: formato desconocido '" + sem + "', asumiendo 1");
-                    return 1;
-            }
-        }
-    }
-
-    private void setupSpinner() {
+    private Map<Integer, String> setupSemestreSelector(){
         Set<DocumentReference> ciclosUnicos = new LinkedHashSet<>();
         for (Materia m : todasMaterias) {
             if (m.getCiclo() != null) {
@@ -135,49 +128,40 @@ public class FragmentCalificacionesAnteriores extends Fragment {
         }
 
         // Extraer solo los IDs de los ciclos (último segmento del path)
-        List<String> items = new ArrayList<>();
+        Map<Integer, String> semestresMap = new LinkedHashMap<>();
+        int contador = 1;
         for (DocumentReference ref : ciclosUnicos) {
             String path = ref.getPath();
-            // Dividir el path y obtener el último segmento
             String[] partes = path.split("/");
             if (partes.length > 0) {
                 String cicloId = partes[partes.length - 1];
-                items.add(cicloId);
+                semestresMap.put(contador++, cicloId); // usar número como clave, cicloId como valor
             }
         }
+        return semestresMap;
+    }
+    private void llamarFragmento() {
+        sombra.setVisibility(View.VISIBLE);
+        FragmentManager fm = getParentFragmentManager();
+        String tag = "SelectorSemestresTag";
+        Fragment existing = fm.findFragmentByTag(tag);
 
-        // Ordenar alfabéticamente
-        Collections.sort(items);
-
-        Log.d(TAG, "Ciclos en el Spinner: " + items);
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                requireContext(),
-                android.R.layout.simple_spinner_item,
-                items
-        );
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerSemestres.setAdapter(adapter);
-
-        spinnerSemestres.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String cicloId = items.get(position);
-                Log.d(TAG, "Ciclo seleccionado: " + cicloId);
-
-                // Reconstruir la referencia completa
-                String fullPath = "ciclosEscolares/" + cicloId;
-                loadGradesForCycle(fullPath);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
-
-        if (!items.isEmpty()) {
-            spinnerSemestres.setSelection(items.size() - 1);
+        if (existing != null && existing.isVisible()) {
+            ocultarSpinnerSiVisible();
+        } else {
+            Fragment fragmento = SelectorSemestre.newInstance(1,setupSemestreSelector());
+            fm.beginTransaction()
+                    .replace(R.id.contenedorSpinner, fragmento, tag)
+                    .addToBackStack(null)
+                    .commit();
+            containerSpinner.setVisibility(View.VISIBLE);
         }
-        spinnerSemestres.setVisibility(View.VISIBLE);
+    }
+
+    private void ocultarSpinnerSiVisible(){
+        boolean isVisible = containerSpinner.getVisibility() == View.VISIBLE;
+        sombra.setVisibility(isVisible ? View.GONE : View.VISIBLE);
+        containerSpinner.setVisibility(isVisible ? View.GONE : View.VISIBLE);
     }
     private void loadGradesForCycle(String cicloEscolar) {
         Log.d(TAG, "loadGradesForCycle ciclo=" + cicloEscolar);
