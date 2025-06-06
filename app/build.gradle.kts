@@ -14,7 +14,7 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
-
+        vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -58,9 +58,9 @@ dependencies {
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore:25.1.3")
     implementation("com.google.firebase:firebase-firestore-ktx")
-
+    implementation("com.google.firebase:firebase-firestore-ktx:24.11.1")
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
-
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
     implementation("com.beust:klaxon:5.5")
     implementation(libs.lottie)
     implementation("com.google.firebase:firebase-inappmessaging-display")
