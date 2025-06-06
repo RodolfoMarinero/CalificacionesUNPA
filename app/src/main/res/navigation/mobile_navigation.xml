@@ -47,4 +47,11 @@
         android:name="mx.edu.unpa.calificacionesunpa.fragments.NotificacionFragment"
         android:label="Notificaciones"
         tools:layout="@layout/fragment_notificaciones" />
+
+    <fragment
+        android:id="@+id/nav_perfil"
+        android:name="mx.edu.unpa.calificacionesunpa.ui.perfil.FragmentPerfil"
+        android:label="Perfil"
+        tools:layout="@layout/fragment_perfil" />
+
 </navigation>
