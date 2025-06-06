@@ -191,20 +191,32 @@
 
             <!-- Tipo de calificación -->
 
-            <!-- Promedio general -->
-            <TextView
-                android:id="@+id/txtPromedioGeneral"
+        <!-- Promedio general -->
+        <TextView
+            android:id="@+id/txtPromedioGeneral"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:visibility="gone"
+            android:layout_marginTop="16dp"
+            android:layout_gravity="center" />
+
+            <Button
+                android:id="@+id/btnDescargarPdf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text=""
-                android:textSize="16sp"
-                android:textStyle="bold"
+                android:text="Descargar PDF de calificaciones"
+                android:backgroundTint="#C1D8D2"
                 android:textColor="#000000"
-                android:visibility="gone"
+                android:layout_gravity="center"
+                android:elevation="4dp"
                 android:layout_marginTop="16dp"
-                android:layout_gravity="center" />
-        </LinearLayout>
-    </ScrollView>
+                android:drawableStart="@drawable/ic_pdf_download" />
+    </LinearLayout>
+</ScrollView>
 
     <!-- Overlay difuminado -->
     <View
