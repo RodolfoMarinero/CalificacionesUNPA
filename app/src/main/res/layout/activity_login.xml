@@ -101,11 +101,12 @@
             android:id="@+id/btnRegistro"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:text="Crear Una Cuenta"
-            android:background="@drawable/bg_button_alt"
-            android:textColor="#2E7D32"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="8dp" />
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_button_alt"
+            android:text="Crear Una Cuenta"
+            android:textColor="#2E7D32"
+            android:visibility="gone" />
 
         <!-- Botón de Google (con error corregido) -->
         <Button
