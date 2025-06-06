@@ -8,6 +8,8 @@
     android:padding="8dp">
 
     <!-- Semestre label -->
+
+    <!-- Promedio value -->
     <TextView
         android:id="@+id/txtSemestreLabel"
         android:layout_width="wrap_content"
@@ -15,20 +17,24 @@
         android:text="Semestre 1"
         android:textSize="16sp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintVertical_bias="0.0" />
 
-    <!-- Promedio value -->
     <TextView
         android:id="@+id/txtPromedioSemestre"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="68dp"
         android:text="8.5"
         android:textSize="16sp"
         android:textStyle="bold"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintVertical_bias="1.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

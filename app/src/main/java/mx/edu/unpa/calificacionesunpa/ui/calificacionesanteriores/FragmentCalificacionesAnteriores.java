@@ -23,6 +23,7 @@ import java.util.*;
 import mx.edu.unpa.calificacionesunpa.R;
 import mx.edu.unpa.calificacionesunpa.models.Alumno;
 import mx.edu.unpa.calificacionesunpa.models.Materia;
+import mx.edu.unpa.calificacionesunpa.service.PromedioCalculatorService;
 import mx.edu.unpa.calificacionesunpa.service.UsuarioService;
 import mx.edu.unpa.calificacionesunpa.ui.dd.SelectorSemestre;
 import mx.edu.unpa.calificacionesunpa.ui.perfil.FragmentPerfil;
@@ -53,6 +54,8 @@ public class FragmentCalificacionesAnteriores extends Fragment {
     private MaterialButton btnSiguiente;
     private MaterialButton btnSemestreActual;
     private int idxCicloActual = 1; // Índice del ciclo actual, empieza en 1
+    private PromedioCalculatorService promedioCalculatorService;
+
     @Nullable @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
@@ -93,9 +96,11 @@ public class FragmentCalificacionesAnteriores extends Fragment {
 
         // 2) Inicializar providers
         usuarioService = UsuarioService.INSTANCE;
+        promedioCalculatorService = PromedioCalculatorService.INSTANCE;
         // 4) Traer alumno básico
         alumnoActual = usuarioService.getAlumnoActual();
         todasMaterias = alumnoActual.getMaterias();
+        promedioCalculatorService.calcularPromedioGeneral(todasMaterias);
         txtMatricula.setText(alumnoActual.getMatricula());
         nombre=alumnoActual.getNombre()+" "+alumnoActual.getApPaterno()+" "+alumnoActual.getApMaterno();
         carrera=alumnoActual.getNombreCarrera();
@@ -107,8 +112,12 @@ public class FragmentCalificacionesAnteriores extends Fragment {
         btnSemestreActual = root.findViewById(R.id.btnSemestre);
 
         contenedorSpinner = root.findViewById(R.id.rvSemestres);
+        contenedorSpinner.setVisibility(View.VISIBLE);
         containerSpinner =  root.findViewById(R.id.contenedorSpinner);
         sombra = root.findViewById(R.id.blurOverlaySpinner);
+        sombra.setOnClickListener(v->{
+            ocultarSpinnerSiVisible();
+        });
         //Observa ciclo actual
         usuarioService.getSemestreSeleccionado().observe(getViewLifecycleOwner(), (Observer<Integer>) semestre -> {
             if (semestre != null) {
@@ -166,17 +175,20 @@ public class FragmentCalificacionesAnteriores extends Fragment {
         sombra.setVisibility(View.VISIBLE);
         FragmentManager fm = getParentFragmentManager();
         String tag = "SelectorSemestresTag";
+
         Fragment existing = fm.findFragmentByTag(tag);
 
-        if (existing != null && existing.isVisible()) {
-            ocultarSpinnerSiVisible();
-        } else {
-            Fragment fragmento = SelectorSemestre.newInstance(1,semestresMapa);
-            fm.beginTransaction()
-                    .replace(R.id.contenedorSpinner, fragmento, tag)
-                    .commit();
-            containerSpinner.setVisibility(View.VISIBLE);
+        // Si ya existe uno, elimínalo antes de añadir uno nuevo
+        if (existing != null) {
+            fm.beginTransaction().remove(existing).commitNow();
         }
+
+        Fragment fragmento = SelectorSemestre.newInstance(1, semestresMapa);
+        fm.beginTransaction()
+                .replace(R.id.contenedorSpinner, fragmento, tag)
+                .commit();
+
+        containerSpinner.setVisibility(View.VISIBLE);
     }
 
     private void ocultarSpinnerSiVisible(){
@@ -226,7 +238,7 @@ public class FragmentCalificacionesAnteriores extends Fragment {
                 addCell(row, format(mat.getCalificaciones().getParcial3() != null ? mat.getCalificaciones().getParcial3() : null));
                 addCell(row, format(mat.getPromedioParciales() != 0.0 ? mat.getPromedioParciales() : null));
                 addCell(row, format(mat.getCalificaciones().getOrdinario() != null ? mat.getCalificaciones().getOrdinario() : null));
-                addCell(row, String.format(Locale.getDefault(), "%.1f", mat.getCalificaciones().getPFinal()));
+                addCell(row, format(mat.getCalificaciones().getPFinal() != null ? mat.getCalificaciones().getPFinal() : null));
                 tablaCalificaciones.addView(row);
             }
 

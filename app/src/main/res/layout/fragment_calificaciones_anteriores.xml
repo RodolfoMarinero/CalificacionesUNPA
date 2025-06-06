@@ -212,7 +212,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#CCFFFFFF"
-        android:visibility="gone" />
+        android:visibility="gone"
+        android:clickable="true"/>
 
     <!-- Contenedor emergente para spinner -->
     <FrameLayout

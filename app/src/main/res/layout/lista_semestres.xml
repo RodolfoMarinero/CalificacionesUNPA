@@ -9,7 +9,7 @@
         android:id="@+id/semestreTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#175D21"
+        android:background="#63A495"
         android:textColor="#FFFFFF"
         android:padding="16dp"
         android:text="Ciclos Escolares"
