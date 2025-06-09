@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -15,31 +15,32 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CalificacionesUNPA"
         tools:targetApi="31">
-
+        <activity
+            android:name=".notificaciones_serviciosescolares"
+            android:exported="false" />
         <!-- Actividad de Login -->
         <activity
             android:name=".ui.login.LoginActivity"
             android:exported="true"
             android:label="CalificaionesUNPA"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+
             <!-- Definir un Intent Filter para iniciar la actividad de login al inicio -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <!-- Actividad Principal (MainActivity) -->
+        </activity> <!-- Actividad Principal (MainActivity) -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/Theme.CalificacionesUNPA.NoActionBar">
+
             <!-- Esta actividad debe ser accesible después de que el usuario haya iniciado sesión -->
         </activity>
         <activity android:name=".ui.register.Register" />
         <activity android:name=".ui.recuperarContrasena.RecuperarContrasena" />
-
-
     </application>
 
 </manifest>
