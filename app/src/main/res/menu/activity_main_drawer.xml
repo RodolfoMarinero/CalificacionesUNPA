@@ -1,6 +1,5 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:showIn="navigation_view">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <group android:checkableBehavior="single">
         <item
@@ -17,6 +16,16 @@
             android:id="@+id/nav_notificaciones"
             android:icon="@drawable/ic_notificaciones"
             android:title="Notificaciones" />
+
+        <item
+            android:id="@+id/nav_calendarioEscolar"
+            android:icon="@drawable/calendar_month_outline"
+            android:title="Calendario Escolar" />
+
+        <item
+            android:id="@+id/nav_calendarioExamen"
+            android:icon="@drawable/calendar_clock_outline"
+            android:title="Calendario De Exámenes" />
 
         <item
             android:id="@+id/nav_logout"
