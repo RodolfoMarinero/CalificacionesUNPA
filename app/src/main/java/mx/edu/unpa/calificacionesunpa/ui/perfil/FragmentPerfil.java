@@ -16,26 +16,23 @@ import androidx.fragment.app.Fragment;
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import com.google.android.material.button.MaterialButton;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
+
+import java.util.Locale;
+
 import mx.edu.unpa.calificacionesunpa.R;
 
+import mx.edu.unpa.calificacionesunpa.service.PromedioCalculatorService;
 
 public class FragmentPerfil extends Fragment {
 
     private TextView tvNombre, tvMatricula, tvCarrera, tvPromedio, tvCodigoBarras;
     private ImageView ivCodigoBarras;
-    private static final int RC_SIGN_IN = 9001;
-    // [START declare_auth]
-    private lateinit var auth: FirebaseAuth;
-    // [END declare_auth]
-
-    // [START declare_credential_manager]
-    private lateinit var credentialManager: CredentialManager;
-    // [END declare_credential_manager]
-
-
+    private PromedioCalculatorService promedioCalculatorService;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -47,7 +44,11 @@ public class FragmentPerfil extends Fragment {
         tvPromedio = view.findViewById(R.id.tvPromedioPerfil);
         ivCodigoBarras = view.findViewById(R.id.ivBarcode);
         tvCodigoBarras = view.findViewById(R.id.tvBarcodeNumber);
-
+        MaterialButton btnVolver = view.findViewById(R.id.btnVolver);
+        btnVolver.setOnClickListener(v ->  {
+            requireActivity().getSupportFragmentManager().popBackStack();
+        });
+        promedioCalculatorService = PromedioCalculatorService.INSTANCE;
         if (getArguments() != null) {
             String nombre = getArguments().getString("nombre", "");
             String matricula = getArguments().getString("matricula", "");
@@ -73,8 +74,8 @@ public class FragmentPerfil extends Fragment {
 
         //launchCredentialManager();
 
+        tvPromedio.setText(String.format("%.1f", promedioCalculatorService.getPromedioGeneral()));
         return view;
-
     }
 
     // [START on_start_check_user]

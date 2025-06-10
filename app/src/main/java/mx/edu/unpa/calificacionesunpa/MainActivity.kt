@@ -1,11 +1,13 @@
 package mx.edu.unpa.calificacionesunpa
 
-import android.content.ContentValues.TAG
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.TextView
 import androidx.annotation.NonNull
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.navigation.NavigationView
@@ -16,8 +18,6 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.credentials.Credential
-import androidx.credentials.CustomCredential
 import androidx.navigation.ui.NavigationUI
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -26,6 +26,8 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
 //import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 //import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.Companion.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
+import com.google.android.material.button.MaterialButton
+import com.google.firebase.messaging.FirebaseMessaging
 import mx.edu.unpa.calificacionesunpa.databinding.ActivityMainBinding
 import mx.edu.unpa.calificacionesunpa.providers.AuthProvider
 import mx.edu.unpa.calificacionesunpa.ui.calificacionesanteriores.FragmentCalificacionesAnteriores
@@ -53,6 +55,17 @@ class MainActivity : AppCompatActivity() {
         val drawerLayout: DrawerLayout   = binding.drawerLayout
         val navView: NavigationView       = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_content_main)
+        solicitarPermisoNotificaciones()
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w("FCM", "Fetching FCM registration token failed", task.exception)
+                return@addOnCompleteListener
+            }
+
+            // Obtener el token FCM
+            val token = task.result
+            Log.d("FCM", "Token FCM: $token")
+        }
 
         // ① Defino los destinos top‑level de mi Drawer
         appBarConfiguration = AppBarConfiguration(
@@ -89,17 +102,16 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        auth = Firebase.auth
     }
 
-    override fun onStart() {
-        super.onStart()
-        // Check if user is signed in (non-null) and update UI accordingly.
-        val currentUser = auth.currentUser
-        updateUI(currentUser)
+    private fun solicitarPermisoNotificaciones() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) !=
+                PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 1001)
+            }
+        }
     }
-
-
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.main, menu)
@@ -131,32 +143,28 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
         finish() // Finaliza la actividad actual para no poder volver atrás
     }
-    private fun updateUI(user: FirebaseUser?) {
-        if (user != null) {
-            // Usuario autenticado
-            Log.d("Auth", "Usuario: ${user.displayName}")
-            // Puedes redirigir al home o mostrar info del usuario
-        } else {
-            // Usuario no autenticado
-            Log.d("Auth", "No hay sesión activa")
-            // Mostrar botón de login, etc.
-        }
-    }
 
-    private fun firebaseAuthWithGoogle(idToken: String) {
-        val credential = GoogleAuthProvider.getCredential(idToken, null)
-        auth.signInWithCredential(credential)
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
-                    Log.d(TAG, "signInWithCredential:success")
-                    val user = auth.currentUser
-                    updateUI(user)
-                } else {
-                    // If sign in fails, display a message to the user
-                    Log.w(TAG, "signInWithCredential:failure", task.exception)
-                    updateUI(null)
-                }
-            }
-    }
+
+//    override fun onStart(){
+//        super.onStart()
+//        if (authProvider.exitsSession()){
+//            val intent = Intent(this, FragmentCalificacionesAnteriores::class.java)
+//            startActivity(intent)
+//        }
+//    }
+
+
+    private fun handleSignIn(credential: Credential) {
+        // Check if credential is of type Google ID
+        //if (credential is CustomCredential && credential.type == TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
+            // Create Google ID Token
+          //  val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
+
+            // Sign in to Firebase with using the token
+            //firebaseAuthWithGoogle(googleIdTokenCredential.idToken)
+        //} else {
+           // Log.w(TAG, "Credential is not of type Google ID!")
+        }
+    //}
+
 }
