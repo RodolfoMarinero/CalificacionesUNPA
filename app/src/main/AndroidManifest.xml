@@ -16,9 +16,11 @@
         android:theme="@style/Theme.CalificacionesUNPA"
         tools:targetApi="31">
         <activity
-            android:name=".notificaciones_serviciosescolares"
+            android:name=".notificaciones_sescolares"
             android:exported="false" />
-        <!-- Actividad de Login -->
+        <activity
+            android:name=".notificaciones_serviciosescolares"
+            android:exported="false" /> <!-- Actividad de Login -->
         <activity
             android:name=".ui.login.LoginActivity"
             android:exported="true"
