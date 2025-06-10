@@ -1,7 +1,9 @@
 package mx.edu.unpa.calificacionesunpa
 
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.annotation.NonNull
@@ -17,6 +19,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.credentials.Credential
 import androidx.credentials.CustomCredential
 import androidx.navigation.ui.NavigationUI
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.auth
 //import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 //import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.Companion.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
 import mx.edu.unpa.calificacionesunpa.databinding.ActivityMainBinding
@@ -29,6 +36,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     private lateinit var authProvider: AuthProvider
+    private lateinit var auth: FirebaseAuth
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,6 +88,15 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
+        auth = Firebase.auth
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // Check if user is signed in (non-null) and update UI accordingly.
+        val currentUser = auth.currentUser
+        updateUI(currentUser)
     }
 
 
@@ -113,28 +131,32 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
         finish() // Finaliza la actividad actual para no poder volver atrás
     }
-
-
-//    override fun onStart(){
-//        super.onStart()
-//        if (authProvider.exitsSession()){
-//            val intent = Intent(this, FragmentCalificacionesAnteriores::class.java)
-//            startActivity(intent)
-//        }
-//    }
-
-
-    private fun handleSignIn(credential: Credential) {
-        // Check if credential is of type Google ID
-        //if (credential is CustomCredential && credential.type == TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
-            // Create Google ID Token
-          //  val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
-
-            // Sign in to Firebase with using the token
-            //firebaseAuthWithGoogle(googleIdTokenCredential.idToken)
-        //} else {
-           // Log.w(TAG, "Credential is not of type Google ID!")
+    private fun updateUI(user: FirebaseUser?) {
+        if (user != null) {
+            // Usuario autenticado
+            Log.d("Auth", "Usuario: ${user.displayName}")
+            // Puedes redirigir al home o mostrar info del usuario
+        } else {
+            // Usuario no autenticado
+            Log.d("Auth", "No hay sesión activa")
+            // Mostrar botón de login, etc.
         }
-    //}
+    }
 
+    private fun firebaseAuthWithGoogle(idToken: String) {
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+        auth.signInWithCredential(credential)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.d(TAG, "signInWithCredential:success")
+                    val user = auth.currentUser
+                    updateUI(user)
+                } else {
+                    // If sign in fails, display a message to the user
+                    Log.w(TAG, "signInWithCredential:failure", task.exception)
+                    updateUI(null)
+                }
+            }
+    }
 }
