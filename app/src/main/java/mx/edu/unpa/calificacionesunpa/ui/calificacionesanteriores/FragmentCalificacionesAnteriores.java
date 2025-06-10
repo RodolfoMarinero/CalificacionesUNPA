@@ -95,8 +95,8 @@ public class FragmentCalificacionesAnteriores extends Fragment {
         txtPromedioGeneral   = root.findViewById(R.id.txtPromedioGeneral);
         tvExtraordinariosLabel   = root.findViewById(R.id.tvExtraordinariosLabel);
         tvNombre             = root.findViewById(R.id.tvNombre);
-        Button btnPdf = root.findViewById(R.id.btnDescargarPdf);
-        btnPdf.setOnClickListener(this::generarPdf);
+        //Button btnPdf = root.findViewById(R.id.btnDescargarPdf);
+        //btnPdf.setOnClickListener(this::generarPdf);
 
 
         ivPerfil = root.findViewById(R.id.ivPerfil); // asegúrate que tenga este ID en tu layout
