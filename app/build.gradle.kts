@@ -54,13 +54,17 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    implementation(platform("com.google.firebase:firebase-bom:33.11.0"))
+    implementation(platform("com.google.firebase:firebase-bom:33.14.0"))
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore:25.1.3")
     implementation("com.google.firebase:firebase-firestore-ktx")
-    implementation("com.google.android.gms:play-services-auth:21.3.0")
-
+    implementation("com.google.firebase:firebase-firestore-ktx:24.11.1")
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
-
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
     implementation("com.beust:klaxon:5.5")
+    implementation(libs.lottie)
+    implementation("com.google.firebase:firebase-inappmessaging-display")
+    implementation("com.google.firebase:firebase-messaging")
+    implementation("com.google.firebase:firebase-analytics")
+
 }
