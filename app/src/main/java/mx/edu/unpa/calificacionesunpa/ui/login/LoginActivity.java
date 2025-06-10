@@ -6,8 +6,10 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
@@ -23,6 +25,7 @@ import kotlin.Unit;
 import kotlin.jvm.internal.Intrinsics;
 import mx.edu.unpa.calificacionesunpa.MainActivity;
 import mx.edu.unpa.calificacionesunpa.R;
+import mx.edu.unpa.calificacionesunpa.fragments.LoadingFragment;
 import mx.edu.unpa.calificacionesunpa.providers.AlumnoProvider;
 import mx.edu.unpa.calificacionesunpa.providers.AuthProvider;
 import mx.edu.unpa.calificacionesunpa.service.UsuarioService;
@@ -39,7 +42,8 @@ public class LoginActivity extends AppCompatActivity {
     private AuthProvider authProvider;
     private AlumnoProvider alumnoProvider;
     private UsuarioService usuarioService = UsuarioService.INSTANCE;
-
+    private LoadingFragment loadingFragment;
+    private boolean isFragmentVisible = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +70,7 @@ public class LoginActivity extends AppCompatActivity {
                         Toast.LENGTH_SHORT).show();
                 return;
             }
+            showLoadingFragment();
 
             // Leemos matrícula en lugar de correo
             String matricula = etMatricula.getText().toString().trim();
@@ -86,6 +91,7 @@ public class LoginActivity extends AppCompatActivity {
                                     authProvider.getId(),
                                     alumno -> {
                                         usuarioService.setAlumnoActual(alumno);
+                                        hideLoadingFragment();
                                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                         intent.putExtra("navigateTo", "calificaciones");
                                         startActivity(intent);
@@ -97,6 +103,8 @@ public class LoginActivity extends AppCompatActivity {
 
 
                         } else {
+                            hideLoadingFragment();
+
                             String err = task.getException() != null
                                     ? task.getException().getMessage()
                                     : "Error desconocido";
@@ -105,6 +113,8 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     })
                     .addOnFailureListener(e -> {
+                        hideLoadingFragment();
+
                         Log.e(TAG, "Login exception", e);
                         if (e instanceof FirebaseNetworkException) {
                             Toast.makeText(this, "Error de red: " + e.getMessage(), Toast.LENGTH_LONG).show();
@@ -136,5 +146,30 @@ public class LoginActivity extends AppCompatActivity {
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo ni = cm != null ? cm.getActiveNetworkInfo() : null;
         return ni != null && ni.isConnected();
+    }
+    private void showLoadingFragment() {
+        FrameLayout container = findViewById(R.id.loadingFragmentContainer);
+        container.setVisibility(View.VISIBLE);
+
+        if (loadingFragment == null) {
+            loadingFragment = new LoadingFragment();
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.loadingFragmentContainer, loadingFragment)
+                    .commit();
+        }
+    }
+
+    private void hideLoadingFragment() {
+        FrameLayout container = findViewById(R.id.loadingFragmentContainer);
+        container.setVisibility(View.GONE);
+
+        if (loadingFragment != null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .remove(loadingFragment)
+                    .commit();
+            loadingFragment = null;
+        }
     }
 }

@@ -1,5 +1,6 @@
 package mx.edu.unpa.calificacionesunpa.ui.calificacionesanteriores;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -10,30 +11,27 @@ import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import com.google.firebase.auth.FirebaseAuth;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.lifecycle.Observer;
+
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.DocumentReference;
-
-import org.w3c.dom.Document;
-
 import java.util.*;
-import java.util.stream.Collectors;
 
-import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
+
 import mx.edu.unpa.calificacionesunpa.R;
 import mx.edu.unpa.calificacionesunpa.models.Alumno;
-import mx.edu.unpa.calificacionesunpa.models.Calificaciones;
 import mx.edu.unpa.calificacionesunpa.models.Materia;
-import mx.edu.unpa.calificacionesunpa.models.StudentBasic;
-import mx.edu.unpa.calificacionesunpa.providers.*;
+import mx.edu.unpa.calificacionesunpa.service.PromedioCalculatorService;
 import mx.edu.unpa.calificacionesunpa.service.UsuarioService;
+import mx.edu.unpa.calificacionesunpa.ui.dd.SelectorSemestre;
 import mx.edu.unpa.calificacionesunpa.ui.perfil.FragmentPerfil;
 
 public class FragmentCalificacionesAnteriores extends Fragment {
     private static final String TAG = "CalifFrag";
 
     private TextView txtMatricula;
-    private Spinner spinnerSemestres;
     private TableLayout tablaCalificaciones;
     private TableLayout tablaExtraordinarios;
     private TextView txtPromedioGeneral;
@@ -47,6 +45,17 @@ public class FragmentCalificacionesAnteriores extends Fragment {
 
     private String nombre,carrera;
 
+    private RecyclerView contenedorSpinner ;
+    private FrameLayout containerSpinner ;
+    private View sombra ;
+    private Map<Integer, String> semestresMapa;
+
+    private MaterialButton btnAnterior;
+    private MaterialButton btnSiguiente;
+    private MaterialButton btnSemestreActual;
+    private int idxCicloActual = 1; // Índice del ciclo actual, empieza en 1
+    private PromedioCalculatorService promedioCalculatorService;
+
     @Nullable @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
@@ -55,11 +64,9 @@ public class FragmentCalificacionesAnteriores extends Fragment {
 
         // 1) Referencias UI
         txtMatricula         = root.findViewById(R.id.txtMatricula);
-        spinnerSemestres     = root.findViewById(R.id.spinnerSemestres);
         tablaCalificaciones  = root.findViewById(R.id.tablaCalificaciones);
         tablaExtraordinarios = root.findViewById(R.id.tablaExtraordinarios);
         txtPromedioGeneral   = root.findViewById(R.id.txtPromedioGeneral);
-        tvTipoCalificacion   = root.findViewById(R.id.tvTipoCalificacion);
         tvExtraordinariosLabel   = root.findViewById(R.id.tvExtraordinariosLabel);
         tvNombre             = root.findViewById(R.id.tvNombre);
 
@@ -86,47 +93,64 @@ public class FragmentCalificacionesAnteriores extends Fragment {
 
 
         txtPromedioGeneral.setVisibility(View.GONE);
-        tvTipoCalificacion.setText("");
 
         // 2) Inicializar providers
         usuarioService = UsuarioService.INSTANCE;
+        promedioCalculatorService = PromedioCalculatorService.INSTANCE;
         // 4) Traer alumno básico
         alumnoActual = usuarioService.getAlumnoActual();
         todasMaterias = alumnoActual.getMaterias();
+        promedioCalculatorService.calcularPromedioGeneral(todasMaterias);
         txtMatricula.setText(alumnoActual.getMatricula());
         nombre=alumnoActual.getNombre()+" "+alumnoActual.getApPaterno()+" "+alumnoActual.getApMaterno();
         carrera=alumnoActual.getNombreCarrera();
         tvNombre.setText(nombre);
-        setupSpinner();
+
+
+        btnAnterior = root.findViewById(R.id.btnIzquierdo);
+        btnSiguiente = root.findViewById(R.id.btnDerecho) ;
+        btnSemestreActual = root.findViewById(R.id.btnSemestre);
+
+        contenedorSpinner = root.findViewById(R.id.rvSemestres);
+        contenedorSpinner.setVisibility(View.VISIBLE);
+        containerSpinner =  root.findViewById(R.id.contenedorSpinner);
+        sombra = root.findViewById(R.id.blurOverlaySpinner);
+        sombra.setOnClickListener(v->{
+            ocultarSpinnerSiVisible();
+        });
+        //Observa ciclo actual
+        usuarioService.getSemestreSeleccionado().observe(getViewLifecycleOwner(), (Observer<Integer>) semestre -> {
+            if (semestre != null) {
+                idxCicloActual = semestre;
+                loadGradesForCycle();
+                ocultarSpinnerSiVisible();
+            }
+        });
+
+        //crear mapa de semestres y seleccionar el semestre actual
+        setupSemestreSelector();
+        int ultimoCiclo = semestresMapa.keySet().stream().max(Comparator.comparingInt(a -> a)).orElse(0);
+        usuarioService.seleccionarSemestre(ultimoCiclo);
+        btnSemestreActual.setText(semestresMapa.get(ultimoCiclo));
+        // 5) Listener para mostrar/ocultar el spinner
+        btnSemestreActual.setOnClickListener(v -> {
+            llamarFragmento();
+        });
+        //Listeners para los botones de navegación
+        btnAnterior.setOnClickListener(v -> {
+            if (tieneAnterior()) {
+                usuarioService.seleccionarSemestre(idxCicloActual -1);
+            }
+        });
+        btnSiguiente.setOnClickListener(v -> {
+            if (tieneSiguiente()) {
+                usuarioService.seleccionarSemestre(idxCicloActual + 1);
+            }
+        });
+        ocultarSpinnerSiVisible();
         return root;
     }
-    private int semestreToInt(@Nullable String sem) {
-        if (sem == null) return 1;
-        try {
-            return Integer.parseInt(sem);
-        } catch (NumberFormatException e) {
-            String s = sem.trim().toUpperCase(Locale.ROOT);
-            switch (s) {
-                case "PRIMERO":   return 1;
-                case "SEGUNDO":   return 2;
-                case "TERCERO":   return 3;
-                case "CUARTO":    return 4;
-                case "QUINTO":    return 5;
-                case "SEXTO":     return 6;
-                case "SÉPTIMO":
-                case "SEPTIMO":   return 7;
-                case "OCTAVO":    return 8;
-                case "NOVENO":    return 9;
-                case "DÉCIMO":
-                case "DECIMO":    return 10;
-                default:
-                    Log.w(TAG, "semestreToInt: formato desconocido '" + sem + "', asumiendo 1");
-                    return 1;
-            }
-        }
-    }
-
-    private void setupSpinner() {
+    private void setupSemestreSelector(){
         Set<DocumentReference> ciclosUnicos = new LinkedHashSet<>();
         for (Materia m : todasMaterias) {
             if (m.getCiclo() != null) {
@@ -135,53 +159,50 @@ public class FragmentCalificacionesAnteriores extends Fragment {
         }
 
         // Extraer solo los IDs de los ciclos (último segmento del path)
-        List<String> items = new ArrayList<>();
+        Map<Integer, String> semestresMap = new LinkedHashMap<>();
+        int contador = 1;
         for (DocumentReference ref : ciclosUnicos) {
             String path = ref.getPath();
-            // Dividir el path y obtener el último segmento
             String[] partes = path.split("/");
             if (partes.length > 0) {
                 String cicloId = partes[partes.length - 1];
-                items.add(cicloId);
+                semestresMap.put(contador++, cicloId); // usar número como clave, cicloId como valor
             }
         }
-
-        // Ordenar alfabéticamente
-        Collections.sort(items);
-
-        Log.d(TAG, "Ciclos en el Spinner: " + items);
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                requireContext(),
-                android.R.layout.simple_spinner_item,
-                items
-        );
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerSemestres.setAdapter(adapter);
-
-        spinnerSemestres.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String cicloId = items.get(position);
-                Log.d(TAG, "Ciclo seleccionado: " + cicloId);
-
-                // Reconstruir la referencia completa
-                String fullPath = "ciclosEscolares/" + cicloId;
-                loadGradesForCycle(fullPath);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
-
-        if (!items.isEmpty()) {
-            spinnerSemestres.setSelection(items.size() - 1);
-        }
-        spinnerSemestres.setVisibility(View.VISIBLE);
+        semestresMapa = semestresMap;
     }
-    private void loadGradesForCycle(String cicloEscolar) {
-        Log.d(TAG, "loadGradesForCycle ciclo=" + cicloEscolar);
+    private void llamarFragmento() {
+        sombra.setVisibility(View.VISIBLE);
+        FragmentManager fm = getParentFragmentManager();
+        String tag = "SelectorSemestresTag";
 
+        Fragment existing = fm.findFragmentByTag(tag);
+
+        // Si ya existe uno, elimínalo antes de añadir uno nuevo
+        if (existing != null) {
+            fm.beginTransaction().remove(existing).commitNow();
+        }
+
+        Fragment fragmento = SelectorSemestre.newInstance(1, semestresMapa);
+        fm.beginTransaction()
+                .replace(R.id.contenedorSpinner, fragmento, tag)
+                .commit();
+
+        containerSpinner.setVisibility(View.VISIBLE);
+    }
+
+    private void ocultarSpinnerSiVisible(){
+        boolean isVisible = containerSpinner.getVisibility() == View.VISIBLE;
+        if (isVisible){
+            sombra.setVisibility(View.GONE);
+            containerSpinner.setVisibility(View.GONE);
+        }
+    }
+    private void loadGradesForCycle() {
+        String cicloEscolar = semestresMapa.get(idxCicloActual);
+        Log.d(TAG, "loadGradesForCycle ciclo=" + cicloEscolar);
+        btnSemestreActual.setText(cicloEscolar);
+        cicloEscolar = "ciclosEscolares/" + cicloEscolar;
         // Limpia las tablas
         if (tablaCalificaciones.getChildCount() > 1)
             tablaCalificaciones.removeViews(1, tablaCalificaciones.getChildCount() - 1);
@@ -217,7 +238,7 @@ public class FragmentCalificacionesAnteriores extends Fragment {
                 addCell(row, format(mat.getCalificaciones().getParcial3() != null ? mat.getCalificaciones().getParcial3() : null));
                 addCell(row, format(mat.getPromedioParciales() != 0.0 ? mat.getPromedioParciales() : null));
                 addCell(row, format(mat.getCalificaciones().getOrdinario() != null ? mat.getCalificaciones().getOrdinario() : null));
-                addCell(row, String.format(Locale.getDefault(), "%.1f", mat.getCalificaciones().getPFinal()));
+                addCell(row, format(mat.getCalificaciones().getPFinal() != null ? mat.getCalificaciones().getPFinal() : null));
                 tablaCalificaciones.addView(row);
             }
 
@@ -271,4 +292,13 @@ public class FragmentCalificacionesAnteriores extends Fragment {
                 ? String.format(Locale.getDefault(), "%.1f", v)
                 : "-";
     }
+    private boolean tieneAnterior() {
+        return idxCicloActual > 1;
+    }
+
+    private boolean tieneSiguiente() {
+        int maxIdx = semestresMapa.keySet().stream().max(Integer::compareTo).orElse(1);
+        return idxCicloActual < maxIdx;
+    }
+
 }
