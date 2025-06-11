@@ -63,4 +63,8 @@ dependencies {
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 
     implementation("com.beust:klaxon:5.5")
+
+    implementation("com.google.firebase:firebase-storage-ktx")
+
+    implementation("com.github.mhiew:android-pdf-viewer:3.2.0-beta.3")
 }

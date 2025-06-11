@@ -56,6 +56,7 @@ public class StudentProviderJ {
                         StudentBasic student = new StudentBasic(
                                 nombre, apeP, apeM, correo, matricula, activo, materiasPaths
                         );
+
                         callback.onSuccess(student);
 
                     } else {
