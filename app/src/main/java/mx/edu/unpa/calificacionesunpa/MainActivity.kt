@@ -154,7 +154,7 @@ class MainActivity : AppCompatActivity() {
 //    }
 
 
-    private fun handleSignIn(credential: Credential) {
+    //private fun handleSignIn(credential: Credential) {
         // Check if credential is of type Google ID
         //if (credential is CustomCredential && credential.type == TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
             // Create Google ID Token
@@ -164,7 +164,7 @@ class MainActivity : AppCompatActivity() {
             //firebaseAuthWithGoogle(googleIdTokenCredential.idToken)
         //} else {
            // Log.w(TAG, "Credential is not of type Google ID!")
-        }
+       // }
     //}
 
 }
