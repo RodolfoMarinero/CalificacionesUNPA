@@ -1,5 +1,5 @@
 package mx.edu.unpa.calificacionesunpa.ui.notificaciones;
-
+/*
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
@@ -69,3 +69,4 @@ public class FragmentNotificaciones extends Fragment {
         return rootView;
     }
 }
+*/

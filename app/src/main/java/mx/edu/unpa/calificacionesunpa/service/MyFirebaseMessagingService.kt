@@ -1,5 +1,5 @@
 package mx.edu.unpa.calificacionesunpa.service
-/*
+
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -12,8 +12,8 @@ import androidx.core.app.NotificationCompat
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import com.unpa.calificaciones.MainActivity
-import com.unpa.calificaciones.R
+import mx.edu.unpa.calificacionesunpa.MainActivity
+import mx.edu.unpa.calificacionesunpa.R
 import kotlin.apply
 import kotlin.jvm.java
 import kotlin.text.toBoolean
@@ -36,7 +36,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     private fun showNotification(title: String?, message: String?) {
         val channelId = "default_channel_id"
-        val notificationManager = ContextWrapper.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val cw = ContextWrapper(this)
+        val notificationManager = cw.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
@@ -48,7 +49,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         }
 
         val intent = Intent(this, MainActivity::class.java).apply {
-            Intent.setFlags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
         }
         val pendingIntent = PendingIntent.getActivity(
             this, 0, intent,
@@ -70,7 +71,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val db = FirebaseFirestore.getInstance()
         val matricula = UsuarioService.alumnoActual?.matricula
 
-        if (!esGlobal && matricula == null) return
+        if (!esGlobal && matricula.isNullOrEmpty()) {
+            Log.d("Firestore", "No se guarda notificación: usuario no autenticado")
+            return
+        }
 
         val notificacion = hashMapOf(
             "titulo" to titulo,
@@ -90,4 +94,3 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             }
     }
 }
-*/
