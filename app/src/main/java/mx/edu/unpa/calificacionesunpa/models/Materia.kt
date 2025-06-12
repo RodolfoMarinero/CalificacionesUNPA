@@ -15,6 +15,7 @@ class Materia() {
     var calificaciones: Calificacion = Calificacion()
     var ciclo: DocumentReference? = null
     var materia: String = ""
+    var examenes : DocumentReference? = null;
     var semestre: Int=-1;
 
     /** Constructor secundario para crear instancias manualmente */
@@ -23,13 +24,15 @@ class Materia() {
         calificacion: Calificacion,
         ciclo: DocumentReference?,
         materia: String,
-        semestre: Int
+        semestre: Int,
+        examenes : DocumentReference?
     ) : this() {
         this.activo = activo
         this.calificaciones = calificacion
         this.ciclo = ciclo
         this.materia = materia
         this.semestre = semestre
+        this.examenes = examenes
     }
 
     fun getPromedioParciales(): Double {

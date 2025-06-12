@@ -1,4 +1,4 @@
-/*package mx.edu.unpa.calificacionesunpa.ui.perfil;
+package mx.edu.unpa.calificacionesunpa.ui.perfil;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -7,15 +7,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toolbar;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.credentials.CredentialManager;
-import androidx.credentials.GetCredentialRequest;
-import androidx.credentials.exceptions.ClearCredentialException;
 import androidx.fragment.app.Fragment;
-import com.google.android.libraries.identity.googleid.GetGoogleIdOption;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.zxing.BarcodeFormat;
@@ -25,142 +21,57 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 import java.util.Locale;
 
 import mx.edu.unpa.calificacionesunpa.R;
-
 import mx.edu.unpa.calificacionesunpa.service.PromedioCalculatorService;
 
-class FragmentPerfil : Fragment() {
+public class FragmentPerfil extends Fragment {
 
-    private lateinit var tvNombre: TextView
-    private lateinit var tvMatricula: TextView
-    private lateinit var tvCarrera: TextView
-    private lateinit var tvPromedio: TextView
-    private lateinit var tvCodigoBarras: TextView
-    private lateinit var ivCodigoBarras: ImageView
-    private lateinit var auth: FirebaseAuth
-    private lateinit var credentialManager: CredentialManager
-    private val promedioCalculatorService = PromedioCalculatorService.INSTANCE
+    private TextView tvNombre, tvMatricula, tvCarrera, tvPromedio, tvCodigoBarras;
+    private ImageView ivCodigoBarras;
+    private PromedioCalculatorService promedioCalculatorService;
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        requireActivity().setTitle("Perfil del Alumno");
 
-    override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
-    ): View? {
-            val view = inflater.inflate(R.layout.fragment_perfil, container, false)
 
-            tvNombre = view.findViewById(R.id.tvNombre)
-            tvMatricula = view.findViewById(R.id.tvMatriculaPerfil)
-            tvCarrera = view.findViewById(R.id.tvCarreraPerfil)
-            tvPromedio = view.findViewById(R.id.tvPromedioPerfil)
-            ivCodigoBarras = view.findViewById(R.id.ivBarcode)
-            tvCodigoBarras = view.findViewById(R.id.tvBarcodeNumber)
+        View view = inflater.inflate(R.layout.fragment_perfil, container, false);
 
-            view.findViewById<MaterialButton>(R.id.btnVolver).setOnClickListener {
-            requireActivity().supportFragmentManager.popBackStack()
+        tvNombre = view.findViewById(R.id.tvNombre);
+        tvMatricula = view.findViewById(R.id.tvMatriculaPerfil);
+        tvCarrera = view.findViewById(R.id.tvCarreraPerfil);
+        tvPromedio = view.findViewById(R.id.tvPromedioPerfil);
+        ivCodigoBarras = view.findViewById(R.id.ivBarcode);
+        tvCodigoBarras = view.findViewById(R.id.tvBarcodeNumber);
+        MaterialButton btnVolver = view.findViewById(R.id.btnVolver);
+        btnVolver.setOnClickListener(v ->  {
+            requireActivity().getSupportFragmentManager().popBackStack();
+        });
+        promedioCalculatorService = PromedioCalculatorService.INSTANCE;
+        if (getArguments() != null) {
+            String nombre = getArguments().getString("nombre", "");
+            String matricula = getArguments().getString("matricula", "");
+            String carrera = getArguments().getString("carrera", "");
+            String promedio = getArguments().getString("promedio", "");
+
+            tvNombre.setText(nombre);
+            tvMatricula.setText(matricula);
+            tvCarrera.setText(carrera);
+            tvPromedio.setText(promedio);
+            tvCodigoBarras.setText(matricula);
+
+            generarCodigoBarras(matricula);
+        }
+        tvPromedio.setText(String.format("%.1f", promedioCalculatorService.getPromedioGeneral()));
+        return view;
     }
 
-            auth = FirebaseAuth.getInstance()
-            credentialManager = CredentialManager.create(requireActivity())
-
-            arguments?.let {
-        val nombre = it.getString("nombre", "")
-        val matricula = it.getString("matricula", "")
-        val carrera = it.getString("carrera", "")
-
-        tvNombre.text = nombre
-        tvMatricula.text = matricula
-        tvCarrera.text = carrera
-        tvCodigoBarras.text = matricula
-        generarCodigoBarras(matricula)
-    }
-
-    tvPromedio.text = String.format("%.1f", promedioCalculatorService.getPromedioGeneral())
-
-    return view
-    }
-
-    override fun onStart() {
-        super.onStart()
-        updateUI(auth.currentUser)
-    }
-
-    private fun generarCodigoBarras(texto: String) {
+    private void generarCodigoBarras(String texto) {
         try {
-            val encoder = BarcodeEncoder()
-            val bitmap = encoder.encodeBitmap(texto, BarcodeFormat.CODE_128, 600, 200)
-            ivCodigoBarras.setImageBitmap(bitmap)
-        } catch (e: WriterException) {
-            e.printStackTrace()
+            BarcodeEncoder encoder = new BarcodeEncoder();
+            Bitmap bitmap = encoder.encodeBitmap(texto, BarcodeFormat.CODE_128, 600, 200);
+            ivCodigoBarras.setImageBitmap(bitmap);
+        } catch (WriterException e) {
+            e.printStackTrace();
         }
-    }
-
-    fun callSignInGoogle(view: View) {
-        launchCredentialManager()
-    }
-
-    private fun launchCredentialManager() {
-        val googleIdOption = GetGoogleIdOption.Builder()
-                .setServerClientId(getString(R.string.default_web_client_id))
-                .setFilterByAuthorizedAccounts(false)
-                .build()
-
-        val request = GetCredentialRequest.Builder()
-                .addCredentialOption(googleIdOption)
-                .build()
-
-        lifecycleScope.launch {
-            try {
-                val result = credentialManager.getCredential(requireActivity(), request)
-                handleSignIn(result.credential)
-            } catch (e: GetCredentialException) {
-                Log.e(TAG, "Error obteniendo credenciales: ${e.localizedMessage}")
-            }
-        }
-    }
-
-    private fun handleSignIn(credential: Credential) {
-        if (credential is CustomCredential && credential.type == TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
-            val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
-            firebaseAuthWithGoogle(googleIdTokenCredential.idToken)
-        } else {
-            Log.w(TAG, "Credential no es de tipo Google ID")
-        }
-    }
-
-    private fun firebaseAuthWithGoogle(idToken: String) {
-        val credential = GoogleAuthProvider.getCredential(idToken, null)
-        auth.signInWithCredential(credential)
-                .addOnCompleteListener(requireActivity()) { task ->
-            if (task.isSuccessful) {
-                updateUI(auth.currentUser)
-            } else {
-                Log.w(TAG, "Fallo al autenticar", task.exception)
-                updateUI(null)
-            }
-        }
-    }
-
-    fun callSignOut(view: View) {
-        signOut()
-    }
-
-    private fun signOut() {
-        auth.signOut()
-        lifecycleScope.launch {
-            try {
-                val clearRequest = ClearCredentialStateRequest()
-                credentialManager.clearCredentialState(clearRequest)
-                updateUI(null)
-            } catch (e: ClearCredentialException) {
-                Log.e(TAG, "No se pudieron limpiar las credenciales: ${e.localizedMessage}")
-            }
-        }
-    }
-
-    private fun updateUI(user: FirebaseUser?) {
-        // Implementar lógica de UI cuando el usuario cambia
-    }
-
-    companion object {
-        private const val TAG = "FragmentPerfil"
     }
 }
-*/

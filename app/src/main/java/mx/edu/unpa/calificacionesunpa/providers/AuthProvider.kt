@@ -11,11 +11,11 @@ import com.google.firebase.firestore.FirebaseFirestore
 class AuthProvider {
     val auth: FirebaseAuth = FirebaseAuth.getInstance()
 
-    fun register(email: String, pass: String): Task<AuthResult>{
+    fun register(email: String, pass: String): Task<AuthResult> {
         return auth.createUserWithEmailAndPassword(email,pass)
     }
 
-    fun login(email: String, pass: String): Task<AuthResult>{
+    fun login(email: String, pass: String): Task<AuthResult> {
         return auth.signInWithEmailAndPassword(email,pass)
     }
 
