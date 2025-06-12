@@ -23,45 +23,58 @@
                 android:id="@+id/txtTituloNotificaciones"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="24dp"
                 android:text="Notificaciones"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="16dp" />
+                android:textSize="50sp"
+                android:textStyle="bold|italic"
+                android:textColor="#8B0000"/>
 
             <!-- Pregunta -->
             <TextView
                 android:id="@+id/txtPreguntaEnvio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="24dp"
                 android:text="¿A quién desea enviar la notificación?"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:layout_marginBottom="8dp" />
+                android:textSize="23sp"
+                android:textStyle="bold|italic"
+                android:textColor="#00008B"/>
 
             <!-- Radios -->
             <RadioGroup
                 android:id="@+id/radioGroup"
-                android:orientation="horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_width="341dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
                 <RadioButton
                     android:id="@+id/radioIndividual"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Individual" />
+                    android:layout_width="113dp"
+                    android:layout_height="48dp"
+                    android:text="Individual"
+                    android:textColor="#000000"
+                    android:textSize="15sp"
+                    android:textStyle="bold|italic" />
 
                 <RadioButton
                     android:id="@+id/radioCiertos"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Ciertos alumnos" />
+                    android:layout_width="156dp"
+                    android:layout_height="48dp"
+                    android:text="Ciertos alumnos"
+                    android:textColor="#000000"
+                    android:textSize="15sp"
+                    android:textStyle="bold|italic" />
 
                 <RadioButton
                     android:id="@+id/radioTodos"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Todos" />
+                    android:layout_height="48dp"
+                    android:text="Todos"
+                    android:textColor="#000000"
+                    android:textSize="15sp"
+                    android:textStyle="bold|italic" />
             </RadioGroup>
 
             <!-- Layout para Individual -->
@@ -132,20 +145,20 @@
             <!-- Campos comunes -->
             <EditText
                 android:id="@+id/inputTitulo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Título"
-                android:layout_marginTop="16dp" />
+                android:layout_width="378dp"
+                android:layout_height="58dp"
+                android:layout_marginTop="28dp"
+                android:hint="Título" />
 
             <EditText
                 android:id="@+id/inputMensaje"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Mensaje"
-                android:layout_marginTop="8dp"
-                android:minLines="3"
+                android:layout_width="374dp"
+                android:layout_height="98dp"
+                android:layout_marginTop="15dp"
                 android:gravity="top"
-                android:inputType="textMultiLine" />
+                android:hint="Mensaje"
+                android:inputType="textMultiLine"
+                android:minLines="3" />
 
             <Button
                 android:id="@+id/btnEnviar"
