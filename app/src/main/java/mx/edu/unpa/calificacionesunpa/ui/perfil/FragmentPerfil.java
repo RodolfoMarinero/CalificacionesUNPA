@@ -10,16 +10,22 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import com.google.android.material.button.MaterialButton;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
+
+import java.util.Locale;
+
 import mx.edu.unpa.calificacionesunpa.R;
+import mx.edu.unpa.calificacionesunpa.service.PromedioCalculatorService;
 
 public class FragmentPerfil extends Fragment {
 
     private TextView tvNombre, tvMatricula, tvCarrera, tvPromedio, tvCodigoBarras;
     private ImageView ivCodigoBarras;
-
+    private PromedioCalculatorService promedioCalculatorService;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -31,7 +37,11 @@ public class FragmentPerfil extends Fragment {
         tvPromedio = view.findViewById(R.id.tvPromedioPerfil);
         ivCodigoBarras = view.findViewById(R.id.ivBarcode);
         tvCodigoBarras = view.findViewById(R.id.tvBarcodeNumber);
-
+        MaterialButton btnVolver = view.findViewById(R.id.btnVolver);
+        btnVolver.setOnClickListener(v ->  {
+            requireActivity().getSupportFragmentManager().popBackStack();
+        });
+        promedioCalculatorService = PromedioCalculatorService.INSTANCE;
         if (getArguments() != null) {
             String nombre = getArguments().getString("nombre", "");
             String matricula = getArguments().getString("matricula", "");
@@ -46,7 +56,7 @@ public class FragmentPerfil extends Fragment {
 
             generarCodigoBarras(matricula);
         }
-
+        tvPromedio.setText(String.format("%.1f", promedioCalculatorService.getPromedioGeneral()));
         return view;
     }
 

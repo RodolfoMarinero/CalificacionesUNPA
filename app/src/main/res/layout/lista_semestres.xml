@@ -1,0 +1,27 @@
+<LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/semestreTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#63A495"
+        android:textColor="#FFFFFF"
+        android:padding="16dp"
+        android:text="Ciclos Escolares"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        app:layoutManager="LinearLayoutManager"
+        tools:context=".ui.dd.SelectorSemestre"
+        tools:listitem="@layout/semestre_item" />
+</LinearLayout>

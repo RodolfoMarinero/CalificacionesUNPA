@@ -1,9 +1,13 @@
 package mx.edu.unpa.calificacionesunpa
 
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.TextView
 import androidx.annotation.NonNull
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.navigation.NavigationView
@@ -15,6 +19,8 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.ui.NavigationUI
+import com.google.android.material.button.MaterialButton
+import com.google.firebase.messaging.FirebaseMessaging
 import mx.edu.unpa.calificacionesunpa.databinding.ActivityMainBinding
 import mx.edu.unpa.calificacionesunpa.providers.AuthProvider
 import mx.edu.unpa.calificacionesunpa.ui.calificacionesanteriores.FragmentCalificacionesAnteriores
@@ -40,12 +46,16 @@ class MainActivity : AppCompatActivity() {
         val drawerLayout: DrawerLayout   = binding.drawerLayout
         val navView: NavigationView       = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_content_main)
-
-        // Navegación desde Login
-        intent.getStringExtra("navigateTo")?.let { destino ->
-            if (destino == "calificaciones") {
-                navController.navigate(R.id.nav_calificaciones_anteriores)
+        solicitarPermisoNotificaciones()
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w("FCM", "Fetching FCM registration token failed", task.exception)
+                return@addOnCompleteListener
             }
+
+            // Obtener el token FCM
+            val token = task.result
+            Log.d("FCM", "Token FCM: $token")
         }
 
         // ① Defino los destinos top‑level de mi Drawer
@@ -60,6 +70,9 @@ class MainActivity : AppCompatActivity() {
 
         // ② Conecto la Toolbar con NavController + AppBarConfig
         setupActionBarWithNavController(navController, appBarConfiguration)
+
+        // Cambiar color del ícono hamburguesa a negro
+        binding.appBarMain.toolbar.navigationIcon?.setTint(resources.getColor(android.R.color.black, theme))
 
         // ③ Conecto el NavigationView con NavController
         navView.setupWithNavController(navController)
@@ -79,9 +92,17 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
     }
 
-
+    private fun solicitarPermisoNotificaciones() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) !=
+                PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 1001)
+            }
+        }
+    }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.main, menu)

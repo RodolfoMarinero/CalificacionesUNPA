@@ -14,12 +14,12 @@
 
 <ImageView
 android:id="@+id/imageView"
-android:layout_width="72dp"
-android:layout_height="72dp"
+android:layout_width="120dp"
+android:layout_height="120dp"
 android:contentDescription="@string/nav_header_desc"
 android:layout_gravity="center_horizontal"
 android:paddingTop="@dimen/nav_header_vertical_spacing"
-app:srcCompat="@drawable/ic_perfil" />
+app:srcCompat="@drawable/he_logo_unpa" />
 
 <TextView
 android:layout_width="match_parent"

@@ -1,5 +1,5 @@
 [versions]
-agp = "8.9.1"
+agp = "8.9.0"
 kotlin = "2.0.21"
 coreKtx = "1.10.1"
 junit = "4.13.2"
@@ -17,6 +17,7 @@ googleGmsGoogleServices = "4.4.2"
 firebaseAuth = "23.2.0"
 datastoreCoreAndroid = "1.1.4"
 playServicesGcm = "17.0.0"
+lottieVersion="6.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -33,6 +34,7 @@ androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation
 androidx-cardview = { group = "androidx.cardview", name = "cardview", version.ref = "cardview" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
 androidx-datastore-core-android = { group = "androidx.datastore", name = "datastore-core-android", version.ref = "datastoreCoreAndroid" }
+lottie = { group = "com.airbnb.android", name = "lottie", version.ref = "lottieVersion" }
 play-services-gcm = { group = "com.google.android.gms", name = "play-services-gcm", version.ref = "playServicesGcm" }
 
 [plugins]
