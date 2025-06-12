@@ -12,17 +12,13 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.google.firebase.auth.FirebaseAuth;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseNetworkException;
 
-import java.util.Objects;
-
 import kotlin.Unit;
-import kotlin.jvm.internal.Intrinsics;
 import mx.edu.unpa.calificacionesunpa.MainActivity;
 import mx.edu.unpa.calificacionesunpa.R;
 import mx.edu.unpa.calificacionesunpa.fragments.LoadingFragment;
@@ -53,9 +49,9 @@ public class LoginActivity extends AppCompatActivity {
 
         // Cambiar el id en el layout a et_matricula para mayor claridad,
         // pero si no lo cambias, sigue usando R.id.et_correo aquí:
-        etMatricula     = findViewById(R.id.et_correo);
-        etPassword      = findViewById(R.id.txtPassword);
-        btnLogin        = findViewById(R.id.btnLogin);
+        etMatricula     = findViewById(R.id.cp_txtConfirmPassword);
+        etPassword      = findViewById(R.id.cp_txtPassword);
+        btnLogin        = findViewById(R.id.cp_changepass);
         btnRegistro     = findViewById(R.id.btnRegistro);
         tvForgotPassword= findViewById(R.id.btnRecuperar_contrasena);
 

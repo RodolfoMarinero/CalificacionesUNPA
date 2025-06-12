@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Button
 import android.widget.TextView
 import androidx.annotation.NonNull
 import com.google.android.material.snackbar.Snackbar
@@ -38,7 +39,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         authProvider = AuthProvider()
-
 
         setSupportActionBar(binding.appBarMain.toolbar)
         supportActionBar?.title = "UNIVERSIDAD DEL PAPALOAPAN"
