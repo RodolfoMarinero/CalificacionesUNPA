@@ -23,6 +23,10 @@
             android:name=".notificaciones_escolares"
             android:exported="false" />
         <activity
+            android:name=".providers.UsuarioProvider"
+            android:exported="false" />
+        <activity android:name=".ui.changePass.ChangePassword" /> <!-- Actividad de Login -->
+        <activity
             android:name=".ui.login.LoginActivity"
             android:exported="true"
             android:label="CalificaionesUNPA"

@@ -55,7 +55,7 @@
                 android:layout_marginBottom="16dp" />
 
             <EditText
-                android:id="@+id/et_correo"
+                android:id="@+id/cp_txtConfirmPassword"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:hint="Matricula"
@@ -65,7 +65,7 @@
                 android:textColor="#000" />
 
             <EditText
-                android:id="@+id/txtPassword"
+                android:id="@+id/cp_txtPassword"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:hint="Contraseña"
@@ -76,7 +76,7 @@
                 android:textColor="#000" />
 
             <Button
-                android:id="@+id/btnLogin"
+                android:id="@+id/cp_changepass"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:text="Iniciar sesión"
@@ -94,6 +94,7 @@
                 android:layout_marginTop="16dp"
                 android:layout_gravity="center_horizontal"
                 android:clickable="true" />
+
         </LinearLayout>
 
         <!-- Botón para crear cuenta -->
