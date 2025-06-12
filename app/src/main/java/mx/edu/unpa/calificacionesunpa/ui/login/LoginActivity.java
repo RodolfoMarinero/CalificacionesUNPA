@@ -29,6 +29,7 @@ import mx.edu.unpa.calificacionesunpa.fragments.LoadingFragment;
 import mx.edu.unpa.calificacionesunpa.providers.AlumnoProvider;
 import mx.edu.unpa.calificacionesunpa.providers.AuthProvider;
 import mx.edu.unpa.calificacionesunpa.service.UsuarioService;
+import mx.edu.unpa.calificacionesunpa.ui.perfil.FragmentPerfilN;
 import mx.edu.unpa.calificacionesunpa.ui.recuperarContrasena.RecuperarContrasena;
 //import mx.edu.unpa.calificacionesunpa.ui.register.Register;
 
@@ -42,6 +43,8 @@ public class LoginActivity extends AppCompatActivity {
     private AuthProvider authProvider;
     private AlumnoProvider alumnoProvider;
     private UsuarioService usuarioService = UsuarioService.INSTANCE;
+
+    private FragmentPerfilN fragmentPerfilN;
     private LoadingFragment loadingFragment;
     private boolean isFragmentVisible = false;
     @Override
@@ -171,5 +174,9 @@ public class LoginActivity extends AppCompatActivity {
                     .commit();
             loadingFragment = null;
         }
+    }
+
+    public void loginGoogle(View view){
+        fragmentPerfilN.launchCredentialManager();
     }
 }

@@ -148,13 +148,13 @@
             android:id="@+id/tvGoogle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Conectar con google"
-            android:textStyle="bold"
-            android:textSize="14sp"
-            android:textColor="#000000"
-            android:gravity="center"
+            android:layout_marginStart="4dp"
             android:background="@drawable/bg_button_google"
-            android:layout_marginStart="4dp"/>
+            android:gravity="center"
+            android:text="Asociar con google"
+            android:textColor="#000000"
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
 
         <!-- Código de barras -->
@@ -166,7 +166,7 @@
             android:layout_marginStart="4dp"
             android:background="@drawable/bg_button_google"
             android:gravity="center"
-            android:text="Conectar con facebook"
+            android:text="Asociar con facebook"
             android:textColor="#000000"
             android:textSize="14sp"
             android:textStyle="bold" />

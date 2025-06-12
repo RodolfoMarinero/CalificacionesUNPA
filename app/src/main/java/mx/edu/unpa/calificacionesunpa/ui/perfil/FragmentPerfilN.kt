@@ -82,7 +82,6 @@ class FragmentPerfilN : Fragment() {
         button.setOnClickListener {
             // Tu acción aquí
             callSignInGoogle(view);
-            //Toast.makeText(requireContext(), "Click desde el Fragment", Toast.LENGTH_SHORT).show()
         }
         return view
     }
@@ -106,7 +105,7 @@ class FragmentPerfilN : Fragment() {
         launchCredentialManager()
     }
 
-    private fun launchCredentialManager() {
+    fun launchCredentialManager() {
         val googleIdOption = GetGoogleIdOption.Builder()
             .setServerClientId(getString(R.string.default_web_client_id))
             .setFilterByAuthorizedAccounts(false)
