@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!-- Botón para regresar -->
+    <!-- Botón para regresar
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnVolver"
         android:layout_width="54dp"
@@ -18,8 +18,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
-
-
+    -->
     <!-- Fondo general con gradiente -->
     <ScrollView
         android:layout_width="match_parent"
@@ -33,9 +32,6 @@
             android:orientation="vertical"
             android:layout_marginTop="60dp"
             android:gravity="center_horizontal">
-
-
-
 
             <!-- Título centrado -->
             <TextView

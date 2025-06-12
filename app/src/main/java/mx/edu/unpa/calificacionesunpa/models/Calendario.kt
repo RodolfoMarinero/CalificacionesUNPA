@@ -1,13 +1,17 @@
 package mx.edu.unpa.calificacionesunpa.models
 
+import com.google.firebase.firestore.IgnoreExtraProperties
 
+@IgnoreExtraProperties
 data class Calendario(
-    val materia: String,
-    val primerParcial: String,
-    val segundoParcial: String,
-    val tercerParcial: String,
-    val ordinario: String,
-    val extra1: String,
-    val extra2: String,
-    val especial: String
+    @Transient
+    val materia: String = "",
+    val e1: String = "",
+    val e2: String = "",
+    val esp: String = "",
+    val f: String = "",
+    val p1: String = "",
+    val p2: String = "",
+    val p3: String = "",
+    val plan: String = "",
 )

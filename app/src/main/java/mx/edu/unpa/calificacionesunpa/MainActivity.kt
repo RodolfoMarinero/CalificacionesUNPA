@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_home,
                 R.id.nav_calificaciones_anteriores,
                 R.id.nav_notificaciones,
-                R.id.nav_examenes
+                R.id.nav_calendarioExamen
             ),
             drawerLayout
         )
