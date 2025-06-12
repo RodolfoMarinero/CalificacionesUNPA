@@ -25,4 +25,8 @@
 
     <string name="txtTitulo">Notificación</string>
     <string name="txtAquien">Seleccione a quien va dirigida la notificación:</string>
+
+    <string name="cboCarrera">Selecciona Carrera</string>
+    <string name="cboSemestre">Selecciona Semestre</string>
+    <string name="cboAlumno">Selecciona Alumno</string>
 </resources>
