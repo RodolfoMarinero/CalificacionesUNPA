@@ -191,7 +191,7 @@
 
             <!-- Tipo de calificación -->
 
-        <!-- Promedio general -->
+        <!-- Promedio general
         <TextView
             android:id="@+id/txtPromedioGeneral"
             android:layout_width="wrap_content"
@@ -203,7 +203,7 @@
             android:visibility="gone"
             android:layout_marginTop="16dp"
             android:layout_gravity="center" />
-
+-->
             <Button
                 android:id="@+id/btnDescargarPdf"
                 android:layout_width="wrap_content"

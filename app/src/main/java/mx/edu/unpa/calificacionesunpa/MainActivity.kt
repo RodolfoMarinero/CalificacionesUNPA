@@ -63,7 +63,8 @@ class MainActivity : AppCompatActivity() {
             setOf(
                 R.id.nav_home,
                 R.id.nav_calificaciones_anteriores,
-                R.id.nav_notificaciones
+                R.id.nav_notificaciones,
+                R.id.nav_calendarioExamen
             ),
             drawerLayout
         )

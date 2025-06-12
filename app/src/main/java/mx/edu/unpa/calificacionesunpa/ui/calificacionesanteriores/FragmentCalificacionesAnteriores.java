@@ -128,16 +128,8 @@ public class FragmentCalificacionesAnteriores extends Fragment {
         promedioCalculatorService = PromedioCalculatorService.INSTANCE;
         // 4) Traer alumno básico
         alumnoActual = usuarioService.getAlumnoActual();
-
-        if (alumnoActual == null) {
-            Log.e(TAG, "❌ alumnoActual es null");
-            Toast.makeText(requireContext(), "No se encontró información del alumno.", Toast.LENGTH_LONG).show();
-            return new FrameLayout(requireContext()); // evitar inflar vista rota
-        }
-
         todasMaterias = alumnoActual.getMaterias();
         promedioCalculatorService.calcularPromedioGeneral(todasMaterias);
-
         txtMatricula.setText(alumnoActual.getMatricula());
         nombre=alumnoActual.getNombre()+" "+alumnoActual.getApPaterno()+" "+alumnoActual.getApMaterno();
         carrera=alumnoActual.getNombreCarrera();
