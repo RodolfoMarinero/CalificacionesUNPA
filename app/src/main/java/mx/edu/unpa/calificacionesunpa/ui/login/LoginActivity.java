@@ -28,6 +28,7 @@ import mx.edu.unpa.calificacionesunpa.R;
 import mx.edu.unpa.calificacionesunpa.fragments.LoadingFragment;
 import mx.edu.unpa.calificacionesunpa.providers.AlumnoProvider;
 import mx.edu.unpa.calificacionesunpa.providers.AuthProvider;
+import mx.edu.unpa.calificacionesunpa.providers.NotificacionProvider;
 import mx.edu.unpa.calificacionesunpa.service.UsuarioService;
 import mx.edu.unpa.calificacionesunpa.ui.recuperarContrasena.RecuperarContrasena;
 //import mx.edu.unpa.calificacionesunpa.ui.register.Register;
@@ -42,6 +43,8 @@ public class LoginActivity extends AppCompatActivity {
     private AuthProvider authProvider;
     private AlumnoProvider alumnoProvider;
     private UsuarioService usuarioService = UsuarioService.INSTANCE;
+    private NotificacionProvider notificacionProvider;
+
     private LoadingFragment loadingFragment;
     private boolean isFragmentVisible = false;
     @Override
@@ -87,10 +90,12 @@ public class LoginActivity extends AppCompatActivity {
                             etPassword.setText("");
                             //solicita el alumno
                             alumnoProvider = new AlumnoProvider();
+                            notificacionProvider = new NotificacionProvider();
                             alumnoProvider.obtenerAlumnoConMateriasDeUsuario(
                                     authProvider.getId(),
                                     alumno -> {
                                         usuarioService.setAlumnoActual(alumno);
+                                        notificacionProvider.cargarNotificacionesDesdeFirestore();
                                         hideLoadingFragment();
                                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                         intent.putExtra("navigateTo", "calificaciones");
