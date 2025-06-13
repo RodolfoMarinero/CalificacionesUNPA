@@ -1,11 +1,12 @@
 package mx.edu.unpa.calificacionesunpa.ui.perfil
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.credentials.ClearCredentialStateRequest
@@ -29,6 +30,7 @@ import com.google.zxing.WriterException
 import com.journeyapps.barcodescanner.BarcodeEncoder
 import kotlinx.coroutines.launch
 import mx.edu.unpa.calificacionesunpa.R
+import mx.edu.unpa.calificacionesunpa.providers.AuthProvider
 import mx.edu.unpa.calificacionesunpa.service.PromedioCalculatorService
 
 class FragmentPerfilN : Fragment() {
@@ -40,8 +42,12 @@ class FragmentPerfilN : Fragment() {
     private lateinit var tvCodigoBarras: TextView
     private lateinit var ivCodigoBarras: ImageView
     private lateinit var auth: FirebaseAuth
+    private lateinit var authProvider: AuthProvider
     private lateinit var credentialManager: CredentialManager
     private val promedioCalculatorService = PromedioCalculatorService
+    private  lateinit var userGoogle: FirebaseUser
+    var loginGoogle: Boolean = false
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,6 +65,7 @@ class FragmentPerfilN : Fragment() {
         view.findViewById<MaterialButton>(R.id.btnVolver).setOnClickListener {
             requireActivity().supportFragmentManager.popBackStack()
         }
+        authProvider = AuthProvider()
 
         auth = FirebaseAuth.getInstance()
         credentialManager = CredentialManager.create(requireActivity())
@@ -125,7 +132,7 @@ class FragmentPerfilN : Fragment() {
         }
     }
 
-    private fun handleSignIn(credential: Credential) {
+     fun handleSignIn(credential: Credential) {
         if (credential is CustomCredential && credential.type == TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
             val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
             firebaseAuthWithGoogle(googleIdTokenCredential.idToken)
@@ -134,7 +141,7 @@ class FragmentPerfilN : Fragment() {
         }
     }
 
-    private fun firebaseAuthWithGoogle(idToken: String) {
+     fun firebaseAuthWithGoogle(idToken: String) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
         auth.signInWithCredential(credential)
             .addOnCompleteListener(requireActivity()) { task ->
@@ -164,10 +171,20 @@ class FragmentPerfilN : Fragment() {
         }
     }
 
-    private fun updateUI(user: FirebaseUser?) {
-        // Implementar lógica de UI cuando el usuario cambia
+    fun updateUI(user: FirebaseUser?) {
+        val sharedPref: SharedPreferences = requireActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        if(user != null) {
+            val uid = user.uid
+            val email = user.email
 
+            Log.d("FirebaseUser", "Email: $email")
+           // userGoogle = user
+            with(sharedPref.edit()){
+                putBoolean("accesoConGoogle",true).commit()
+            }
+        }
     }
+
 
     companion object {
         private const val TAG = "FragmentPerfil"
