@@ -20,6 +20,9 @@
         android:theme="@style/Theme.CalificacionesUNPA"
         tools:targetApi="31">
         <activity
+            android:name=".notificaciones_escolares"
+            android:exported="false" />
+        <activity
             android:name=".providers.UsuarioProvider"
             android:exported="false" />
         <activity android:name=".ui.changePass.ChangePassword" /> <!-- Actividad de Login -->
