@@ -66,7 +66,7 @@
                 android:textColor="#000" />
 
             <EditText
-                android:id="@+id/et_correo"
+                android:id="@+id/cp_txtConfirmPassword"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:hint="Correo electrónico"
