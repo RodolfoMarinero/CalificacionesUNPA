@@ -178,10 +178,13 @@ class FragmentPerfilN : Fragment() {
             val email = user.email
 
             Log.d("FirebaseUser", "Email: $email")
-           // userGoogle = user
-            with(sharedPref.edit()){
-                putBoolean("accesoConGoogle",true).commit()
+
+            if(!email.toString().endsWith("@unpaLoma")){
+                with(sharedPref.edit()){
+                    putBoolean("accesoConGoogle",true).commit()
+                }
             }
+
         }
     }
 
