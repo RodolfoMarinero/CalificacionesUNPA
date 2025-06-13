@@ -69,4 +69,8 @@ dependencies {
     implementation("com.google.firebase:firebase-messaging")
     implementation("com.google.firebase:firebase-analytics")
 
+
+    implementation("com.google.firebase:firebase-storage-ktx")
+
+    implementation("com.github.mhiew:android-pdf-viewer:3.2.0-beta.3")
 }

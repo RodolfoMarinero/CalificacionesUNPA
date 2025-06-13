@@ -37,6 +37,7 @@ firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version
 androidx-datastore-core-android = { group = "androidx.datastore", name = "datastore-core-android", version.ref = "datastoreCoreAndroid" }
 play-services-gcm = { group = "com.google.android.gms", name = "play-services-gcm", version.ref = "playServicesGcm" }
 lottie = { group = "com.airbnb.android", name = "lottie", version.ref = "lottieVersion" }
+play-services-gcm = { group = "com.google.android.gms", name = "play-services-gcm", version.ref = "playServicesGcm" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 
 [plugins]

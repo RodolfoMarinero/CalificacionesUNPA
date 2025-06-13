@@ -59,4 +59,10 @@
         android:name="mx.edu.unpa.calificacionesunpa.ui.calendario.CalendarioFragment"
         android:label="Examenes"
         tools:layout="@layout/calendario_examenes"/>
+
+    <fragment
+        android:id="@+id/nav_calendarioEscolar"
+        android:name="mx.edu.unpa.calificacionesunpa.ui.calendarioescolar.FragmentCalendarioEscolar"
+        android:label="Calendario Escolar"
+        tools:layout="@layout/fragment_calendario_escolar" />
 </navigation>
