@@ -2,6 +2,7 @@ package mx.edu.unpa.calificacionesunpa.ui.login;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -12,11 +13,15 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.view.View;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseNetworkException;
+import com.google.firebase.auth.FirebaseUser;
 
 import kotlin.Unit;
 import mx.edu.unpa.calificacionesunpa.MainActivity;
@@ -25,6 +30,7 @@ import mx.edu.unpa.calificacionesunpa.fragments.LoadingFragment;
 import mx.edu.unpa.calificacionesunpa.providers.AlumnoProvider;
 import mx.edu.unpa.calificacionesunpa.providers.AuthProvider;
 import mx.edu.unpa.calificacionesunpa.service.UsuarioService;
+import mx.edu.unpa.calificacionesunpa.ui.perfil.FragmentPerfilN;
 import mx.edu.unpa.calificacionesunpa.ui.recuperarContrasena.RecuperarContrasena;
 //import mx.edu.unpa.calificacionesunpa.ui.register.Register;
 
@@ -38,7 +44,13 @@ public class LoginActivity extends AppCompatActivity {
     private AuthProvider authProvider;
     private AlumnoProvider alumnoProvider;
     private UsuarioService usuarioService = UsuarioService.INSTANCE;
+
+    private FirebaseUser userGoogle;
+
+    private FragmentPerfilN fragmentPerfilN;
     private LoadingFragment loadingFragment;
+
+
     private boolean isFragmentVisible = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +68,8 @@ public class LoginActivity extends AppCompatActivity {
         tvForgotPassword= findViewById(R.id.btnRecuperar_contrasena);
 
         authProvider = new AuthProvider();
+
+
 
         btnLogin.setOnClickListener(v -> {
             if (!isValidateForm()) return;
@@ -122,6 +136,23 @@ public class LoginActivity extends AppCompatActivity {
         tvForgotPassword.setOnClickListener(v ->
                 startActivity(new Intent(LoginActivity.this, RecuperarContrasena.class))
         );
+
+        //Button button = findViewById(R.id.btnGoogle);
+        validarGoogle();
+
+    }
+
+
+    public void validarGoogle(){
+        Button button = findViewById(R.id.btnGoogle);
+        SharedPreferences sharedPref = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+
+        if(sharedPref.contains("accesoConGoogle")){
+            boolean acceso= sharedPref.getBoolean(("accesoConGoogle"),false);
+            button.setEnabled(acceso);
+        }else{
+            button.setEnabled(false); // Esto desactiva el botón
+        }
     }
 
     private boolean isValidateForm() {
@@ -168,4 +199,15 @@ public class LoginActivity extends AppCompatActivity {
             loadingFragment = null;
         }
     }
+
+    public void loginGoogle(View view) {
+        Toast.makeText(this,
+                "Entró",
+                Toast.LENGTH_SHORT).show();
+    }
+
+    /*public void googleAccountExists(){
+        if(userGoogle.getEmail())
+    }*/
+
 }

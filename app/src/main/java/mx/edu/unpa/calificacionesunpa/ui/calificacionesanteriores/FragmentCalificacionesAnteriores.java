@@ -22,7 +22,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.lifecycle.Observer;
-
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.DocumentReference;
 
@@ -52,7 +51,7 @@ import mx.edu.unpa.calificacionesunpa.models.Materia;
 import mx.edu.unpa.calificacionesunpa.service.PromedioCalculatorService;
 import mx.edu.unpa.calificacionesunpa.service.UsuarioService;
 import mx.edu.unpa.calificacionesunpa.ui.dd.SelectorSemestre;
-import mx.edu.unpa.calificacionesunpa.ui.perfil.FragmentPerfil;
+import mx.edu.unpa.calificacionesunpa.ui.perfil.FragmentPerfilN;
 
 public class FragmentCalificacionesAnteriores extends Fragment {
     private static final String TAG = "CalifFrag";
@@ -108,7 +107,7 @@ public class FragmentCalificacionesAnteriores extends Fragment {
             bundle.putString("promedio", txtPromedioGeneral.getText().toString().replace("Promedio: ", ""));
             bundle.putString("codigo", txtMatricula.getText().toString());
 
-            FragmentPerfil fragment = new FragmentPerfil();
+            FragmentPerfilN fragment = new FragmentPerfilN();
             fragment.setArguments(bundle);
 
             requireActivity()
@@ -247,7 +246,7 @@ public class FragmentCalificacionesAnteriores extends Fragment {
                 filtradas.add(m);
             }
         }
-
+        
         Log.d(TAG, "Materias filtradas por ciclo: " + filtradas.size());
         if (filtradas.isEmpty()) {
             Toast.makeText(requireContext(),
