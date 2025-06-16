@@ -1,6 +1,7 @@
 package mx.edu.unpa.calificacionesunpa
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -195,7 +196,7 @@ class notificaciones_escolares : AppCompatActivity() {
             }
     }
 
-    private fun cargarAlumnos(spinner: Spinner, carrera: String, ciclo: String) {
+    /*private fun cargarAlumnos(spinner: Spinner, carrera: String, ciclo: String) {
         db.collection("alumnos")
             .whereEqualTo("carrera", carrera)
             .whereEqualTo("ciclo", ciclo)
@@ -203,6 +204,24 @@ class notificaciones_escolares : AppCompatActivity() {
             .addOnSuccessListener { result ->
                 val nombres = result.mapNotNull { it.getString("nombre") }
                 spinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, nombres)
+            }
+    }*/
+
+    private fun cargarAlumnos(spinner: Spinner, carrera: String, ciclo: String) {
+        val context = spinner.context  // Contexto seguro para el ArrayAdapter
+
+        db.collection("alumnos")
+            .whereEqualTo("carrera", carrera)
+            .whereEqualTo("ciclo", ciclo)
+            .get()
+            .addOnSuccessListener { result ->
+                val nombres = result.documents.mapNotNull { it.getString("nombre") }
+                val adapter = ArrayAdapter(context, android.R.layout.simple_spinner_dropdown_item, nombres)
+                spinner.adapter = adapter
+            }
+            .addOnFailureListener { e ->
+                Log.e("Firestore", "Error al cargar alumnos", e)
+                Toast.makeText(context, "Error al cargar alumnos", Toast.LENGTH_SHORT).show()
             }
     }
 }
