@@ -23,17 +23,26 @@ class notificaciones_escolares : AppCompatActivity() {
     private lateinit var radioIndividual: RadioButton
     private lateinit var radioCiertos: RadioButton
     private lateinit var radioTodos: RadioButton
-    private lateinit var inputMatricula: EditText
+
+    private lateinit var inputMatriculaIndividual: EditText
+    private lateinit var inputMatriculaCiertos: EditText
+
     private lateinit var inputTitulo: EditText
     private lateinit var inputMensaje: EditText
+
     private lateinit var layoutMatricula: LinearLayout
     private lateinit var layoutCiertos: LinearLayout
-    private lateinit var spinnerCarrera: Spinner
-    private lateinit var spinnerSemestre: Spinner
-    private lateinit var spinnerNombres: Spinner
+
+    private lateinit var btnAgregarMatricula: Button
+   //DESCOMENTAR private lateinit var recyclerMatriculas: RecyclerView
+
     private lateinit var btnEnviar: Button
 
     private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
+
+    // Lista mutable para guardar las matrículas agregadas
+    private val listaMatriculas = mutableListOf<String>()
+   //DESCOMENTAR private lateinit var adapterMatriculas: MatriculaAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,17 +52,32 @@ class notificaciones_escolares : AppCompatActivity() {
         radioIndividual = findViewById(R.id.radioIndividual)
         radioCiertos = findViewById(R.id.radioCiertos)
         radioTodos = findViewById(R.id.radioTodos)
-        inputMatricula = findViewById(R.id.inputMatricula)
+
+        inputMatriculaIndividual = findViewById(R.id.inputMatricula)
+        inputMatriculaCiertos = findViewById(R.id.inputMatriculaCiertos)
+
         inputTitulo = findViewById(R.id.inputTitulo)
         inputMensaje = findViewById(R.id.inputMensaje)
+
         layoutMatricula = findViewById(R.id.layoutMatricula)
         layoutCiertos = findViewById(R.id.layoutCiertos)
-        spinnerCarrera = findViewById(R.id.spinnerCarrera)
-        spinnerSemestre = findViewById(R.id.spinnerSemestre)
-        spinnerNombres = findViewById(R.id.spinnerNombres)
+
+        btnAgregarMatricula = findViewById(R.id.btnAgregarMatricula)
+       //DESCOMENTAR recyclerMatriculas = findViewById(R.id.recyclerMatriculas)
+
         btnEnviar = findViewById(R.id.btnEnviar)
 
-        // Ocultar campos al inicio
+        // Configurar RecyclerView
+        //Descomentar esta parte del código
+      /*  recyclerMatriculas.layoutManager = LinearLayoutManager(this)
+        adapterMatriculas = MatriculaAdapter(listaMatriculas) { matricula ->
+            // Callback para eliminar matrícula
+            listaMatriculas.remove(matricula)
+            adapterMatriculas.notifyDataSetChanged()
+        }
+        recyclerMatriculas.adapter = adapterMatriculas*/
+
+        // Ocultar layouts inicialmente
         layoutMatricula.visibility = View.GONE
         layoutCiertos.visibility = View.GONE
         inputTitulo.visibility = View.GONE
@@ -76,8 +100,6 @@ class notificaciones_escolares : AppCompatActivity() {
                     inputTitulo.visibility = View.VISIBLE
                     inputMensaje.visibility = View.VISIBLE
                     btnEnviar.visibility = View.VISIBLE
-                    cargarCarreras(spinnerCarrera)
-                    cargarCiclos(spinnerSemestre)
                 }
                 R.id.radioTodos -> {
                     layoutMatricula.visibility = View.GONE
@@ -96,27 +118,20 @@ class notificaciones_escolares : AppCompatActivity() {
             }
         }
 
-        // Actualizar lista de alumnos según carrera y semestre
-        val actualizarAlumnos = {
-            val carrera = spinnerCarrera.selectedItem?.toString()
-            val ciclo = spinnerSemestre.selectedItem?.toString()
-            if (!carrera.isNullOrEmpty() && !ciclo.isNullOrEmpty()) {
-                cargarAlumnos(spinnerNombres, carrera, ciclo)
+        // Botón para agregar matrícula en "Ciertos alumnos"
+        btnAgregarMatricula.setOnClickListener {
+            val matricula = inputMatriculaCiertos.text.toString().trim()
+            if (matricula.isEmpty()) {
+                Toast.makeText(this, "Ingresa una matrícula válida", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
-        }
-
-        spinnerCarrera.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                actualizarAlumnos()
+            if (listaMatriculas.contains(matricula)) {
+                Toast.makeText(this, "La matrícula ya fue agregada", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
-            override fun onNothingSelected(parent: AdapterView<*>) {}
-        }
-
-        spinnerSemestre.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                actualizarAlumnos()
-            }
-            override fun onNothingSelected(parent: AdapterView<*>) {}
+            listaMatriculas.add(matricula)
+           //DESCOMENTAR adapterMatriculas.notifyDataSetChanged()
+            inputMatriculaCiertos.text.clear()
         }
 
         btnEnviar.setOnClickListener {
@@ -127,7 +142,6 @@ class notificaciones_escolares : AppCompatActivity() {
                 Toast.makeText(this, "Por favor ingresa un título", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-
             if (mensaje.isEmpty()) {
                 Toast.makeText(this, "Por favor ingresa un mensaje", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -135,32 +149,31 @@ class notificaciones_escolares : AppCompatActivity() {
 
             when {
                 radioIndividual.isChecked -> {
-                    val matricula = inputMatricula.text.toString().trim()
+                    val matricula = inputMatriculaIndividual.text.toString().trim()
                     if (matricula.isEmpty()) {
                         Toast.makeText(this, "Por favor ingresa la matrícula", Toast.LENGTH_SHORT).show()
                         return@setOnClickListener
                     }
 
-                    Toast.makeText(this, "Enviando a matrícula: $matricula\nTítulo: $titulo\nMensaje: $mensaje", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Enviando a matrícula: $matricula\nTítulo: $titulo\nMensaje: $mensaje", Toast.LENGTH_LONG).show()
+                    // Aquí va la lógica para enviar notificación individual
                 }
 
                 radioCiertos.isChecked -> {
-                    if (spinnerNombres.adapter == null || spinnerNombres.adapter.isEmpty) {
-                        Toast.makeText(this, "No hay alumnos disponibles", Toast.LENGTH_SHORT).show()
+                    if (listaMatriculas.isEmpty()) {
+                        Toast.makeText(this, "Agrega al menos una matrícula", Toast.LENGTH_SHORT).show()
                         return@setOnClickListener
                     }
 
-                    val alumno = spinnerNombres.selectedItem?.toString() ?: ""
-                    if (alumno.isEmpty()) {
-                        Toast.makeText(this, "Selecciona un alumno", Toast.LENGTH_SHORT).show()
-                        return@setOnClickListener
-                    }
-
-                    Toast.makeText(this, "Enviando a: $alumno\nTítulo: $titulo\nMensaje: $mensaje", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this,
+                        "Enviando a matrículas: ${listaMatriculas.joinToString(", ")}\nTítulo: $titulo\nMensaje: $mensaje",
+                        Toast.LENGTH_LONG).show()
+                    // Aquí va la lógica para enviar notificación a las matrículas de la lista
                 }
 
                 radioTodos.isChecked -> {
-                    Toast.makeText(this, "Enviando a todos\nTítulo: $titulo\nMensaje: $mensaje", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Enviando a todos\nTítulo: $titulo\nMensaje: $mensaje", Toast.LENGTH_LONG).show()
+                    // Aquí va la lógica para enviar notificación a todos
                 }
 
                 else -> {
@@ -169,40 +182,12 @@ class notificaciones_escolares : AppCompatActivity() {
                 }
             }
 
-            // Limpiar todos los campos después de enviar
-            inputMatricula.setText("")
-            inputTitulo.setText("")
-            inputMensaje.setText("")
-            spinnerCarrera.setSelection(0)
-            spinnerSemestre.setSelection(0)
-            spinnerNombres.adapter = null
+            // Limpiar campos después de enviar
+            inputMatriculaIndividual.text.clear()
+            listaMatriculas.clear()
+            //DESCOMENTAR adapterMatriculas.notifyDataSetChanged()
+            inputTitulo.text.clear()
+            inputMensaje.text.clear()
         }
-    }
-
-    private fun cargarCarreras(spinner: Spinner) {
-        db.collection("alumnos").get()
-            .addOnSuccessListener { result ->
-                val carreras = result.mapNotNull { it.getString("carrera") }.toSet().toList()
-                spinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, carreras)
-            }
-    }
-
-    private fun cargarCiclos(spinner: Spinner) {
-        db.collection("alumnos").get()
-            .addOnSuccessListener { result ->
-                val ciclos = result.mapNotNull { it.getString("ciclo") }.toSet().toList()
-                spinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, ciclos)
-            }
-    }
-
-    private fun cargarAlumnos(spinner: Spinner, carrera: String, ciclo: String) {
-        db.collection("alumnos")
-            .whereEqualTo("carrera", carrera)
-            .whereEqualTo("ciclo", ciclo)
-            .get()
-            .addOnSuccessListener { result ->
-                val nombres = result.mapNotNull { it.getString("nombre") }
-                spinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, nombres)
-            }
     }
 }
