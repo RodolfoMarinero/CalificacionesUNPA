@@ -50,6 +50,8 @@ public class LoginActivity extends AppCompatActivity {
     private FragmentPerfilN fragmentPerfilN;
     private LoadingFragment loadingFragment;
 
+    private  String matricula;
+
 
     private boolean isFragmentVisible = false;
     @Override
@@ -137,6 +139,13 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(new Intent(LoginActivity.this, RecuperarContrasena.class))
         );
 
+        /*if (savedInstanceState == null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.fragment_container, new FragmentPerfilN(), FragmentPerfilN.TAG)
+                    .commit();
+        }*/
+
         //Button button = findViewById(R.id.btnGoogle);
         validarGoogle();
 
@@ -147,12 +156,19 @@ public class LoginActivity extends AppCompatActivity {
         Button button = findViewById(R.id.btnGoogle);
         SharedPreferences sharedPref = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
 
+
+           /* SharedPreferences.Editor editor = sharedPref.edit();
+            editor.clear().commit();*/
         if(sharedPref.contains("accesoConGoogle")){
             boolean acceso= sharedPref.getBoolean(("accesoConGoogle"),false);
             button.setEnabled(acceso);
+            matricula= sharedPref.getString("matricula",null);
+            Toast.makeText(this,"matricula:"+matricula,Toast.LENGTH_LONG).show();
         }else{
             button.setEnabled(false); // Esto desactiva el botón
         }
+        Toast.makeText(this, "shared:"+ sharedPref.getBoolean(("accesoConGoogle"),false),
+                Toast.LENGTH_SHORT).show();
     }
 
     private boolean isValidateForm() {
@@ -201,9 +217,13 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void loginGoogle(View view) {
-        Toast.makeText(this,
-                "Entró",
-                Toast.LENGTH_SHORT).show();
+        Toast.makeText(this,"matricula:"+matricula,Toast.LENGTH_LONG).show();
+        FragmentPerfilN fragment = (FragmentPerfilN) getSupportFragmentManager().findFragmentByTag(FragmentPerfilN.TAG);
+        if (fragment != null) {
+            fragment.callSignInGoogle(view);
+        }
+
+
     }
 
     /*public void googleAccountExists(){

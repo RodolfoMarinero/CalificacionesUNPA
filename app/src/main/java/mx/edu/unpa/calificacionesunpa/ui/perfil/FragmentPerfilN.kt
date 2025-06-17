@@ -86,6 +86,11 @@ class FragmentPerfilN : Fragment() {
 
 
         val button = view.findViewById<TextView>(R.id.tvGoogle)
+        val sharedPref: SharedPreferences = requireActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        with(sharedPref.edit()){
+            putString("matricula",authProvider.getId()).commit();
+        }
+
         button.setOnClickListener {
             // Tu acción aquí
             callSignInGoogle(view);
@@ -177,6 +182,12 @@ class FragmentPerfilN : Fragment() {
             val uid = user.uid
             val email = user.email
 
+            Log.d("FirebaseUser","Id: $uid")
+
+
+
+            Log.d("FirebaseUser","auth:${authProvider.getId()}")
+
             Log.d("FirebaseUser", "Email: $email")
 
             if(!email.toString().endsWith("@unpaLoma")){
@@ -190,6 +201,6 @@ class FragmentPerfilN : Fragment() {
 
 
     companion object {
-        private const val TAG = "FragmentPerfil"
+         const val TAG = "FragmentPerfil"
     }
 }
