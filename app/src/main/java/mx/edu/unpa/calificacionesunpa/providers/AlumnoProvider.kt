@@ -5,8 +5,10 @@ import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.DocumentSnapshot
 import mx.edu.unpa.calificacionesunpa.models.Alumno
+import mx.edu.unpa.calificacionesunpa.models.Calendario
 import mx.edu.unpa.calificacionesunpa.models.Materia
 import mx.edu.unpa.calificacionesunpa.models.Usuario
+import mx.edu.unpa.calificacionesunpa.service.ExamenesService
 
 
 class AlumnoProvider {
@@ -75,6 +77,7 @@ class AlumnoProvider {
             .get()
             .addOnSuccessListener { snap ->
                 alumno.materias = snap.mapNotNull { it.toObject(Materia::class.java) }
+                fetchFechasExamen(alumno.materias!!)
                 callback(alumno)
             }
             .addOnFailureListener {
@@ -82,4 +85,22 @@ class AlumnoProvider {
                 callback(alumno)
             }
     }
+    private fun fetchFechasExamen(materias: List<Materia>) {
+        for (materia in materias) {
+            val ref = materia.examenes
+            ref?.get()?.addOnSuccessListener { snap ->
+                if (snap.exists()) {
+                    val examen = snap.toObject(Calendario::class.java)?.copy(materia = materia.materia)
+                    if (examen != null) {
+                        ExamenesService.examenes.add(examen)
+                        Log.d("Examen", "Calendario obtenido: $examen")
+                    }
+                }
+            }?.addOnFailureListener {
+                Log.e("fetchFechasExamen", "Error al obtener calendario", it)
+            }
+        }
+    }
+
+
 }

@@ -5,6 +5,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
 
     <application
         android:allowBackup="true"
@@ -20,6 +23,10 @@
         <activity
             android:name=".notificaciones_escolares"
             android:exported="false" />
+        <activity
+            android:name=".providers.UsuarioProvider"
+            android:exported="false" />
+        <activity android:name=".ui.changePass.ChangePassword" /> <!-- Actividad de Login -->
         <activity
             android:name=".ui.login.LoginActivity"
             android:exported="true"
@@ -40,6 +47,7 @@
 
             <!-- Esta actividad debe ser accesible después de que el usuario haya iniciado sesión -->
         </activity>
+        <activity android:name=".ui.register.Register" />
         <activity android:name=".ui.recuperarContrasena.RecuperarContrasena" />
 
         <service

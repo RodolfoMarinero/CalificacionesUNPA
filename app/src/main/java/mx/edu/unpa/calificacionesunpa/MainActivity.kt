@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Button
 import android.widget.TextView
 import androidx.annotation.NonNull
 import com.google.android.material.snackbar.Snackbar
@@ -19,6 +20,13 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.ui.NavigationUI
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.auth
+//import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+//import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.Companion.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
 import com.google.android.material.button.MaterialButton
 import com.google.firebase.messaging.FirebaseMessaging
 import mx.edu.unpa.calificacionesunpa.databinding.ActivityMainBinding
@@ -31,6 +39,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     private lateinit var authProvider: AuthProvider
+    private lateinit var auth: FirebaseAuth
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +48,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         authProvider = AuthProvider()
-
 
         setSupportActionBar(binding.appBarMain.toolbar)
         supportActionBar?.title = "UNIVERSIDAD DEL PAPALOAPAN"
@@ -63,7 +72,8 @@ class MainActivity : AppCompatActivity() {
             setOf(
                 R.id.nav_home,
                 R.id.nav_calificaciones_anteriores,
-                R.id.nav_notificaciones
+                R.id.nav_notificaciones,
+                R.id.nav_calendarioExamen
             ),
             drawerLayout
         )
@@ -143,4 +153,19 @@ class MainActivity : AppCompatActivity() {
 //            startActivity(intent)
 //        }
 //    }
+
+
+    //private fun handleSignIn(credential: Credential) {
+        // Check if credential is of type Google ID
+        //if (credential is CustomCredential && credential.type == TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
+            // Create Google ID Token
+          //  val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
+
+            // Sign in to Firebase with using the token
+            //firebaseAuthWithGoogle(googleIdTokenCredential.idToken)
+        //} else {
+           // Log.w(TAG, "Credential is not of type Google ID!")
+       // }
+    //}
+
 }
