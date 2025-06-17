@@ -1,7 +1,6 @@
 package mx.edu.unpa.calificacionesunpa
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -24,17 +23,26 @@ class notificaciones_escolares : AppCompatActivity() {
     private lateinit var radioIndividual: RadioButton
     private lateinit var radioCiertos: RadioButton
     private lateinit var radioTodos: RadioButton
-    private lateinit var inputMatricula: EditText
+
+    private lateinit var inputMatriculaIndividual: EditText
+    private lateinit var inputMatriculaCiertos: EditText
+
     private lateinit var inputTitulo: EditText
     private lateinit var inputMensaje: EditText
+
     private lateinit var layoutMatricula: LinearLayout
     private lateinit var layoutCiertos: LinearLayout
-    private lateinit var spinnerCarrera: Spinner
-    private lateinit var spinnerSemestre: Spinner
-    private lateinit var spinnerNombres: Spinner
+
+    private lateinit var btnAgregarMatricula: Button
+   //DESCOMENTAR private lateinit var recyclerMatriculas: RecyclerView
+
     private lateinit var btnEnviar: Button
 
     private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
+
+    // Lista mutable para guardar las matrículas agregadas
+    private val listaMatriculas = mutableListOf<String>()
+   //DESCOMENTAR private lateinit var adapterMatriculas: MatriculaAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,14 +52,19 @@ class notificaciones_escolares : AppCompatActivity() {
         radioIndividual = findViewById(R.id.radioIndividual)
         radioCiertos = findViewById(R.id.radioCiertos)
         radioTodos = findViewById(R.id.radioTodos)
-        inputMatricula = findViewById(R.id.inputMatricula)
+
+        inputMatriculaIndividual = findViewById(R.id.inputMatricula)
+        inputMatriculaCiertos = findViewById(R.id.inputMatriculaCiertos)
+
         inputTitulo = findViewById(R.id.inputTitulo)
         inputMensaje = findViewById(R.id.inputMensaje)
+
         layoutMatricula = findViewById(R.id.layoutMatricula)
         layoutCiertos = findViewById(R.id.layoutCiertos)
-        spinnerCarrera = findViewById(R.id.spinnerCarrera)
-        spinnerSemestre = findViewById(R.id.spinnerSemestre)
-        spinnerNombres = findViewById(R.id.spinnerNombres)
+
+        btnAgregarMatricula = findViewById(R.id.btnAgregarMatricula)
+       //DESCOMENTAR recyclerMatriculas = findViewById(R.id.recyclerMatriculas)
+
         btnEnviar = findViewById(R.id.btnEnviar)
 
         // Ocultar campos al inicio
