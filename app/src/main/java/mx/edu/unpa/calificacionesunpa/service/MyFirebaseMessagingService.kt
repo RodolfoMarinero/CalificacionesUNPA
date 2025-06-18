@@ -81,7 +81,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             "mensaje" to mensaje,
             "esGlobal" to esGlobal,
             "destinatarios" to if (esGlobal) emptyList<String>() else listOf(matricula!!),
-            "timestamp" to System.currentTimeMillis()
+            "timestamp" to System.currentTimeMillis(),
+            "fueLeida" to false
         )
 
         db.collection("notificaciones")
