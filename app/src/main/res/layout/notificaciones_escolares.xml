@@ -28,7 +28,7 @@
                 android:text="Notificaciones"
                 android:textSize="50sp"
                 android:textStyle="bold|italic"
-                android:textColor="#8B0000"/>
+                android:textColor="#000000"/>
 
             <!-- Pregunta -->
             <TextView
@@ -40,7 +40,7 @@
                 android:text="¿A quién desea enviar la notificación?"
                 android:textSize="23sp"
                 android:textStyle="bold|italic"
-                android:textColor="#00008B"/>
+                android:textColor="#000000"/>
 
             <!-- Radios -->
             <RadioGroup
@@ -61,7 +61,7 @@
                 <RadioButton
                     android:id="@+id/radioCiertos"
                     android:layout_width="156dp"
-                    android:layout_height="48dp"
+                    android:layout_height="match_parent"
                     android:text="Ciertos alumnos"
                     android:textColor="#000000"
                     android:textSize="15sp"
@@ -100,7 +100,7 @@
                     android:inputType="text" />
             </LinearLayout>
 
-            <!-- Layout para Ciertos alumnos -->
+            <!-- Layout para Ciertos alumnos (modificado para ingreso múltiple de matrículas) -->
             <LinearLayout
                 android:id="@+id/layoutCiertos"
                 android:layout_width="match_parent"
@@ -112,47 +112,52 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Selecciona la carrera" />
+                    android:text="Agregar Matrículas"
+                    android:textStyle="bold"
+                    android:textSize="16sp" />
 
-                <Spinner
-                    android:id="@+id/spinnerCarrera"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-                <TextView
-                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Selecciona el semestre"
-                    android:layout_marginTop="8dp" />
+                    android:orientation="horizontal"
+                    android:layout_marginTop="8dp">
 
-                <Spinner
-                    android:id="@+id/spinnerSemestre"
+                    <EditText
+                        android:id="@+id/inputMatriculaCiertos"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:hint="Ingresa matrícula"
+                        android:inputType="text" />
+
+                    <Button
+                        android:id="@+id/btnAgregarMatricula"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Agregar"
+                        android:layout_marginStart="8dp" />
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerMatriculas"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Selecciona el alumno"
-                    android:layout_marginTop="8dp" />
-
-                <Spinner
-                    android:id="@+id/spinnerNombres"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="150dp"
+                    android:layout_marginTop="12dp"
+                    android:background="@android:color/darker_gray"
+                    android:padding="8dp" />
             </LinearLayout>
 
             <!-- Campos comunes -->
             <EditText
                 android:id="@+id/inputTitulo"
-                android:layout_width="378dp"
+                android:layout_width="match_parent"
                 android:layout_height="58dp"
                 android:layout_marginTop="28dp"
                 android:hint="Título" />
 
             <EditText
                 android:id="@+id/inputMensaje"
-                android:layout_width="374dp"
+                android:layout_width="match_parent"
                 android:layout_height="98dp"
                 android:layout_marginTop="15dp"
                 android:gravity="top"
@@ -170,4 +175,18 @@
 
         </LinearLayout>
     </ScrollView>
+    <Button
+        android:id="@+id/btnSubirCalendario"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Subir Calendario Escolar"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:padding="10dp"
+        android:background="@drawable/bg_button"
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="16dp"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
