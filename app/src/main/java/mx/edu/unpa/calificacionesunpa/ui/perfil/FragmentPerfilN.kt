@@ -1,6 +1,8 @@
 package mx.edu.unpa.calificacionesunpa.ui.perfil
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
@@ -48,12 +50,25 @@ class FragmentPerfilN : Fragment() {
     private  lateinit var userGoogle: FirebaseUser
     var loginGoogle: Boolean = false
 
+    private lateinit var ivProfile: ImageView
+    private val PICK_IMAGE_REQUEST = 1001
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_perfil, container, false)
+
+        ivProfile = view.findViewById(R.id.ivProfile)
+
+        ivProfile.setOnClickListener {
+            val intent = Intent(Intent.ACTION_PICK)
+            intent.type = "image/*"
+            startActivityForResult(intent, PICK_IMAGE_REQUEST)
+        }
+
 
         tvNombre = view.findViewById(R.id.tvNombre)
         tvMatricula = view.findViewById(R.id.tvMatriculaPerfil)
@@ -191,5 +206,12 @@ class FragmentPerfilN : Fragment() {
 
     companion object {
         private const val TAG = "FragmentPerfil"
+    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null && data.data != null) {
+            val imageUri = data.data
+            ivProfile.setImageURI(imageUri)
+        }
     }
 }
