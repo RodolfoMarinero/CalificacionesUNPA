@@ -34,6 +34,7 @@ import mx.edu.unpa.calificacionesunpa.providers.NotificacionProvider;
 import mx.edu.unpa.calificacionesunpa.service.UsuarioService;
 import mx.edu.unpa.calificacionesunpa.ui.perfil.FragmentPerfilN;
 import mx.edu.unpa.calificacionesunpa.ui.recuperarContrasena.RecuperarContrasena;
+import mx.edu.unpa.calificacionesunpa.ui.sescolares.EscolaresActivity;
 //import mx.edu.unpa.calificacionesunpa.ui.register.Register;
 
 public class LoginActivity extends AppCompatActivity {
@@ -98,6 +99,11 @@ public class LoginActivity extends AppCompatActivity {
                             etMatricula.setText("");
                             etPassword.setText("");
                             //solicita el alumno
+                            if(matricula.equals("20010043")){
+                                Intent intento = new Intent(this, EscolaresActivity.class );
+                                startActivity(intento);
+                                finish();
+                            }
                             alumnoProvider = new AlumnoProvider();
                             notificacionProvider = new NotificacionProvider();
                             alumnoProvider.obtenerAlumnoConMateriasDeUsuario(
@@ -199,7 +205,8 @@ public class LoginActivity extends AppCompatActivity {
             getSupportFragmentManager()
                     .beginTransaction()
                     .remove(loadingFragment)
-                    .commit();
+                    .commitAllowingStateLoss();
+
             loadingFragment = null;
         }
     }

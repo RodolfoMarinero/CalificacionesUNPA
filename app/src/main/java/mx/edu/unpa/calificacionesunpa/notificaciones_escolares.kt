@@ -1,10 +1,14 @@
 package mx.edu.unpa.calificacionesunpa
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.FirebaseFirestore
+import mx.edu.unpa.calificacionesunpa.service.ArchivoUtils
+
 /*import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
@@ -23,6 +27,8 @@ class notificaciones_escolares : AppCompatActivity() {
     private lateinit var radioIndividual: RadioButton
     private lateinit var radioCiertos: RadioButton
     private lateinit var radioTodos: RadioButton
+    private val REQUEST_CODE_PDF = 101
+    private var uriPDF: Uri? = null
 
     private lateinit var inputMatriculaIndividual: EditText
     private lateinit var inputMatriculaCiertos: EditText
@@ -66,6 +72,27 @@ class notificaciones_escolares : AppCompatActivity() {
        //DESCOMENTAR recyclerMatriculas = findViewById(R.id.recyclerMatriculas)
 
         btnEnviar = findViewById(R.id.btnEnviar)
+        val btnSeleccionarPdf = findViewById<Button>(R.id.btnSeleccionarPdf)
+        val btnConvertirBase64 = findViewById<Button>(R.id.btnConvertir)
+        val txtNombreArchivo = findViewById<TextView>(R.id.txtNombreArchivo)
+
+        btnSeleccionarPdf.setOnClickListener {
+            val intent = Intent(Intent.ACTION_GET_CONTENT)
+            intent.type = "application/pdf"
+            startActivityForResult(intent, REQUEST_CODE_PDF)
+        }
+
+        btnConvertirBase64.setOnClickListener {
+            uriPDF?.let {
+                val base64 = ArchivoUtils.convertirA_Base64(this, it)
+                if (base64 != null) {
+                    Toast.makeText(this, "Archivo convertido a Base64", Toast.LENGTH_SHORT).show()
+                    //subirPdfBase64AFirebase(base64)
+                } else {
+                    Toast.makeText(this, "Error al convertir archivo", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
 
         // Configurar RecyclerView
         //Descomentar esta parte del código
