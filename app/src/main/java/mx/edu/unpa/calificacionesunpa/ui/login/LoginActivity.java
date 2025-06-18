@@ -1,5 +1,7 @@
 package mx.edu.unpa.calificacionesunpa.ui.login;
 
+import static java.lang.reflect.Array.set;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,21 +15,22 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.view.View;
 
-import com.google.firebase.auth.FirebaseAuth;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseNetworkException;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import kotlin.Unit;
 import mx.edu.unpa.calificacionesunpa.MainActivity;
 import mx.edu.unpa.calificacionesunpa.R;
 import mx.edu.unpa.calificacionesunpa.fragments.LoadingFragment;
 import mx.edu.unpa.calificacionesunpa.providers.AlumnoProvider;
+import mx.edu.unpa.calificacionesunpa.providers.AuthGoogleProvider;
 import mx.edu.unpa.calificacionesunpa.providers.AuthProvider;
 import mx.edu.unpa.calificacionesunpa.service.UsuarioService;
 import mx.edu.unpa.calificacionesunpa.ui.perfil.FragmentPerfilN;
@@ -45,10 +48,17 @@ public class LoginActivity extends AppCompatActivity {
     private AlumnoProvider alumnoProvider;
     private UsuarioService usuarioService = UsuarioService.INSTANCE;
 
+    private AuthGoogleProvider authGoogleProvider =  new AuthGoogleProvider();
+
     private FirebaseUser userGoogle;
 
     private FragmentPerfilN fragmentPerfilN;
     private LoadingFragment loadingFragment;
+
+    private  String matricula;
+
+    private FirebaseAuth auth;
+
 
 
     private boolean isFragmentVisible = false;
@@ -68,6 +78,7 @@ public class LoginActivity extends AppCompatActivity {
         tvForgotPassword= findViewById(R.id.btnRecuperar_contrasena);
 
         authProvider = new AuthProvider();
+        auth = FirebaseAuth.getInstance();
 
 
 
@@ -110,6 +121,7 @@ public class LoginActivity extends AppCompatActivity {
                                         return Unit.INSTANCE;
                                     }
                             );
+                            Toast.makeText(this, "Alumno id: "+authProvider.getId() , Toast.LENGTH_LONG).show();
 
 
                         } else {
@@ -147,9 +159,16 @@ public class LoginActivity extends AppCompatActivity {
         Button button = findViewById(R.id.btnGoogle);
         SharedPreferences sharedPref = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
 
+
+       /*
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.clear().commit();*/
+
         if(sharedPref.contains("accesoConGoogle")){
             boolean acceso= sharedPref.getBoolean(("accesoConGoogle"),false);
             button.setEnabled(acceso);
+            matricula= sharedPref.getString("matricula",null);
+            Toast.makeText(this,"matricula:"+matricula,Toast.LENGTH_LONG).show();
         }else{
             button.setEnabled(false); // Esto desactiva el botón
         }
@@ -204,10 +223,24 @@ public class LoginActivity extends AppCompatActivity {
         Toast.makeText(this,
                 "Entró",
                 Toast.LENGTH_SHORT).show();
+        Log.d("FirebaseUser", "Matricula: $matricula" + matricula);
+        /// //////////////////
+        alumnoProvider = new AlumnoProvider();
+        alumnoProvider.obtenerAlumnoConMateriasDeUsuario(
+                matricula,
+                alumno -> {
+                    usuarioService.setAlumnoActual(alumno);
+                    hideLoadingFragment();
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    intent.putExtra("navigateTo", "calificaciones");
+                    startActivity(intent);
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                    finish();
+                    return Unit.INSTANCE;
+                }
+        );
     }
 
-    /*public void googleAccountExists(){
-        if(userGoogle.getEmail())
-    }*/
+
 
 }
