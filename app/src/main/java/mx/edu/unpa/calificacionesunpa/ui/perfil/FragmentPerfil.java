@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toolbar;
-
+import android.content.Intent;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -20,11 +20,12 @@ import java.util.Locale;
 
 import mx.edu.unpa.calificacionesunpa.R;
 import mx.edu.unpa.calificacionesunpa.service.PromedioCalculatorService;
+import mx.edu.unpa.calificacionesunpa.ui.changePass.ChangePassword;
 
 
 public class FragmentPerfil extends Fragment {
 
-    private TextView tvNombre, tvMatricula, tvCarrera, tvPromedio, tvCodigoBarras;
+    private TextView tvNombre, tvMatricula, tvCarrera, tvPromedio, tvCodigoBarras, btnChangePass;
     private ImageView ivCodigoBarras;
     private PromedioCalculatorService promedioCalculatorService;
     @Nullable
@@ -41,6 +42,12 @@ public class FragmentPerfil extends Fragment {
         tvPromedio = view.findViewById(R.id.tvPromedioPerfil);
         ivCodigoBarras = view.findViewById(R.id.ivBarcode);
         tvCodigoBarras = view.findViewById(R.id.tvBarcodeNumber);
+        btnChangePass = view.findViewById(R.id.changePass);
+        btnChangePass.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), ChangePassword.class);
+            startActivity(intent);
+        });
+
         MaterialButton btnVolver = view.findViewById(R.id.btnVolver);
         btnVolver.setOnClickListener(v ->  {
             requireActivity().getSupportFragmentManager().popBackStack();
