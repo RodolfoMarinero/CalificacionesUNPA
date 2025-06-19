@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.FirebaseFirestore
+import mx.edu.unpa.calificacionesunpa.providers.StorageProvider
 import mx.edu.unpa.calificacionesunpa.service.ArchivoUtils
 
 /*import android.os.Bundle
@@ -86,10 +87,14 @@ class notificaciones_escolares : AppCompatActivity() {
             uriPDF?.let {
                 val base64 = ArchivoUtils.convertirA_Base64(this, it)
                 if (base64 != null) {
-                    Toast.makeText(this, "Archivo convertido a Base64", Toast.LENGTH_SHORT).show()
-                    //subirPdfBase64AFirebase(base64)
-                } else {
-                    Toast.makeText(this, "Error al convertir archivo", Toast.LENGTH_SHORT).show()
+                    val storageProvider = StorageProvider()
+                    storageProvider.uploadFile(base64, txtNombreArchivo.toString()) { success ->
+                        if (success) {
+                            Toast.makeText(this, "Archivo subido exitosamente", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(this, "Error al subir el archivo", Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 }
             }
         }
