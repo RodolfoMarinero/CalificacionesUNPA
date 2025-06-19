@@ -4,7 +4,11 @@ import android.os.Bundle
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.FirebaseFirestore
+import mx.edu.unpa.calificacionesunpa.adapters.MatriculaAdapter
+
 /*import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
@@ -34,7 +38,7 @@ class notificaciones_escolares : AppCompatActivity() {
     private lateinit var layoutCiertos: LinearLayout
 
     private lateinit var btnAgregarMatricula: Button
-   //DESCOMENTAR private lateinit var recyclerMatriculas: RecyclerView
+    private lateinit var recyclerMatriculas: RecyclerView
 
     private lateinit var btnEnviar: Button
 
@@ -42,7 +46,7 @@ class notificaciones_escolares : AppCompatActivity() {
 
     // Lista mutable para guardar las matrículas agregadas
     private val listaMatriculas = mutableListOf<String>()
-   //DESCOMENTAR private lateinit var adapterMatriculas: MatriculaAdapter
+    private lateinit var adapterMatriculas: MatriculaAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,19 +67,18 @@ class notificaciones_escolares : AppCompatActivity() {
         layoutCiertos = findViewById(R.id.layoutCiertos)
 
         btnAgregarMatricula = findViewById(R.id.btnAgregarMatricula)
-       //DESCOMENTAR recyclerMatriculas = findViewById(R.id.recyclerMatriculas)
+        recyclerMatriculas = findViewById(R.id.recyclerMatriculas)
 
         btnEnviar = findViewById(R.id.btnEnviar)
 
         // Configurar RecyclerView
-        //Descomentar esta parte del código
-      /*  recyclerMatriculas.layoutManager = LinearLayoutManager(this)
+        recyclerMatriculas.layoutManager = LinearLayoutManager(this)
         adapterMatriculas = MatriculaAdapter(listaMatriculas) { matricula ->
             // Callback para eliminar matrícula
             listaMatriculas.remove(matricula)
             adapterMatriculas.notifyDataSetChanged()
         }
-        recyclerMatriculas.adapter = adapterMatriculas*/
+        recyclerMatriculas.adapter = adapterMatriculas
 
         // Ocultar layouts inicialmente
         layoutMatricula.visibility = View.GONE
@@ -130,7 +133,7 @@ class notificaciones_escolares : AppCompatActivity() {
                 return@setOnClickListener
             }
             listaMatriculas.add(matricula)
-           //DESCOMENTAR adapterMatriculas.notifyDataSetChanged()
+            adapterMatriculas.notifyDataSetChanged()
             inputMatriculaCiertos.text.clear()
         }
 
@@ -185,7 +188,7 @@ class notificaciones_escolares : AppCompatActivity() {
             // Limpiar campos después de enviar
             inputMatriculaIndividual.text.clear()
             listaMatriculas.clear()
-            //DESCOMENTAR adapterMatriculas.notifyDataSetChanged()
+            adapterMatriculas.notifyDataSetChanged()
             inputTitulo.text.clear()
             inputMensaje.text.clear()
         }

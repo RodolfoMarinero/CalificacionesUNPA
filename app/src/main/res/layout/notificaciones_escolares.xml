@@ -175,18 +175,4 @@
 
         </LinearLayout>
     </ScrollView>
-    <Button
-        android:id="@+id/btnSubirCalendario"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Subir Calendario Escolar"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        android:padding="10dp"
-        android:background="@drawable/bg_button"
-        android:textColor="#FFFFFF"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="16dp"/>
-
 </androidx.constraintlayout.widget.ConstraintLayout>
