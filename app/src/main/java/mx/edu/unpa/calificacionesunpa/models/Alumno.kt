@@ -14,7 +14,10 @@ data class Alumno(
     @Transient
     var nombreCarrera : String? = null,
     @Transient
-    var matricula: String = ""
+    var matricula: String = "",
 
-    )
+    var usuario: Usuario? = null
+
+
+)
 

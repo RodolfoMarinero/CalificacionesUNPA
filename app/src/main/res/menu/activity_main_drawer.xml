@@ -28,6 +28,11 @@
             android:title="Calendario De Exámenes" />
 
         <item
+            android:id="@+id/nav_notificaciones_escolares"
+            android:icon="@drawable/ic_notificaciones"
+            android:title="Notificaciones Escolare" />
+
+        <item
             android:id="@+id/nav_logout"
             android:icon="@drawable/ic_logout"
             android:title="Cerrar sesión" />

@@ -38,6 +38,7 @@ class AlumnoProvider {
                                 callback(null)
                                 return@addOnSuccessListener
                             }
+                        alumno.usuario = usuario
 
                         // Obtener el nombre de la carrera leyendo el padre planesEstudio
                         val planEstudioDocRef: DocumentReference? = alumnoDoc.reference.parent.parent?.parent?.parent

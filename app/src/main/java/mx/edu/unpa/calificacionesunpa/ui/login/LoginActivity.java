@@ -30,6 +30,7 @@ import mx.edu.unpa.calificacionesunpa.fragments.LoadingFragment;
 import mx.edu.unpa.calificacionesunpa.providers.AlumnoProvider;
 import mx.edu.unpa.calificacionesunpa.providers.AuthProvider;
 import mx.edu.unpa.calificacionesunpa.service.UsuarioService;
+import mx.edu.unpa.calificacionesunpa.ui.changePass.ChangePassword;
 import mx.edu.unpa.calificacionesunpa.ui.perfil.FragmentPerfilN;
 import mx.edu.unpa.calificacionesunpa.ui.recuperarContrasena.RecuperarContrasena;
 //import mx.edu.unpa.calificacionesunpa.ui.register.Register;
@@ -102,11 +103,20 @@ public class LoginActivity extends AppCompatActivity {
                                     alumno -> {
                                         usuarioService.setAlumnoActual(alumno);
                                         hideLoadingFragment();
-                                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                        intent.putExtra("navigateTo", "calificaciones");
-                                        startActivity(intent);
-                                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                                        finish();
+
+                                        // Si es su primer acceso, fuerza cambio de contraseña
+                                        if (alumno.getUsuario().getPrimerAcceso()) {
+                                            Intent intent = new Intent(LoginActivity.this, ChangePassword.class);
+                                            intent.putExtra("primerAcceso", true);
+                                            startActivity(intent);
+                                            finish(); // previene que regrese a Login sin cambiar contraseña
+                                        } else {
+                                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                            intent.putExtra("navigateTo", "calificaciones");
+                                            startActivity(intent);
+                                            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                                            finish();
+                                        }
                                         return Unit.INSTANCE;
                                     }
                             );
