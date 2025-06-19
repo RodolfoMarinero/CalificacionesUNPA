@@ -24,14 +24,17 @@ import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.FirebaseUser;
 
 import kotlin.Unit;
+import kotlin.jvm.internal.Intrinsics;
 import mx.edu.unpa.calificacionesunpa.MainActivity;
 import mx.edu.unpa.calificacionesunpa.R;
 import mx.edu.unpa.calificacionesunpa.fragments.LoadingFragment;
 import mx.edu.unpa.calificacionesunpa.providers.AlumnoProvider;
 import mx.edu.unpa.calificacionesunpa.providers.AuthProvider;
+import mx.edu.unpa.calificacionesunpa.providers.NotificacionProvider;
 import mx.edu.unpa.calificacionesunpa.service.UsuarioService;
 import mx.edu.unpa.calificacionesunpa.ui.perfil.FragmentPerfilN;
 import mx.edu.unpa.calificacionesunpa.ui.recuperarContrasena.RecuperarContrasena;
+import mx.edu.unpa.calificacionesunpa.ui.sescolares.EscolaresActivity;
 //import mx.edu.unpa.calificacionesunpa.ui.register.Register;
 
 public class LoginActivity extends AppCompatActivity {
@@ -44,6 +47,8 @@ public class LoginActivity extends AppCompatActivity {
     private AuthProvider authProvider;
     private AlumnoProvider alumnoProvider;
     private UsuarioService usuarioService = UsuarioService.INSTANCE;
+    private NotificacionProvider notificacionProvider;
+
 
     private FirebaseUser userGoogle;
 
@@ -68,8 +73,6 @@ public class LoginActivity extends AppCompatActivity {
         tvForgotPassword= findViewById(R.id.btnRecuperar_contrasena);
 
         authProvider = new AuthProvider();
-
-
 
         btnLogin.setOnClickListener(v -> {
             if (!isValidateForm()) return;
@@ -96,11 +99,18 @@ public class LoginActivity extends AppCompatActivity {
                             etMatricula.setText("");
                             etPassword.setText("");
                             //solicita el alumno
+                            if(matricula.equals("20010043")){
+                                Intent intento = new Intent(this, EscolaresActivity.class );
+                                startActivity(intento);
+                                finish();
+                            }
                             alumnoProvider = new AlumnoProvider();
+                            notificacionProvider = new NotificacionProvider();
                             alumnoProvider.obtenerAlumnoConMateriasDeUsuario(
                                     authProvider.getId(),
                                     alumno -> {
                                         usuarioService.setAlumnoActual(alumno);
+                                        notificacionProvider.cargarNotificacionesDesdeFirestore();
                                         hideLoadingFragment();
                                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                         intent.putExtra("navigateTo", "calificaciones");
@@ -195,7 +205,8 @@ public class LoginActivity extends AppCompatActivity {
             getSupportFragmentManager()
                     .beginTransaction()
                     .remove(loadingFragment)
-                    .commit();
+                    .commitAllowingStateLoss();
+
             loadingFragment = null;
         }
     }
