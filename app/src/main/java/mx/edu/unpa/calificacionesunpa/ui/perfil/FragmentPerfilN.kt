@@ -1,6 +1,7 @@
 package mx.edu.unpa.calificacionesunpa.ui.perfil
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
@@ -9,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.credentials.ClearCredentialStateRequest
 import androidx.credentials.Credential
 import androidx.credentials.CredentialManager
@@ -32,6 +34,7 @@ import kotlinx.coroutines.launch
 import mx.edu.unpa.calificacionesunpa.R
 import mx.edu.unpa.calificacionesunpa.providers.AuthProvider
 import mx.edu.unpa.calificacionesunpa.service.PromedioCalculatorService
+import mx.edu.unpa.calificacionesunpa.ui.changePass.ChangePassword
 
 class FragmentPerfilN : Fragment() {
 
@@ -64,6 +67,12 @@ class FragmentPerfilN : Fragment() {
 
         view.findViewById<MaterialButton>(R.id.btnVolver).setOnClickListener {
             requireActivity().supportFragmentManager.popBackStack()
+        }
+        val btnCambiarPass = view.findViewById<TextView>(R.id.cambiarPass)
+
+        btnCambiarPass.setOnClickListener { v: View? ->
+            val intent = Intent(activity, ChangePassword::class.java)
+            startActivity(intent)
         }
         authProvider = AuthProvider()
 
