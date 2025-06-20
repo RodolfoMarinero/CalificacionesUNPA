@@ -22,7 +22,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.lifecycle.Observer;
-
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.DocumentReference;
 
@@ -44,15 +43,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
-
-
 import mx.edu.unpa.calificacionesunpa.R;
 import mx.edu.unpa.calificacionesunpa.models.Alumno;
 import mx.edu.unpa.calificacionesunpa.models.Materia;
 import mx.edu.unpa.calificacionesunpa.service.PromedioCalculatorService;
 import mx.edu.unpa.calificacionesunpa.service.UsuarioService;
 import mx.edu.unpa.calificacionesunpa.ui.dd.SelectorSemestre;
-import mx.edu.unpa.calificacionesunpa.ui.perfil.FragmentPerfil;
+import mx.edu.unpa.calificacionesunpa.ui.perfil.FragmentPerfilN;
 
 public class FragmentCalificacionesAnteriores extends Fragment {
     private static final String TAG = "CalifFrag";
@@ -95,9 +92,6 @@ public class FragmentCalificacionesAnteriores extends Fragment {
         txtPromedioGeneral   = root.findViewById(R.id.txtPromedioGeneral);
         tvExtraordinariosLabel   = root.findViewById(R.id.tvExtraordinariosLabel);
         tvNombre             = root.findViewById(R.id.tvNombre);
-        //Button btnPdf = root.findViewById(R.id.btnDescargarPdf);
-        //btnPdf.setOnClickListener(this::generarPdf);
-
 
         ivPerfil = root.findViewById(R.id.ivPerfil); // asegúrate que tenga este ID en tu layout
         ivPerfil.setOnClickListener(v -> {
@@ -108,7 +102,7 @@ public class FragmentCalificacionesAnteriores extends Fragment {
             bundle.putString("promedio", txtPromedioGeneral.getText().toString().replace("Promedio: ", ""));
             bundle.putString("codigo", txtMatricula.getText().toString());
 
-            FragmentPerfil fragment = new FragmentPerfil();
+            FragmentPerfilN fragment = new FragmentPerfilN();
             fragment.setArguments(bundle);
 
             requireActivity()

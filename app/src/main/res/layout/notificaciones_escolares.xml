@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".notificaciones_escolares"
+    android:background="@drawable/bg_gradient">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:padding="16dp"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- Título principal -->
+            <TextView
+                android:id="@+id/txtTituloNotificaciones"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="24dp"
+                android:text="Notificaciones"
+                android:textSize="50sp"
+                android:textStyle="bold|italic"
+                android:textColor="#000000"/>
+
+            <!-- Pregunta -->
+            <TextView
+                android:id="@+id/txtPreguntaEnvio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="24dp"
+                android:text="¿A quién desea enviar la notificación?"
+                android:textSize="23sp"
+                android:textStyle="bold|italic"
+                android:textColor="#000000"/>
+
+            <!-- Radios -->
+            <RadioGroup
+                android:id="@+id/radioGroup"
+                android:layout_width="341dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/radioIndividual"
+                    android:layout_width="113dp"
+                    android:layout_height="48dp"
+                    android:text="Individual"
+                    android:textColor="#000000"
+                    android:textSize="15sp"
+                    android:textStyle="bold|italic" />
+
+                <RadioButton
+                    android:id="@+id/radioCiertos"
+                    android:layout_width="156dp"
+                    android:layout_height="match_parent"
+                    android:text="Ciertos alumnos"
+                    android:textColor="#000000"
+                    android:textSize="15sp"
+                    android:textStyle="bold|italic" />
+
+                <RadioButton
+                    android:id="@+id/radioTodos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:text="Todos"
+                    android:textColor="#000000"
+                    android:textSize="15sp"
+                    android:textStyle="bold|italic" />
+            </RadioGroup>
+
+            <!-- Layout para Individual -->
+            <LinearLayout
+                android:id="@+id/layoutMatricula"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:layout_marginTop="12dp">
+
+                <TextView
+                    android:id="@+id/txtMatricula"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Matrícula:" />
+
+                <EditText
+                    android:id="@+id/inputMatricula"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Ingresa matrícula"
+                    android:inputType="text" />
+            </LinearLayout>
+
+            <!-- Layout para Ciertos alumnos (modificado para ingreso múltiple de matrículas) -->
+            <LinearLayout
+                android:id="@+id/layoutCiertos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:layout_marginTop="12dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Agregar Matrículas"
+                    android:textStyle="bold"
+                    android:textSize="16sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="8dp">
+
+                    <EditText
+                        android:id="@+id/inputMatriculaCiertos"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:hint="Ingresa matrícula"
+                        android:inputType="text" />
+
+                    <Button
+                        android:id="@+id/btnAgregarMatricula"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Agregar"
+                        android:layout_marginStart="8dp" />
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerMatriculas"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:layout_marginTop="12dp"
+                    android:background="@android:color/darker_gray"
+                    android:padding="8dp" />
+            </LinearLayout>
+
+            <!-- Campos comunes -->
+            <EditText
+                android:id="@+id/inputTitulo"
+                android:layout_width="match_parent"
+                android:layout_height="58dp"
+                android:layout_marginTop="28dp"
+                android:hint="Título" />
+
+            <EditText
+                android:id="@+id/inputMensaje"
+                android:layout_width="match_parent"
+                android:layout_height="98dp"
+                android:layout_marginTop="15dp"
+                android:gravity="top"
+                android:hint="Mensaje"
+                android:inputType="textMultiLine"
+                android:minLines="3" />
+
+            <Button
+                android:id="@+id/btnEnviar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Enviar notificación"
+                android:layout_marginTop="20dp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -14,7 +14,7 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
-        vectorDrawables.useSupportLibrary = true
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -57,9 +57,18 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(platform("com.google.firebase:firebase-bom:33.14.0"))
+    //implementation("androidx.credentials:credentials:1.3.0")
+   // implementation("androidx.credentials:credentials-play-services-auth:1.3.0")
+    implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
+    //implementation(platform("com.google.firebase:firebase-bom:33.14.0"))
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore:25.1.3")
     implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation("com.google.android.gms:play-services-auth:21.3.0")
+    implementation("androidx.credentials:credentials:1.2.0-alpha02")
+    //implementation("androidx.credentials:credentials-play-services-auth:1.1.0-alpha01")
+
+
     implementation("com.google.firebase:firebase-firestore-ktx:24.11.1")
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
     implementation("androidx.recyclerview:recyclerview:1.3.2")
