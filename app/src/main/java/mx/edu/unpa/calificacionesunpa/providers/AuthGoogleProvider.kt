@@ -20,10 +20,17 @@ import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.Co
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
+import mx.edu.unpa.calificacionesunpa.models.Alumno
+import mx.edu.unpa.calificacionesunpa.service.UsuarioService
 
 
 class AuthGoogleProvider() {
+
+    private val usuarioService = UsuarioService;
+    private val db = FirebaseFirestore.getInstance()
+
 
     fun callSignInGoogle(
         view: View,
@@ -131,10 +138,40 @@ class AuthGoogleProvider() {
             val uid = user.uid
             Log.d("FirebaseUser", "Id: $uid")
             Log.d("FirebaseUser", "Email: $email")
-            if (!email.isNullOrEmpty() && !email.endsWith("@unpaLoma")) {
+            if (!email.isNullOrEmpty() && !email.endsWith("@unpaloma.com")) {
                 sharedPref.edit().putBoolean("accesoConGoogle", true).apply()
-            }
 
+                val alumnoActual = usuarioService.alumnoActual
+                if (alumnoActual != null) {
+                    val db = FirebaseFirestore.getInstance()
+                    val data = mapOf(
+                        "correoGoogle" to email,
+                        "matricula" to alumnoActual.matricula,
+                    )
+
+                    db.collection("usuarios_vinculados")
+                        .document(uid)
+                        .get()
+                        .addOnSuccessListener { document ->
+                            if (!document.exists()) {
+                                db.collection("usuarios_vinculados")
+                                    .document(uid)
+                                    .set(data)
+                                    .addOnSuccessListener {
+                                        Log.d("Firestore", "Usuario vinculado exitosamente")
+                                    }
+                                    .addOnFailureListener { e ->
+                                        Log.e("Firestore", "Error al vincular usuario", e)
+                                    }
+                            } else {
+                                Log.d("Firestore", "Ya existe documento vinculado para este UID")
+                            }
+                        }
+
+                } else {
+                    Log.w("AuthGoogleProvider", "No se encontró alumno actual para vincular")
+                }
+            }
         }
     }
 }
