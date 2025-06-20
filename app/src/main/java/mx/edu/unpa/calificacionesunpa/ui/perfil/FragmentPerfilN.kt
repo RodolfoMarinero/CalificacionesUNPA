@@ -53,7 +53,6 @@ class FragmentPerfilN : Fragment() {
         authProvider = AuthProvider()
         authGoogleProvider = AuthGoogleProvider()
         auth = FirebaseAuth.getInstance()
-        //authGoogleProvider = FirebaseAuth.getInstance()
         credentialManager = CredentialManager.create(requireActivity())
 
         arguments?.let {

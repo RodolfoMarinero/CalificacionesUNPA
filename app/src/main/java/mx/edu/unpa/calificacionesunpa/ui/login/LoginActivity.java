@@ -16,6 +16,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -172,6 +173,8 @@ public class LoginActivity extends AppCompatActivity {
         }else{
             button.setEnabled(false); // Esto desactiva el botón
         }
+        Toast.makeText(this, "shared:"+ sharedPref.getBoolean(("accesoConGoogle"),false),
+                Toast.LENGTH_SHORT).show();
     }
 
     private boolean isValidateForm() {
