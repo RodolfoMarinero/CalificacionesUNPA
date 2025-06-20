@@ -76,13 +76,11 @@ class notificaciones_escolares : AppCompatActivity() {
         val btnSeleccionarPdf = findViewById<Button>(R.id.btnSeleccionarPdf)
         val btnConvertirBase64 = findViewById<Button>(R.id.btnConvertir)
         val txtNombreArchivo = findViewById<TextView>(R.id.txtNombreArchivo)
-
         btnSeleccionarPdf.setOnClickListener {
             val intent = Intent(Intent.ACTION_GET_CONTENT)
             intent.type = "application/pdf"
             startActivityForResult(intent, REQUEST_CODE_PDF)
         }
-
         btnConvertirBase64.setOnClickListener {
             uriPDF?.let {
                 val base64 = ArchivoUtils.convertirA_Base64(this, it)

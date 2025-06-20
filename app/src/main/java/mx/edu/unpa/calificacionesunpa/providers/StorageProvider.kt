@@ -1,6 +1,7 @@
 package mx.edu.unpa.calificacionesunpa.providers
 
 import com.google.firebase.firestore.FirebaseFirestore
+import mx.edu.unpa.calificacionesunpa.ui.calificacionesanteriores.OnResultCallback
 import java.util.*
 
 class StorageProvider {
@@ -17,22 +18,9 @@ class StorageProvider {
             "timestamp" to Date()
         )
 
-        // Buscar si ya hay una imagen con ese userId
-        collection.whereEqualTo("userId", userId).get()
-            .addOnSuccessListener { querySnapshot ->
-                if (!querySnapshot.isEmpty) {
-                    // Ya existe: actualizar el primer documento encontrado
-                    val docId = querySnapshot.documents.first().id
-                    collection.document(docId).set(data)
-                        .addOnSuccessListener { onResult(true) }
-                        .addOnFailureListener { onResult(false) }
-                } else {
-                    // No existe: crear nuevo
-                    collection.add(data)
-                        .addOnSuccessListener { onResult(true) }
-                        .addOnFailureListener { onResult(false) }
-                }
-            }
+
+        collection.document(userId).set(data)
+            .addOnSuccessListener { onResult(true) }
             .addOnFailureListener { onResult(false) }
     }
 
@@ -78,18 +66,19 @@ class StorageProvider {
             }
     }
 
-    fun getImageByUserId(userId: String, onResult: (String?) -> Unit) {
-        collection.whereEqualTo("userId", userId).get()
-            .addOnSuccessListener { querySnapshot ->
-                if (!querySnapshot.isEmpty) {
-                    val base64 = querySnapshot.documents.first().getString("base64")
-                    onResult(base64)
+    fun getImageByUserId(userId: String, onResult: OnResultCallback) {
+        collection.document(userId).get()
+            .addOnSuccessListener { documentSnapshot ->
+                if (documentSnapshot.exists()) {
+                    val base64 = documentSnapshot.getString("base64")
+                    onResult.onResult(base64)
                 } else {
-                    onResult(null)
+                    onResult.onResult(null)
                 }
             }
             .addOnFailureListener {
-                onResult(null)
+                onResult.onResult(null)
             }
     }
+
 }
