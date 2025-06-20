@@ -135,16 +135,29 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Agregar"
-                        android:layout_marginStart="8dp" />
+                        android:layout_marginStart="8dp"
+                        android:background="#88E788"
+                        android:radius="8dp"/>
                 </LinearLayout>
 
-                <androidx.recyclerview.widget.RecyclerView
+                <!--<androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerMatriculas"
                     android:layout_width="match_parent"
-                    android:layout_height="150dp"
+                    android:layout_height="100dp"
                     android:layout_marginTop="12dp"
-                    android:background="@android:color/darker_gray"
+                    android:background="#C1D8D2"
+                    android:padding="8dp"
+                    android:overScrollMode="never"
+                    android:nestedScrollingEnabled="false"/>-->
+                <LinearLayout
+                    android:id="@+id/layoutListaMatriculas"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_gradient"
+                    android:orientation="vertical"
                     android:padding="8dp" />
+
             </LinearLayout>
 
             <!-- Campos comunes -->
@@ -171,7 +184,8 @@
                 android:layout_height="wrap_content"
                 android:text="Enviar notificación"
                 android:layout_marginTop="20dp"
-                android:visibility="gone" />
+                android:visibility="gone"
+                android:background="@drawable/bg_button"/>
 
         </LinearLayout>
     </ScrollView>
