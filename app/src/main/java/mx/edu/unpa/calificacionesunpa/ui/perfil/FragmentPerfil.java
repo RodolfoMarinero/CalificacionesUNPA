@@ -5,8 +5,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.Toolbar;
 import android.content.Intent;
 import androidx.annotation.NonNull;
@@ -17,7 +19,6 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 import java.util.Locale;
-
 import mx.edu.unpa.calificacionesunpa.R;
 import mx.edu.unpa.calificacionesunpa.service.PromedioCalculatorService;
 import mx.edu.unpa.calificacionesunpa.ui.changePass.ChangePassword;
@@ -25,7 +26,7 @@ import mx.edu.unpa.calificacionesunpa.ui.changePass.ChangePassword;
 
 public class FragmentPerfil extends Fragment {
 
-    private TextView tvNombre, tvMatricula, tvCarrera, tvPromedio, tvCodigoBarras, btnChangePass;
+    private TextView tvNombre, tvMatricula, tvCarrera, tvPromedio, tvCodigoBarras;
     private ImageView ivCodigoBarras;
     private PromedioCalculatorService promedioCalculatorService;
     @Nullable
@@ -42,16 +43,19 @@ public class FragmentPerfil extends Fragment {
         tvPromedio = view.findViewById(R.id.tvPromedioPerfil);
         ivCodigoBarras = view.findViewById(R.id.ivBarcode);
         tvCodigoBarras = view.findViewById(R.id.tvBarcodeNumber);
-        btnChangePass = view.findViewById(R.id.changePass);
-        btnChangePass.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), ChangePassword.class);
-            startActivity(intent);
-        });
 
         MaterialButton btnVolver = view.findViewById(R.id.btnVolver);
         btnVolver.setOnClickListener(v ->  {
             requireActivity().getSupportFragmentManager().popBackStack();
         });
+
+        TextView btnCambiarPass = view.findViewById(R.id.cambiarPass);
+        btnCambiarPass.setOnClickListener(v -> {
+            Toast.makeText(getActivity(), "Click detectado", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(getActivity(), ChangePassword.class);
+            startActivity(intent);
+        });
+
         promedioCalculatorService = PromedioCalculatorService.INSTANCE;
         if (getArguments() != null) {
             String nombre = getArguments().getString("nombre", "");
