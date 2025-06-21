@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Base64
@@ -40,6 +41,8 @@ import mx.edu.unpa.calificacionesunpa.providers.StorageProvider
 import mx.edu.unpa.calificacionesunpa.service.ArchivoUtils
 import mx.edu.unpa.calificacionesunpa.service.PromedioCalculatorService
 import mx.edu.unpa.calificacionesunpa.ui.changePass.ChangePassword
+import java.io.File
+import java.io.FileOutputStream
 
 class FragmentPerfilN : Fragment() {
 
@@ -243,11 +246,15 @@ class FragmentPerfilN : Fragment() {
             }
             val provider = StorageProvider()
             uid?.let {
-                provider.getImageByUserId(it) { base64 ->
-                    base64?.let {
-                        val imageBytes = Base64.decode(base64, Base64.DEFAULT)
-                        val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-                        ivProfile.setImageBitmap(bitmap)
+                if (!cargarImagenLocal()) {
+                    provider.getImageByUserId(it) { base64 ->
+                        base64?.let {
+                            val imageBytes = Base64.decode(base64, Base64.DEFAULT)
+                            val bitmap =
+                                BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+                            ivProfile.setImageBitmap(bitmap)
+                            guardarImagenLocal(bitmap)
+                        }
                     }
                 }
             }
@@ -255,6 +262,30 @@ class FragmentPerfilN : Fragment() {
         }
 
 
+
+    }
+    private fun guardarImagenLocal(bitmap: Bitmap) {
+        try {
+            val file = File(requireContext().filesDir, "imagen_perfil.png")
+            if (file.exists()) file.delete()
+            val outputStream = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+            outputStream.flush()
+            outputStream.close()
+            Log.d("Perfil", "Imagen guardada localmente")
+        } catch (e: Exception) {
+            Log.e("Perfil", "Error al guardar imagen localmente", e)
+        }
+    }
+    private fun cargarImagenLocal(): Boolean {
+        val file = File(requireContext().filesDir, "imagen_perfil.png")
+        return if (file.exists()) {
+            val bitmap = BitmapFactory.decodeFile(file.absolutePath)
+            ivProfile.setImageBitmap(bitmap)
+            true
+        } else {
+            false
+        }
     }
 
 
