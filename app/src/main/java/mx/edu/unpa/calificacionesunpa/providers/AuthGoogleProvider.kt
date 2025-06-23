@@ -23,16 +23,13 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
-import mx.edu.unpa.calificacionesunpa.models.Alumno
 import mx.edu.unpa.calificacionesunpa.service.UsuarioService
 import mx.edu.unpa.calificacionesunpa.ui.login.LoginActivity
 
 
 class AuthGoogleProvider() {
-
     private val usuarioService = UsuarioService;
     private val db = FirebaseFirestore.getInstance()
-
 
     fun callSignInGoogle(
         view: View,
@@ -46,7 +43,6 @@ class AuthGoogleProvider() {
         launchCredentialManager(activity, lifecycleScope, credentialManager, webClientId, auth,redirigir)
     }
 
-    // Lanza el CredentialManager
     fun launchCredentialManager(
         activity: Activity,
         lifecycleScope: LifecycleCoroutineScope,
@@ -74,7 +70,6 @@ class AuthGoogleProvider() {
         }
     }
 
-    // Procesa el resultado del login
     fun handleSignIn(
         credential: Credential,
         activity: Activity,
@@ -90,21 +85,6 @@ class AuthGoogleProvider() {
             Log.w(TAG, "Credential no es de tipo Google ID")
         }
     }
-
-    // Autenticación con Firebase
-    //ESTE SE COMENTÓ
-   /* fun firebaseAuthWithGoogle(idToken: String, activity: Activity, auth: FirebaseAuth) {
-        val credential = GoogleAuthProvider.getCredential(idToken, null)
-        auth.signInWithCredential(credential)
-            .addOnCompleteListener(activity) { task ->
-                if (task.isSuccessful) {
-                    updateUI(auth.currentUser, activity)
-                } else {
-                    Log.w(TAG, "Fallo al autenticar", task.exception)
-                    updateUI(null, activity)
-                }
-            }
-    }*/
 
     fun firebaseAuthWithGoogle(
         idToken: String,
@@ -143,8 +123,6 @@ class AuthGoogleProvider() {
             }
     }
 
-
-    // Función para cerrar sesión
     fun callSignOut(
         activity: Activity,
         lifecycleScope: LifecycleCoroutineScope,
@@ -154,7 +132,6 @@ class AuthGoogleProvider() {
         signOut(activity, lifecycleScope, credentialManager, auth)
     }
 
-    // Proceso para cerrar sesión y limpiar credenciales
     fun signOut(
         activity: Activity,
         lifecycleScope: LifecycleCoroutineScope,
@@ -173,7 +150,6 @@ class AuthGoogleProvider() {
         }
     }
 
-    // Actualiza UI y guarda en SharedPreferences si es válido
     fun updateUI(user: FirebaseUser?, context: Context) {
         val sharedPref: SharedPreferences =
             context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
@@ -211,7 +187,6 @@ class AuthGoogleProvider() {
                                 Log.d("Firestore", "Ya existe documento vinculado para este UID")
                             }
                         }
-
                 } else {
                     Log.w("AuthGoogleProvider", "No se encontró alumno actual para vincular")
                 }

@@ -1,11 +1,8 @@
 package mx.edu.unpa.calificacionesunpa.ui.login;
 
 import static androidx.lifecycle.LifecycleOwnerKt.getLifecycleScope;
-import static java.lang.reflect.Array.set;
-
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -16,21 +13,14 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.firebase.auth.FirebaseAuth;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.credentials.CredentialManager;
 import androidx.lifecycle.LifecycleCoroutineScope;
 import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.LifecycleOwnerKt;
-
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseNetworkException;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
-
 import kotlin.Unit;
 import mx.edu.unpa.calificacionesunpa.MainActivity;
 import mx.edu.unpa.calificacionesunpa.R;
@@ -41,35 +31,20 @@ import mx.edu.unpa.calificacionesunpa.providers.AuthProvider;
 import mx.edu.unpa.calificacionesunpa.service.UsuarioService;
 import mx.edu.unpa.calificacionesunpa.ui.perfil.FragmentPerfilN;
 import mx.edu.unpa.calificacionesunpa.ui.recuperarContrasena.RecuperarContrasena;
-//import mx.edu.unpa.calificacionesunpa.ui.register.Register;
 
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
-
-    // Ahora este campo contendrá la matrícula, no el correo completo
     private EditText etMatricula, etPassword;
     private Button btnLogin, btnRegistro;
     private TextView tvForgotPassword;
     private AuthProvider authProvider;
     private AlumnoProvider alumnoProvider;
     private UsuarioService usuarioService = UsuarioService.INSTANCE;
-
-    private AuthGoogleProvider authGoogleProvider =  new AuthGoogleProvider();
-
-    private FirebaseUser userGoogle;
-
-    private FragmentPerfilN fragmentPerfilN;
     private LoadingFragment loadingFragment;
-
     private  String matricula;
-
     private FirebaseAuth auth;
-
     LifecycleOwner lifecycleOwner = this;
     LifecycleCoroutineScope scope = getLifecycleScope(lifecycleOwner);
-
-
-
 
     private boolean isFragmentVisible = false;
     @Override
@@ -89,8 +64,6 @@ public class LoginActivity extends AppCompatActivity {
 
         authProvider = new AuthProvider();
         auth = FirebaseAuth.getInstance();
-
-
 
         btnLogin.setOnClickListener(v -> {
             if (!isValidateForm()) return;
@@ -121,7 +94,6 @@ public class LoginActivity extends AppCompatActivity {
                             alumnoProvider.obtenerAlumnoConMateriasDeUsuario(
                                     authProvider.getId(),
                                     alumno -> {
-                                        Log.d("FirebaseUser", "AlumnoLogin: $alumno" + alumno);
                                         usuarioService.setAlumnoActual(alumno);
                                         hideLoadingFragment();
                                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
@@ -132,8 +104,6 @@ public class LoginActivity extends AppCompatActivity {
                                         return Unit.INSTANCE;
                                     }
                             );
-                            Toast.makeText(this, "Alumno id: "+authProvider.getId() , Toast.LENGTH_LONG).show();
-
 
                         } else {
                             hideLoadingFragment();
@@ -175,33 +145,6 @@ public class LoginActivity extends AppCompatActivity {
                     true
             );
         });
-
-
-        //Button button = findViewById(R.id.btnGoogle);
-        validarGoogle();
-
-    }
-
-
-    public void validarGoogle(){
-        Button button = findViewById(R.id.btnGoogle);
-       // SharedPreferences sharedPref = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
-
-
-       /*
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.clear().commit();*/
-
-        /*if(sharedPref.contains("accesoConGoogle")){
-            boolean acceso= sharedPref.getBoolean(("accesoConGoogle"),false);
-            button.setEnabled(acceso);
-            matricula= sharedPref.getString("matricula",null);
-            Toast.makeText(this,"matricula:"+matricula,Toast.LENGTH_LONG).show();
-        }else{
-            button.setEnabled(false); // Esto desactiva el botón
-        }
-        Toast.makeText(this, "shared:"+ sharedPref.getBoolean(("accesoConGoogle"),false),
-                Toast.LENGTH_SHORT).show();*/
     }
 
     private boolean isValidateForm() {
@@ -249,37 +192,6 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    /*public void loginGoogle(View view) {
-        Toast.makeText(this,
-                "Entró",
-                Toast.LENGTH_SHORT).show();
-        Log.d("FirebaseUser", "Matricula: $matricula" + matricula);
-        Log.d("Debug", "Longitud: " + matricula.length());
-
-        /// //////////////////
-        alumnoProvider = new AlumnoProvider();
-        //Log.d("FirebaseUser", "AlumnoProvider: $matricula" + matricula);
-        alumnoProvider.obtenerAlumnoConMateriasDeUsuario(
-                matricula,
-                alumno -> {
-                    Log.d("Debug", "Alumno: " + alumno);
-                    if (alumno == null) {
-                        Toast.makeText(this, "No se pudo cargar el alumno", Toast.LENGTH_LONG).show();
-                        hideLoadingFragment();
-                        return Unit.INSTANCE;
-                    }
-
-                    usuarioService.setAlumnoActual(alumno);
-                    hideLoadingFragment();
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    intent.putExtra("navigateTo", "calificaciones");
-                    startActivity(intent);
-                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                    finish();
-                    return Unit.INSTANCE;
-                }
-       */
-
     public void loginGoogle(String matriculaFirestore) {
         this.matricula = matriculaFirestore;
 
@@ -303,8 +215,4 @@ public class LoginActivity extends AppCompatActivity {
                 }
         );
     }
-
-
-
-
 }

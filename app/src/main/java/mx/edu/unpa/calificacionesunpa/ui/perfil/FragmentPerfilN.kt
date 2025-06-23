@@ -66,17 +66,11 @@ class FragmentPerfilN : Fragment() {
 
         //tvPromedio.text = String.format("%.1f", promedioCalculatorService.getPromedioGeneral())
 
-
         val button = view.findViewById<TextView>(R.id.tvGoogle)
-        //val sharedPref: SharedPreferences = requireActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
-       /*with(sharedPref.edit()){
-            putString("matricula",authProvider.getId()).commit();
-        }*/
 
         button.setOnClickListener {
             // Tu acción aquí
             authGoogleProvider.callSignInGoogle(view,requireActivity(),lifecycleScope,credentialManager,requireActivity().getString(R.string.default_web_client_id),auth,true);
-        //callSignInGoogle(view);
         }
         return view
     }
@@ -84,7 +78,6 @@ class FragmentPerfilN : Fragment() {
     override fun onStart() {
         super.onStart()
         authGoogleProvider.updateUI(auth.currentUser,requireActivity());
-        //updateUI(auth.currentUser)
     }
 
     private fun generarCodigoBarras(texto: String) {
