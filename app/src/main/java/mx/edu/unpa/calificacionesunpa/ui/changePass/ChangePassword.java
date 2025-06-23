@@ -19,6 +19,7 @@ public class ChangePassword extends AppCompatActivity {
     private EditText etNuevaPass;
     private EditText etConfirmarPass;
     private Button btnCambiar;
+    private Button btnCancelar;
     private FirebaseAuth auth;
 
     @Override
@@ -30,6 +31,7 @@ public class ChangePassword extends AppCompatActivity {
         etNuevaPass = findViewById(R.id.cp_txtnewPassword);
         etConfirmarPass = findViewById(R.id.cp_txtConfirmPassword);
         btnCambiar = findViewById(R.id.cp_changepass);
+        btnCancelar= findViewById(R.id.cp_cancelchangepass);
         auth = FirebaseAuth.getInstance();
 
         btnCambiar.setOnClickListener(view -> {
@@ -38,6 +40,9 @@ public class ChangePassword extends AppCompatActivity {
             String confirmacion = etConfirmarPass.getText().toString().trim();
             cambiarPassword(actualPass, nuevaPass, confirmacion);
         });
+
+        btnCancelar.setOnClickListener(view -> cancelarCambio());
+
     }
 
     private void cambiarPassword(String actualPass, String nuevaPass, String confirmacion) {
@@ -69,6 +74,11 @@ public class ChangePassword extends AppCompatActivity {
             Toast.makeText(this, "No se pudo obtener el correo del usuario", Toast.LENGTH_SHORT).show();
             return;
         }
+        if (nuevaPass.length() < 6) {
+            Toast.makeText(this, "La nueva contraseña debe tener al menos 6 caracteres", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
 
         // Reautenticación con la contraseña actual
         AuthCredential credential = EmailAuthProvider.getCredential(email, actualPass);
@@ -77,18 +87,26 @@ public class ChangePassword extends AppCompatActivity {
                 // Cambiar contraseña en Firebase Auth
                 user.updatePassword(nuevaPass).addOnCompleteListener(updateTask -> {
                     if (updateTask.isSuccessful()) {
-                        Toast.makeText(ChangePassword.this, "Contraseña actualizada correctamente", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Contraseña actualizada correctamente", Toast.LENGTH_SHORT).show();
                         etActualPass.setText("");
                         etNuevaPass.setText("");
                         etConfirmarPass.setText("");
+                        finish();
                     } else {
-                        Toast.makeText(ChangePassword.this, "Error al cambiar la contraseña en Auth", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Error al cambiar la contraseña en Auth", Toast.LENGTH_SHORT).show();
                     }
                 });
             } else {
-                Toast.makeText(ChangePassword.this, "Error de reautenticación: contraseña incorrecta", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Error de reautenticación: contraseña incorrecta", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void cancelarCambio(){
+        etActualPass.setText("");
+        etNuevaPass.setText("");
+        etConfirmarPass.setText("");
+        finish();
     }
 
 }

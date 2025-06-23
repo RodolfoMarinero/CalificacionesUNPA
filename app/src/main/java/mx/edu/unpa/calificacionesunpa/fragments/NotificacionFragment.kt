@@ -47,34 +47,11 @@ class NotificacionFragment : Fragment(R.layout.fragment_notificaciones) {
         recyclerView.adapter = adapter
         recyclerView.itemAnimator = DefaultItemAnimator()
 
-        cargarNotificacionesDesdeFirestore()
+        //cargarNotificacionesDesdeFirestore()
     }
     private fun eliminarNotificacion(notificacion: NotificationItem) {
         // Eliminar de Firestore y actualizar lista
     }
 
-    private fun cargarNotificacionesDesdeFirestore() {
-        val db = FirebaseFirestore.getInstance()
-        db.collection("notificaciones")
-            .orderBy("timestamp")
-            .get()
-            .addOnSuccessListener { documents ->
-                notificationsList.clear()
-                for (doc in documents) {
-                    val notificacion = doc.toObject(NotificationItem::class.java)
-                    notificationsList.add(notificacion)
-                }
-                adapter.notifyDataSetChanged()
-                if (notificationsList.isEmpty()) {
-                    emptyView.visibility = View.VISIBLE
-                    recyclerView.visibility = View.GONE
-                } else {
-                    emptyView.visibility = View.GONE
-                    recyclerView.visibility = View.VISIBLE
-                }
-            }
-            .addOnFailureListener { e ->
-                Log.w("Firestore", "Error al cargar notificaciones", e)
-            }
-    }
+
 }

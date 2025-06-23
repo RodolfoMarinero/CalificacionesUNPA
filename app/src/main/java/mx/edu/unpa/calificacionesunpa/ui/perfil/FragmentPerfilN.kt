@@ -1,6 +1,14 @@
 package mx.edu.unpa.calificacionesunpa.ui.perfil
 
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.util.Base64
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +25,10 @@ import com.journeyapps.barcodescanner.BarcodeEncoder
 import mx.edu.unpa.calificacionesunpa.R
 import mx.edu.unpa.calificacionesunpa.providers.AuthGoogleProvider
 import mx.edu.unpa.calificacionesunpa.providers.AuthProvider
+import mx.edu.unpa.calificacionesunpa.service.PromedioCalculatorService
+import mx.edu.unpa.calificacionesunpa.ui.changePass.ChangePassword
+import java.io.File
+import java.io.FileOutputStream
 
 class FragmentPerfilN : Fragment() {
 
@@ -29,6 +41,16 @@ class FragmentPerfilN : Fragment() {
     private lateinit var auth: FirebaseAuth
     private lateinit var authProvider: AuthProvider
     private lateinit var credentialManager: CredentialManager
+    private val promedioCalculatorService = PromedioCalculatorService
+    private  lateinit var userGoogle: FirebaseUser
+    var loginGoogle: Boolean = false
+
+    private lateinit var ivProfile: ImageView
+    private val PICK_IMAGE_REQUEST = 1001
+    private val REQUEST_PERMISSION_CODE = 2001
+
+
+
     private lateinit var authGoogleProvider: AuthGoogleProvider
 
     override fun onCreateView(
@@ -36,6 +58,22 @@ class FragmentPerfilN : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_perfil, container, false)
+
+        ivProfile = view.findViewById(R.id.ivProfile)
+
+        ivProfile.setOnClickListener {
+            if (hasPermission()) {
+                abrirGaleria()
+            } else {
+                requestPermissions(arrayOf(
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU)
+                        android.Manifest.permission.READ_MEDIA_IMAGES
+                    else
+                        android.Manifest.permission.READ_EXTERNAL_STORAGE
+                ), REQUEST_PERMISSION_CODE)
+            }
+        }
+
 
         tvNombre = view.findViewById(R.id.tvNombre)
         tvMatricula = view.findViewById(R.id.tvMatriculaPerfil)
@@ -46,6 +84,12 @@ class FragmentPerfilN : Fragment() {
 
         view.findViewById<MaterialButton>(R.id.btnVolver).setOnClickListener {
             requireActivity().supportFragmentManager.popBackStack()
+        }
+        val btnCambiarPass = view.findViewById<TextView>(R.id.cambiarPass)
+
+        btnCambiarPass.setOnClickListener { v: View? ->
+            val intent = Intent(activity, ChangePassword::class.java)
+            startActivity(intent)
         }
         authProvider = AuthProvider()
         authGoogleProvider = AuthGoogleProvider()
@@ -67,7 +111,6 @@ class FragmentPerfilN : Fragment() {
         //tvPromedio.text = String.format("%.1f", promedioCalculatorService.getPromedioGeneral())
 
         val button = view.findViewById<TextView>(R.id.tvGoogle)
-
         button.setOnClickListener {
             // Tu acción aquí
             authGoogleProvider.callSignInGoogle(view,requireActivity(),lifecycleScope,credentialManager,requireActivity().getString(R.string.default_web_client_id),auth,true);
@@ -78,6 +121,27 @@ class FragmentPerfilN : Fragment() {
     override fun onStart() {
         super.onStart()
         authGoogleProvider.updateUI(auth.currentUser,requireActivity());
+    }
+    private fun hasPermission(): Boolean {
+        val permission = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU)
+            android.Manifest.permission.READ_MEDIA_IMAGES
+        else
+            android.Manifest.permission.READ_EXTERNAL_STORAGE
+
+        return requireContext().checkSelfPermission(permission) == android.content.pm.PackageManager.PERMISSION_GRANTED
+    }
+    private fun abrirGaleria() {
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = "image/*"
+        startActivityForResult(intent, PICK_IMAGE_REQUEST)
+    }
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_PERMISSION_CODE && grantResults.isNotEmpty() && grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            abrirGaleria()
+        } else {
+            Log.e(TAG, "Permiso denegado para acceder a la galería")
+        }
     }
 
     private fun generarCodigoBarras(texto: String) {
@@ -90,7 +154,59 @@ class FragmentPerfilN : Fragment() {
         }
     }
 
+    private fun guardarImagenLocal(bitmap: Bitmap) {
+        try {
+            val file = File(requireContext().filesDir, "imagen_perfil.png")
+            if (file.exists()) file.delete()
+            val outputStream = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+            outputStream.flush()
+            outputStream.close()
+            Log.d("Perfil", "Imagen guardada localmente")
+        } catch (e: Exception) {
+            Log.e("Perfil", "Error al guardar imagen localmente", e)
+        }
+    }
+    private fun cargarImagenLocal(): Boolean {
+        val file = File(requireContext().filesDir, "imagen_perfil.png")
+        return if (file.exists()) {
+            val bitmap = BitmapFactory.decodeFile(file.absolutePath)
+            ivProfile.setImageBitmap(bitmap)
+            true
+        } else {
+            false
+        }
+    }
+
+
     companion object {
         private const val TAG = "FragmentPerfil"
     }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null && data.data != null) {
+            val imageUri = data.data
+            ivProfile.setImageURI(imageUri)
+
+            // Convertir la imagen a base64
+            val base64 = ArchivoUtils.convertirA_Base64(requireContext(), imageUri!!)
+            if (base64 != null) {
+                val userId = FirebaseAuth.getInstance().currentUser?.uid
+                val fileName = "perfil_${System.currentTimeMillis()}.jpg" // nombre único
+                if (userId != null) {
+                    val provider = StorageProvider()
+                    provider.uploadImage(base64, fileName, userId) { success ->
+                        if (success) {
+                            Log.d("Perfil", "Imagen de perfil actualizada correctamente")
+                        } else {
+                            Log.e("Perfil", "Error al subir la imagen")
+                        }
+                    }
+                }
+            } else {
+                Log.e("Perfil", "Error al convertir la imagen")
+            }
+        }
+    }
+
 }

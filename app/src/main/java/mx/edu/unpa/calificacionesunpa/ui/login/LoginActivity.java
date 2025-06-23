@@ -1,6 +1,5 @@
 package mx.edu.unpa.calificacionesunpa.ui.login;
 
-import static androidx.lifecycle.LifecycleOwnerKt.getLifecycleScope;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -13,11 +12,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.google.firebase.auth.FirebaseAuth;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.credentials.CredentialManager;
-import androidx.lifecycle.LifecycleCoroutineScope;
-import androidx.lifecycle.LifecycleOwner;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.FirebaseUser;
@@ -28,9 +23,11 @@ import mx.edu.unpa.calificacionesunpa.fragments.LoadingFragment;
 import mx.edu.unpa.calificacionesunpa.providers.AlumnoProvider;
 import mx.edu.unpa.calificacionesunpa.providers.AuthGoogleProvider;
 import mx.edu.unpa.calificacionesunpa.providers.AuthProvider;
+import mx.edu.unpa.calificacionesunpa.providers.NotificacionProvider;
 import mx.edu.unpa.calificacionesunpa.service.UsuarioService;
 import mx.edu.unpa.calificacionesunpa.ui.perfil.FragmentPerfilN;
 import mx.edu.unpa.calificacionesunpa.ui.recuperarContrasena.RecuperarContrasena;
+import mx.edu.unpa.calificacionesunpa.ui.sescolares.EscolaresActivity;
 
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
@@ -40,6 +37,8 @@ public class LoginActivity extends AppCompatActivity {
     private AuthProvider authProvider;
     private AlumnoProvider alumnoProvider;
     private UsuarioService usuarioService = UsuarioService.INSTANCE;
+    private NotificacionProvider notificacionProvider;
+    private FirebaseUser userGoogle;
     private LoadingFragment loadingFragment;
     private  String matricula;
     private FirebaseAuth auth;
@@ -90,11 +89,18 @@ public class LoginActivity extends AppCompatActivity {
                             etMatricula.setText("");
                             etPassword.setText("");
                             //solicita el alumno
+                            if(matricula.equals("20010043")){
+                                Intent intento = new Intent(this, EscolaresActivity.class );
+                                startActivity(intento);
+                                finish();
+                            }
                             alumnoProvider = new AlumnoProvider();
+                            notificacionProvider = new NotificacionProvider();
                             alumnoProvider.obtenerAlumnoConMateriasDeUsuario(
                                     authProvider.getId(),
                                     alumno -> {
                                         usuarioService.setAlumnoActual(alumno);
+                                        notificacionProvider.cargarNotificacionesDesdeFirestore();
                                         hideLoadingFragment();
                                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                         intent.putExtra("navigateTo", "calificaciones");
@@ -104,6 +110,7 @@ public class LoginActivity extends AppCompatActivity {
                                         return Unit.INSTANCE;
                                     }
                             );
+
 
                         } else {
                             hideLoadingFragment();
@@ -187,7 +194,8 @@ public class LoginActivity extends AppCompatActivity {
             getSupportFragmentManager()
                     .beginTransaction()
                     .remove(loadingFragment)
-                    .commit();
+                    .commitAllowingStateLoss();
+
             loadingFragment = null;
         }
     }
