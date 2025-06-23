@@ -1,5 +1,7 @@
 package mx.edu.unpa.calificacionesunpa.ui.login;
 
+import static androidx.lifecycle.LifecycleOwnerKt.getLifecycleScope;
+
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -13,8 +15,13 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.credentials.CredentialManager;
+import androidx.lifecycle.LifecycleCoroutineScope;
+import androidx.lifecycle.LifecycleOwner;
+
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseNetworkException;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import kotlin.Unit;
 import mx.edu.unpa.calificacionesunpa.MainActivity;
