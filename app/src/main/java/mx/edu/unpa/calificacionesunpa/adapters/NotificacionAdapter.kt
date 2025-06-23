@@ -13,6 +13,7 @@ data class NotificationItem(
     val titulo: String = "",
     val mensaje: String = "",
     val esGlobal: Boolean = false,
+
     val timestamp: Long = 0L,
     val fueLeida : Boolean = true
 ) {

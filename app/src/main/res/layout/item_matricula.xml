@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:orientation="horizontal"
+android:padding="8dp"
+android:background="#C1D8D2"
+android:gravity="center_vertical">
+    <!--@android:color/white   #FFFFFF-->
+<TextView
+    android:id="@+id/txtMatriculaItem"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android:text="Matrícula"
+    android:textColor="#000000"
+    android:textSize="16sp" />
+
+<ImageView
+    android:id="@+id/btnEliminarMatricula"
+    android:layout_width="24dp"
+    android:layout_height="24dp"
+    android:src="@drawable/ic_close"
+    android:contentDescription="Eliminar"
+    android:padding="4dp"
+    android:layout_marginStart="8dp" />
+</LinearLayout>
+
