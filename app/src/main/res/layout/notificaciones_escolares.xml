@@ -136,8 +136,7 @@
                         android:layout_height="wrap_content"
                         android:text="Agregar"
                         android:layout_marginStart="8dp"
-                        android:background="#88E788"
-                        android:radius="8dp"/>
+                        android:radius="12dp"/>
                 </LinearLayout>
 
                 <!--<androidx.recyclerview.widget.RecyclerView
@@ -148,13 +147,15 @@
                     android:background="#C1D8D2"
                     android:padding="8dp"
                     android:overScrollMode="never"
-                    android:nestedScrollingEnabled="false"/>-->
+                    android:nestedScrollingEnabled="false"/>
+                    Esta es para la parte de abajo
+                    android:background="@drawable/bg_gradient"-->
                 <LinearLayout
                     android:id="@+id/layoutListaMatriculas"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:background="@drawable/bg_gradient"
+
                     android:orientation="vertical"
                     android:padding="8dp" />
 

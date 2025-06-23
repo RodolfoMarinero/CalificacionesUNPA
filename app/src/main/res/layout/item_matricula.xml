@@ -5,9 +5,9 @@ android:layout_width="match_parent"
 android:layout_height="wrap_content"
 android:orientation="horizontal"
 android:padding="8dp"
-android:background="#C1D8D2"
+android:background="#FFFFFF"
 android:gravity="center_vertical">
-    <!--@android:color/white   #FFFFFF-->
+    <!--@android:color/white   #C1D8D2-->
 <TextView
     android:id="@+id/txtMatriculaItem"
     android:layout_width="0dp"
