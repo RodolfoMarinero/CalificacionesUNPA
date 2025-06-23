@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.credentials.Credential
 import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
@@ -24,6 +25,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 import mx.edu.unpa.calificacionesunpa.models.Alumno
 import mx.edu.unpa.calificacionesunpa.service.UsuarioService
+import mx.edu.unpa.calificacionesunpa.ui.login.LoginActivity
 
 
 class AuthGoogleProvider() {
@@ -38,9 +40,10 @@ class AuthGoogleProvider() {
         lifecycleScope: LifecycleCoroutineScope,
         credentialManager: CredentialManager,
         webClientId: String,
-        auth: FirebaseAuth
+        auth: FirebaseAuth,
+        redirigir: Boolean
     ) {
-        launchCredentialManager(activity, lifecycleScope, credentialManager, webClientId, auth)
+        launchCredentialManager(activity, lifecycleScope, credentialManager, webClientId, auth,redirigir)
     }
 
     // Lanza el CredentialManager
@@ -49,7 +52,8 @@ class AuthGoogleProvider() {
         lifecycleScope: LifecycleCoroutineScope,
         credentialManager: CredentialManager,
         webClientId: String,
-        auth: FirebaseAuth
+        auth: FirebaseAuth,
+        redirigir: Boolean
     ) {
         val googleIdOption = GetGoogleIdOption.Builder()
             .setServerClientId(webClientId)
@@ -63,7 +67,7 @@ class AuthGoogleProvider() {
         lifecycleScope.launch {
             try {
                 val result = credentialManager.getCredential(activity, request)
-                handleSignIn(result.credential, activity, lifecycleScope, credentialManager, auth)
+                handleSignIn(result.credential, activity, lifecycleScope, credentialManager, auth,redirigir)
             } catch (e: GetCredentialException) {
                 Log.e(TAG, "Error obteniendo credenciales: ${e.localizedMessage}")
             }
@@ -76,18 +80,20 @@ class AuthGoogleProvider() {
         activity: Activity,
         lifecycleScope: LifecycleCoroutineScope,
         credentialManager: CredentialManager,
-        auth: FirebaseAuth
+        auth: FirebaseAuth,
+        redirigir: Boolean
     ) {
         if (credential is CustomCredential && credential.type == TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
             val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
-            firebaseAuthWithGoogle(googleIdTokenCredential.idToken, activity, auth)
+            firebaseAuthWithGoogle(googleIdTokenCredential.idToken, activity, auth,redirigir)
         } else {
             Log.w(TAG, "Credential no es de tipo Google ID")
         }
     }
 
     // Autenticación con Firebase
-    fun firebaseAuthWithGoogle(idToken: String, activity: Activity, auth: FirebaseAuth) {
+    //ESTE SE COMENTÓ
+   /* fun firebaseAuthWithGoogle(idToken: String, activity: Activity, auth: FirebaseAuth) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
         auth.signInWithCredential(credential)
             .addOnCompleteListener(activity) { task ->
@@ -98,7 +104,45 @@ class AuthGoogleProvider() {
                     updateUI(null, activity)
                 }
             }
+    }*/
+
+    fun firebaseAuthWithGoogle(
+        idToken: String,
+        activity: Activity,
+        auth: FirebaseAuth,
+        redirigir: Boolean
+    ) {
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+        auth.signInWithCredential(credential)
+            .addOnCompleteListener(activity) { task ->
+                if (task.isSuccessful) {
+                    val user = auth.currentUser
+                    updateUI(user, activity)
+
+                    if (redirigir && user != null) {
+                        val db = FirebaseFirestore.getInstance()
+                        db.collection("usuarios_vinculados")
+                            .document(user.uid)
+                            .get()
+                            .addOnSuccessListener { document ->
+                                if (document.exists()) {
+                                    val matricula = document.getString("matricula")
+                                    if (activity is LoginActivity && matricula != null) {
+                                        activity.loginGoogle(matricula)
+                                    }
+                                } else {
+                                    Toast.makeText(activity, "Esta cuenta de Google no está registrada", Toast.LENGTH_LONG).show()
+                                    FirebaseAuth.getInstance().signOut()
+                                }
+                            }
+                    }
+                } else {
+                    Log.w(TAG, "Fallo al autenticar", task.exception)
+                    updateUI(null, activity)
+                }
+            }
     }
+
 
     // Función para cerrar sesión
     fun callSignOut(

@@ -1,5 +1,6 @@
 package mx.edu.unpa.calificacionesunpa.ui.login;
 
+import static androidx.lifecycle.LifecycleOwnerKt.getLifecycleScope;
 import static java.lang.reflect.Array.set;
 
 import android.content.Context;
@@ -19,6 +20,10 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.credentials.CredentialManager;
+import androidx.lifecycle.LifecycleCoroutineScope;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LifecycleOwnerKt;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseNetworkException;
@@ -59,6 +64,10 @@ public class LoginActivity extends AppCompatActivity {
     private  String matricula;
 
     private FirebaseAuth auth;
+
+    LifecycleOwner lifecycleOwner = this;
+    LifecycleCoroutineScope scope = getLifecycleScope(lifecycleOwner);
+
 
 
 
@@ -112,6 +121,7 @@ public class LoginActivity extends AppCompatActivity {
                             alumnoProvider.obtenerAlumnoConMateriasDeUsuario(
                                     authProvider.getId(),
                                     alumno -> {
+                                        Log.d("FirebaseUser", "AlumnoLogin: $alumno" + alumno);
                                         usuarioService.setAlumnoActual(alumno);
                                         hideLoadingFragment();
                                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
@@ -150,6 +160,23 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(new Intent(LoginActivity.this, RecuperarContrasena.class))
         );
 
+        Button btnGoogle = findViewById(R.id.btnGoogle);
+
+        btnGoogle.setOnClickListener(view -> {
+            AuthGoogleProvider authGoogleProvider = new AuthGoogleProvider();
+
+            authGoogleProvider.callSignInGoogle(
+                    view,
+                    this,
+                    scope,
+                    CredentialManager.create(this),
+                    getString(R.string.default_web_client_id),
+                    FirebaseAuth.getInstance(),
+                    true
+            );
+        });
+
+
         //Button button = findViewById(R.id.btnGoogle);
         validarGoogle();
 
@@ -158,14 +185,14 @@ public class LoginActivity extends AppCompatActivity {
 
     public void validarGoogle(){
         Button button = findViewById(R.id.btnGoogle);
-        SharedPreferences sharedPref = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+       // SharedPreferences sharedPref = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
 
 
        /*
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.clear().commit();*/
 
-        if(sharedPref.contains("accesoConGoogle")){
+        /*if(sharedPref.contains("accesoConGoogle")){
             boolean acceso= sharedPref.getBoolean(("accesoConGoogle"),false);
             button.setEnabled(acceso);
             matricula= sharedPref.getString("matricula",null);
@@ -174,7 +201,7 @@ public class LoginActivity extends AppCompatActivity {
             button.setEnabled(false); // Esto desactiva el botón
         }
         Toast.makeText(this, "shared:"+ sharedPref.getBoolean(("accesoConGoogle"),false),
-                Toast.LENGTH_SHORT).show();
+                Toast.LENGTH_SHORT).show();*/
     }
 
     private boolean isValidateForm() {
@@ -222,16 +249,26 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    public void loginGoogle(View view) {
+    /*public void loginGoogle(View view) {
         Toast.makeText(this,
                 "Entró",
                 Toast.LENGTH_SHORT).show();
         Log.d("FirebaseUser", "Matricula: $matricula" + matricula);
+        Log.d("Debug", "Longitud: " + matricula.length());
+
         /// //////////////////
         alumnoProvider = new AlumnoProvider();
+        //Log.d("FirebaseUser", "AlumnoProvider: $matricula" + matricula);
         alumnoProvider.obtenerAlumnoConMateriasDeUsuario(
                 matricula,
                 alumno -> {
+                    Log.d("Debug", "Alumno: " + alumno);
+                    if (alumno == null) {
+                        Toast.makeText(this, "No se pudo cargar el alumno", Toast.LENGTH_LONG).show();
+                        hideLoadingFragment();
+                        return Unit.INSTANCE;
+                    }
+
                     usuarioService.setAlumnoActual(alumno);
                     hideLoadingFragment();
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
@@ -241,8 +278,32 @@ public class LoginActivity extends AppCompatActivity {
                     finish();
                     return Unit.INSTANCE;
                 }
+       */
+
+    public void loginGoogle(String matriculaFirestore) {
+        this.matricula = matriculaFirestore;
+
+        alumnoProvider = new AlumnoProvider();
+        alumnoProvider.obtenerAlumnoConMateriasDeUsuario(
+                matricula,
+                alumno -> {
+                    if (alumno == null) {
+                        Toast.makeText(this, "No se pudo cargar el alumno", Toast.LENGTH_LONG).show();
+                        return Unit.INSTANCE;
+                    }
+
+                    usuarioService.setAlumnoActual(alumno);
+
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    intent.putExtra("navigateTo", "calificaciones");
+                    startActivity(intent);
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                    finish();
+                    return Unit.INSTANCE;
+                }
         );
     }
+
 
 
 

@@ -1,7 +1,5 @@
 package mx.edu.unpa.calificacionesunpa.ui.perfil
 
-import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +11,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.button.MaterialButton
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.WriterException
 import com.journeyapps.barcodescanner.BarcodeEncoder
@@ -71,14 +68,14 @@ class FragmentPerfilN : Fragment() {
 
 
         val button = view.findViewById<TextView>(R.id.tvGoogle)
-        val sharedPref: SharedPreferences = requireActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
-        with(sharedPref.edit()){
+        //val sharedPref: SharedPreferences = requireActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+       /*with(sharedPref.edit()){
             putString("matricula",authProvider.getId()).commit();
-        }
+        }*/
 
         button.setOnClickListener {
             // Tu acción aquí
-            authGoogleProvider.callSignInGoogle(view,requireActivity(),lifecycleScope,credentialManager,requireActivity().getString(R.string.default_web_client_id),auth);
+            authGoogleProvider.callSignInGoogle(view,requireActivity(),lifecycleScope,credentialManager,requireActivity().getString(R.string.default_web_client_id),auth,true);
         //callSignInGoogle(view);
         }
         return view
