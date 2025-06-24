@@ -1,8 +1,9 @@
 package mx.edu.unpa.calificacionesunpa.ui.login;
 
+import static androidx.lifecycle.LifecycleOwnerKt.getLifecycleScope;
+
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -13,34 +14,30 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.view.View;
-
-import com.google.firebase.auth.FirebaseAuth;
-
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.credentials.CredentialManager;
+import androidx.lifecycle.LifecycleCoroutineScope;
+import androidx.lifecycle.LifecycleOwner;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseNetworkException;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
 import kotlin.Unit;
-import kotlin.jvm.internal.Intrinsics;
 import mx.edu.unpa.calificacionesunpa.MainActivity;
 import mx.edu.unpa.calificacionesunpa.R;
 import mx.edu.unpa.calificacionesunpa.fragments.LoadingFragment;
 import mx.edu.unpa.calificacionesunpa.providers.AlumnoProvider;
+import mx.edu.unpa.calificacionesunpa.providers.AuthGoogleProvider;
 import mx.edu.unpa.calificacionesunpa.providers.AuthProvider;
 import mx.edu.unpa.calificacionesunpa.providers.NotificacionProvider;
 import mx.edu.unpa.calificacionesunpa.service.UsuarioService;
 import mx.edu.unpa.calificacionesunpa.ui.perfil.FragmentPerfilN;
 import mx.edu.unpa.calificacionesunpa.ui.recuperarContrasena.RecuperarContrasena;
 import mx.edu.unpa.calificacionesunpa.ui.sescolares.EscolaresActivity;
-//import mx.edu.unpa.calificacionesunpa.ui.register.Register;
 
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
-
-    // Ahora este campo contendrá la matrícula, no el correo completo
     private EditText etMatricula, etPassword;
     private Button btnLogin, btnRegistro;
     private TextView tvForgotPassword;
@@ -48,13 +45,12 @@ public class LoginActivity extends AppCompatActivity {
     private AlumnoProvider alumnoProvider;
     private UsuarioService usuarioService = UsuarioService.INSTANCE;
     private NotificacionProvider notificacionProvider;
-
-
     private FirebaseUser userGoogle;
-
-    private FragmentPerfilN fragmentPerfilN;
     private LoadingFragment loadingFragment;
-
+    private  String matricula;
+    private FirebaseAuth auth;
+    LifecycleOwner lifecycleOwner = this;
+    LifecycleCoroutineScope scope = getLifecycleScope(lifecycleOwner);
 
     private boolean isFragmentVisible = false;
     @Override
@@ -73,6 +69,7 @@ public class LoginActivity extends AppCompatActivity {
         tvForgotPassword= findViewById(R.id.btnRecuperar_contrasena);
 
         authProvider = new AuthProvider();
+        auth = FirebaseAuth.getInstance();
 
         btnLogin.setOnClickListener(v -> {
             if (!isValidateForm()) return;
@@ -153,22 +150,21 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(new Intent(LoginActivity.this, RecuperarContrasena.class))
         );
 
-        //Button button = findViewById(R.id.btnGoogle);
-        validarGoogle();
+        Button btnGoogle = findViewById(R.id.btnGoogle);
 
-    }
+        btnGoogle.setOnClickListener(view -> {
+            AuthGoogleProvider authGoogleProvider = new AuthGoogleProvider();
 
-
-    public void validarGoogle(){
-        Button button = findViewById(R.id.btnGoogle);
-        SharedPreferences sharedPref = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
-
-        if(sharedPref.contains("accesoConGoogle")){
-            boolean acceso= sharedPref.getBoolean(("accesoConGoogle"),false);
-            button.setEnabled(acceso);
-        }else{
-            button.setEnabled(false); // Esto desactiva el botón
-        }
+            authGoogleProvider.callSignInGoogle(
+                    view,
+                    this,
+                    scope,
+                    CredentialManager.create(this),
+                    getString(R.string.default_web_client_id),
+                    FirebaseAuth.getInstance(),
+                    true
+            );
+        });
     }
 
     private boolean isValidateForm() {
@@ -217,14 +213,27 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    public void loginGoogle(View view) {
-        Toast.makeText(this,
-                "Entró",
-                Toast.LENGTH_SHORT).show();
+    public void loginGoogle(String matriculaFirestore) {
+        this.matricula = matriculaFirestore;
+
+        alumnoProvider = new AlumnoProvider();
+        alumnoProvider.obtenerAlumnoConMateriasDeUsuario(
+                matricula,
+                alumno -> {
+                    if (alumno == null) {
+                        Toast.makeText(this, "No se pudo cargar el alumno", Toast.LENGTH_LONG).show();
+                        return Unit.INSTANCE;
+                    }
+
+                    usuarioService.setAlumnoActual(alumno);
+
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    intent.putExtra("navigateTo", "calificaciones");
+                    startActivity(intent);
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                    finish();
+                    return Unit.INSTANCE;
+                }
+        );
     }
-
-    /*public void googleAccountExists(){
-        if(userGoogle.getEmail())
-    }*/
-
 }

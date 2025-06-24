@@ -2,8 +2,8 @@ package mx.edu.unpa.calificacionesunpa.providers
 
 import android.util.Log
 import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FirebaseFirestore
 import mx.edu.unpa.calificacionesunpa.models.Alumno
 import mx.edu.unpa.calificacionesunpa.models.Calendario
 import mx.edu.unpa.calificacionesunpa.models.Materia
@@ -20,13 +20,19 @@ class AlumnoProvider {
         usuarioId: String,
         callback: (Alumno?) -> Unit
     ) {
+        Log.d("FirebaseUser", "usuarioId: $usuarioId")
+
         usuariosCollection.document(usuarioId)
             .get()
             .addOnSuccessListener { userDoc: DocumentSnapshot ->
                 val usuario = userDoc.toObject(Usuario::class.java)
                 val alumnoRef = usuario?.alumnoRef
 
+                Log.d("FirebaseUser", "alumnnoRef: $alumnoRef")
+
+
                 if (alumnoRef == null) {
+                    Log.d("FirebaseUser", "alumnnoRef null")
                     callback(null)
                     return@addOnSuccessListener
                 }

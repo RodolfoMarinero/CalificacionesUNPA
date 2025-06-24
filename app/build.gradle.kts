@@ -77,6 +77,8 @@ dependencies {
     implementation("com.google.firebase:firebase-inappmessaging-display")
     implementation("com.google.firebase:firebase-messaging")
     implementation("com.google.firebase:firebase-analytics")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
+
 
 
     implementation("com.google.firebase:firebase-storage-ktx")
