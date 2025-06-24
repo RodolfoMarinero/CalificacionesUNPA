@@ -1,5 +1,7 @@
 package mx.edu.unpa.calificacionesunpa.ui.calificacionesanteriores;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -85,7 +87,8 @@ public class FragmentCalificacionesAnteriores extends Fragment {
     private MaterialButton btnSemestreActual;
     private int idxCicloActual = 1; // Índice del ciclo actual, empieza en 1
     private PromedioCalculatorService promedioCalculatorService;
-
+    private SharedPreferences sharedPrefs;
+    private long lastUpdateTime = 0;
     @Nullable @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
@@ -101,6 +104,8 @@ public class FragmentCalificacionesAnteriores extends Fragment {
         tvNombre             = root.findViewById(R.id.tvNombre);
 
         ivPerfil = root.findViewById(R.id.ivPerfil);
+        sharedPrefs = requireContext().getSharedPreferences("profile_prefs", Context.MODE_PRIVATE);
+        lastUpdateTime = sharedPrefs.getLong("last_update", 0);
 
         File file = new File(requireContext().getFilesDir(), "imagen_perfil.png");
         if (file.exists()) {
@@ -202,6 +207,41 @@ public class FragmentCalificacionesAnteriores extends Fragment {
         ocultarSpinnerSiVisible();
         return root;
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadProfileImage(); // Verificar actualizaciones al volver al fragmento
+    }
+    private void loadProfileImage() {
+        long currentUpdateTime = sharedPrefs.getLong("last_update", 0);
+
+        // Recargar solo si ha habido una actualización
+        if (currentUpdateTime > lastUpdateTime) {
+            lastUpdateTime = currentUpdateTime;
+            ivPerfil.setImageDrawable(null); // Forzar recarga
+        }
+
+        File file = new File(requireContext().getFilesDir(), "imagen_perfil.png");
+        if (file.exists()) {
+            Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+            ivPerfil.setImageBitmap(bitmap);
+        } else {
+            // Si no está local, aún puedes hacer fallback a Firebase si deseas
+            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            StorageProvider provider = new StorageProvider();
+            provider.getImageByUserId(userId, new OnResultCallback() {
+                @Override
+                public void onResult(@Nullable String base64) {
+                    if (base64 != null) {
+                        byte[] imageBytes = Base64.decode(base64, Base64.DEFAULT);
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                        ivPerfil.setImageBitmap(bitmap);
+                    }
+                }
+            });
+        }
+    }
+
     private void setupSemestreSelector(){
         Set<DocumentReference> ciclosUnicos = new LinkedHashSet<>();
         for (Materia m : todasMaterias) {

@@ -1,6 +1,9 @@
 package mx.edu.unpa.calificacionesunpa.providers
 
+import android.content.Context
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.ktx.app
 import mx.edu.unpa.calificacionesunpa.ui.calificacionesanteriores.OnResultCallback
 import java.util.*
 
@@ -20,8 +23,17 @@ class StorageProvider {
 
 
         collection.document(userId).set(data)
-            .addOnSuccessListener { onResult(true) }
-            .addOnFailureListener { onResult(false) }
+            .addOnSuccessListener {
+                onResult(true)
+
+                // Actualizar último timestamp de modificación
+                val prefs = Firebase.app.getApplicationContext()
+                    .getSharedPreferences("profile_prefs", Context.MODE_PRIVATE)
+                prefs.edit().putLong("last_update", System.currentTimeMillis()).apply()
+            }
+            .addOnFailureListener {
+                onResult(false)
+            }
     }
 
     fun uploadFile(fileB64: String, fileName: String, onResult: (Boolean) -> Unit) {
