@@ -14,31 +14,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
-import androidx.credentials.ClearCredentialStateRequest
-import androidx.credentials.Credential
 import androidx.credentials.CredentialManager
-import androidx.credentials.CustomCredential
-import androidx.credentials.GetCredentialRequest
-import androidx.credentials.exceptions.ClearCredentialException
-import androidx.credentials.exceptions.GetCredentialException
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.google.android.libraries.identity.googleid.GetGoogleIdOption
-import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
-import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.Companion.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
 import com.google.android.material.button.MaterialButton
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.GoogleAuthProvider
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.WriterException
 import com.journeyapps.barcodescanner.BarcodeEncoder
-import kotlinx.coroutines.launch
 import mx.edu.unpa.calificacionesunpa.R
+import mx.edu.unpa.calificacionesunpa.providers.AuthGoogleProvider
 import mx.edu.unpa.calificacionesunpa.providers.AuthProvider
-import mx.edu.unpa.calificacionesunpa.providers.StorageProvider
-import mx.edu.unpa.calificacionesunpa.service.ArchivoUtils
 import mx.edu.unpa.calificacionesunpa.service.PromedioCalculatorService
 import mx.edu.unpa.calificacionesunpa.ui.changePass.ChangePassword
 import java.io.File
@@ -67,6 +53,7 @@ class FragmentPerfilN : Fragment() {
     }
 
 
+    private lateinit var authGoogleProvider: AuthGoogleProvider
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -97,9 +84,6 @@ class FragmentPerfilN : Fragment() {
         ivCodigoBarras = view.findViewById(R.id.ivBarcode)
         tvCodigoBarras = view.findViewById(R.id.tvBarcodeNumber)
 
-        view.findViewById<MaterialButton>(R.id.btnVolver).setOnClickListener {
-            requireActivity().supportFragmentManager.popBackStack()
-        }
         val btnCambiarPass = view.findViewById<TextView>(R.id.cambiarPass)
 
         btnCambiarPass.setOnClickListener { v: View? ->
@@ -107,7 +91,7 @@ class FragmentPerfilN : Fragment() {
             startActivity(intent)
         }
         authProvider = AuthProvider()
-
+        authGoogleProvider = AuthGoogleProvider()
         auth = FirebaseAuth.getInstance()
         credentialManager = CredentialManager.create(requireActivity())
 
@@ -125,18 +109,17 @@ class FragmentPerfilN : Fragment() {
 
         //tvPromedio.text = String.format("%.1f", promedioCalculatorService.getPromedioGeneral())
 
-
         val button = view.findViewById<TextView>(R.id.tvGoogle)
         button.setOnClickListener {
             // Tu acción aquí
-            callSignInGoogle(view);
+            authGoogleProvider.callSignInGoogle(view,requireActivity(),lifecycleScope,credentialManager,requireActivity().getString(R.string.default_web_client_id),auth,true);
         }
         return view
     }
 
     override fun onStart() {
         super.onStart()
-        updateUI(auth.currentUser)
+        authGoogleProvider.updateUI(auth.currentUser,requireActivity());
     }
     private fun hasPermission(): Boolean {
         val permission = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU)
@@ -170,102 +153,6 @@ class FragmentPerfilN : Fragment() {
         }
     }
 
-    fun callSignInGoogle(view: View) {
-        launchCredentialManager()
-    }
-
-    fun launchCredentialManager() {
-        val googleIdOption = GetGoogleIdOption.Builder()
-            .setServerClientId(getString(R.string.default_web_client_id))
-            .setFilterByAuthorizedAccounts(false)
-            .build()
-
-        val request = GetCredentialRequest.Builder()
-            .addCredentialOption(googleIdOption)
-            .build()
-
-        lifecycleScope.launch {
-            try {
-                val result = credentialManager.getCredential(requireActivity(), request)
-                handleSignIn(result.credential)
-            } catch (e: GetCredentialException) {
-                Log.e(TAG, "Error obteniendo credenciales: ${e.localizedMessage}")
-            }
-        }
-    }
-
-     fun handleSignIn(credential: Credential) {
-        if (credential is CustomCredential && credential.type == TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
-            val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
-            firebaseAuthWithGoogle(googleIdTokenCredential.idToken)
-        } else {
-            Log.w(TAG, "Credential no es de tipo Google ID")
-        }
-    }
-
-     fun firebaseAuthWithGoogle(idToken: String) {
-        val credential = GoogleAuthProvider.getCredential(idToken, null)
-        auth.signInWithCredential(credential)
-            .addOnCompleteListener(requireActivity()) { task ->
-                if (task.isSuccessful) {
-                    updateUI(auth.currentUser)
-                } else {
-                    Log.w(TAG, "Fallo al autenticar", task.exception)
-                    updateUI(null)
-                }
-            }
-    }
-
-    fun callSignOut(view: View) {
-        signOut()
-    }
-
-    private fun signOut() {
-        auth.signOut()
-        lifecycleScope.launch {
-            try {
-                val clearRequest = ClearCredentialStateRequest()
-                credentialManager.clearCredentialState(clearRequest)
-                updateUI(null)
-            } catch (e: ClearCredentialException) {
-                Log.e(TAG, "No se pudieron limpiar las credenciales: ${e.localizedMessage}")
-            }
-        }
-    }
-
-    fun updateUI(user: FirebaseUser?) {
-        val sharedPref: SharedPreferences = requireActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
-        if(user != null) {
-            val uid = user.uid
-            val email = user.email
-
-            Log.d("FirebaseUser", "Email: $email")
-
-            if(!email.toString().endsWith("@unpaLoma")){
-                with(sharedPref.edit()){
-                    putBoolean("accesoConGoogle",true).commit()
-                }
-            }
-            val provider = StorageProvider()
-            uid?.let {
-                if (!cargarImagenLocal()) {
-                    provider.getImageByUserId(it) { base64 ->
-                        base64?.let {
-                            val imageBytes = Base64.decode(base64, Base64.DEFAULT)
-                            val bitmap =
-                                BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-                            ivProfile.setImageBitmap(bitmap)
-                            guardarImagenLocal(bitmap)
-                        }
-                    }
-                }
-            }
-
-        }
-
-
-
-    }
     private fun guardarImagenLocal(bitmap: Bitmap) {
         try {
             val file = File(requireContext().filesDir, "imagen_perfil.png")

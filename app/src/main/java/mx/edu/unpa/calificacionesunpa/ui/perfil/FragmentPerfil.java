@@ -44,11 +44,6 @@ public class FragmentPerfil extends Fragment {
         ivCodigoBarras = view.findViewById(R.id.ivBarcode);
         tvCodigoBarras = view.findViewById(R.id.tvBarcodeNumber);
 
-        MaterialButton btnVolver = view.findViewById(R.id.btnVolver);
-        btnVolver.setOnClickListener(v ->  {
-            requireActivity().getSupportFragmentManager().popBackStack();
-        });
-
         TextView btnCambiarPass = view.findViewById(R.id.cambiarPass);
         btnCambiarPass.setOnClickListener(v -> {
             Toast.makeText(getActivity(), "Click detectado", Toast.LENGTH_SHORT).show();

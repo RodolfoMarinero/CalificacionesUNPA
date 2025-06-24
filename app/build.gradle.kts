@@ -51,7 +51,7 @@ dependencies {
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.firebase.auth)
     implementation(libs.androidx.datastore.core.android)
-    implementation(libs.play.services.gcm)
+    //implementation(libs.play.services.gcm)
     implementation(libs.androidx.activity)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -77,9 +77,14 @@ dependencies {
     implementation("com.google.firebase:firebase-inappmessaging-display")
     implementation("com.google.firebase:firebase-messaging")
     implementation("com.google.firebase:firebase-analytics")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
+
 
 
     implementation("com.google.firebase:firebase-storage-ktx")
 
     implementation("com.github.mhiew:android-pdf-viewer:3.2.0-beta.3")
+
+   // implementation("com.github.barteksc:android-pdf-viewer:3.2.0-beta.1")
+
 }
