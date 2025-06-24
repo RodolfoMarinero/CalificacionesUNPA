@@ -51,7 +51,7 @@ dependencies {
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.firebase.auth)
     implementation(libs.androidx.datastore.core.android)
-    implementation(libs.play.services.gcm)
+    //implementation(libs.play.services.gcm)
     implementation(libs.androidx.activity)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -83,6 +83,6 @@ dependencies {
 
     implementation("com.github.mhiew:android-pdf-viewer:3.2.0-beta.3")
 
-    implementation("com.github.barteksc:android-pdf-viewer:3.2.0-beta.1")
+   // implementation("com.github.barteksc:android-pdf-viewer:3.2.0-beta.1")
 
 }

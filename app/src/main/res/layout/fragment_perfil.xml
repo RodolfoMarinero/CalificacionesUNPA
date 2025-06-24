@@ -13,22 +13,10 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+
         <!-- Avatar centrado -->
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnVolver"
-            android:layout_width="54dp"
-            android:layout_height="48dp"
-            android:backgroundTint="#D9F0EA"
-            android:contentDescription="Volver atrás"
-            app:icon="@drawable/ic_back"
-            app:iconTint="@color/black"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/btnSemestre"
-            app:layout_constraintHorizontal_bias="0.333"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+
 
         <ImageView
             android:id="@+id/ivProfile"
