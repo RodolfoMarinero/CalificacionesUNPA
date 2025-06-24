@@ -140,26 +140,20 @@
                     app:layout_constraintVertical_bias="1.0" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <HorizontalScrollView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+            >
+
             <!-- Tabla de calificaciones -->
             <TableLayout
                 android:id="@+id/tablaCalificaciones"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:stretchColumns="*"
                 android:background="@drawable/bg_table_light"
                 android:padding="8dp">
-
-                <TableRow>
-                    <TextView style="@style/CalifHeader" android:text="Materia" android:textColor="#000000" />
-                    <TextView style="@style/CalifHeader" android:text="1er." android:textColor="#000000" />
-                    <TextView style="@style/CalifHeader" android:text="2o." android:textColor="#000000" />
-                    <TextView style="@style/CalifHeader" android:text="3er." android:textColor="#000000" />
-                    <TextView style="@style/CalifHeader" android:text="P.P" android:textColor="#000000" />
-                    <TextView style="@style/CalifHeader" android:text="E.F" android:textColor="#000000" />
-                    <TextView style="@style/CalifHeader" android:text="CAL.DEF" android:textColor="#000000" />
-                </TableRow>
             </TableLayout>
-
+            </HorizontalScrollView>
             <!-- Extraordinarios -->
             <TextView
                 android:id="@+id/tvExtraordinariosLabel"

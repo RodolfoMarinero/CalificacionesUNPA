@@ -228,6 +228,8 @@ public class FragmentCalificacionesAnteriores extends Fragment {
         }
     }
     private void loadGradesForCycle() {
+        tablaCalificaciones.removeAllViews();
+        addHeaderRow();
         String cicloEscolar = semestresMapa.get(idxCicloActual);
         Log.d(TAG, "loadGradesForCycle ciclo=" + cicloEscolar);
         btnSemestreActual.setText(cicloEscolar);
@@ -282,7 +284,7 @@ public class FragmentCalificacionesAnteriores extends Fragment {
                 tvExtraordinariosLabel.setVisibility(View.VISIBLE);
                 hasExtra[0] = true;
                 TableRow rowEx = new TableRow(requireContext());
-                rowEx.setGravity(Gravity.CENTER);
+                rowEx.setGravity(Gravity.START);
                 addCell(rowEx, mat.getMateria());
                 addCell(rowEx, format(mat.getCalificaciones().getExtraOrdinario1()));
                 addCell(rowEx, format(mat.getCalificaciones().getExtraOrdinario2()));
@@ -291,24 +293,35 @@ public class FragmentCalificacionesAnteriores extends Fragment {
             }
         }
     }
+
+    private void addHeaderRow() {
+        TableRow headerRow = new TableRow(requireContext());
+        headerRow.setGravity(Gravity.CENTER);
+        addCell(headerRow, "Materia");
+        addCell(headerRow, "1er.");
+        addCell(headerRow, "2o.");
+        addCell(headerRow, "3er.");
+        addCell(headerRow, "P.P");
+        addCell(headerRow, "E.F");
+        addCell(headerRow, "CAL.DEF");
+        tablaCalificaciones.addView(headerRow);
+    }
+
     private void addCell(TableRow row, String texto) {
         TextView tv = new TextView(requireContext());
         tv.setText(texto);
         tv.setPadding(8, 8, 8, 8);
 
-        // 1) Centrado completo
-        tv.setGravity(Gravity.CENTER);
-        tv.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        tv.setGravity(Gravity.START);
+        tv.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
 
-        // 2) Multi‐línea
         tv.setSingleLine(false);
         tv.setMaxLines(3);
 
-        // 3) LayoutParams con “peso” para ancho fijo
+        // Esta es la clave
         TableRow.LayoutParams lp = new TableRow.LayoutParams(
-                0,
                 ViewGroup.LayoutParams.WRAP_CONTENT,
-                1f
+                ViewGroup.LayoutParams.WRAP_CONTENT
         );
         tv.setLayoutParams(lp);
 
