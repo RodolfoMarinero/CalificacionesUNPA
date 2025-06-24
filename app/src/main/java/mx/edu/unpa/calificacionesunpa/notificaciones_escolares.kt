@@ -1,5 +1,7 @@
 package mx.edu.unpa.calificacionesunpa
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.*
@@ -7,6 +9,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.FirebaseFirestore
+import mx.edu.unpa.calificacionesunpa.providers.StorageProvider
+import mx.edu.unpa.calificacionesunpa.service.ArchivoUtils
+
 import mx.edu.unpa.calificacionesunpa.adapters.MatriculaAdapter
 
 /*import android.os.Bundle
@@ -27,6 +32,8 @@ class notificaciones_escolares : AppCompatActivity() {
     private lateinit var radioIndividual: RadioButton
     private lateinit var radioCiertos: RadioButton
     private lateinit var radioTodos: RadioButton
+    private val REQUEST_CODE_PDF = 101
+    private var uriPDF: Uri? = null
 
     private lateinit var inputMatriculaIndividual: EditText
     private lateinit var inputMatriculaCiertos: EditText
@@ -70,6 +77,29 @@ class notificaciones_escolares : AppCompatActivity() {
         recyclerMatriculas = findViewById(R.id.recyclerMatriculas)
 
         btnEnviar = findViewById(R.id.btnEnviar)
+        val btnSeleccionarPdf = findViewById<Button>(R.id.btnSeleccionarPdf)
+        val btnConvertirBase64 = findViewById<Button>(R.id.btnConvertir)
+        val txtNombreArchivo = findViewById<TextView>(R.id.txtNombreArchivo)
+        btnSeleccionarPdf.setOnClickListener {
+            val intent = Intent(Intent.ACTION_GET_CONTENT)
+            intent.type = "application/pdf"
+            startActivityForResult(intent, REQUEST_CODE_PDF)
+        }
+        btnConvertirBase64.setOnClickListener {
+            uriPDF?.let {
+                val base64 = ArchivoUtils.convertirA_Base64(this, it)
+                if (base64 != null) {
+                    val storageProvider = StorageProvider()
+                    storageProvider.uploadFile(base64, txtNombreArchivo.toString()) { success ->
+                        if (success) {
+                            Toast.makeText(this, "Archivo subido exitosamente", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(this, "Error al subir el archivo", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
+        }
 
         // Configurar RecyclerView
         recyclerMatriculas.layoutManager = LinearLayoutManager(this)
