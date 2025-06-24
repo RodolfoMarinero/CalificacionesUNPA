@@ -115,7 +115,7 @@ public class LoginActivity extends AppCompatActivity {
                                             startActivity(intent);
                                         } else {
                                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                            intent.putExtra("navigateTo", "calificaciones");
+                                            intent.putExtra("navigateTo", "notificaciones");
                                             startActivity(intent);
                                         }
                                         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
