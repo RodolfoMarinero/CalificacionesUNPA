@@ -95,9 +95,6 @@ class FragmentPerfilN : Fragment() {
         ivCodigoBarras = view.findViewById(R.id.ivBarcode)
         tvCodigoBarras = view.findViewById(R.id.tvBarcodeNumber)
 
-        view.findViewById<MaterialButton>(R.id.btnVolver).setOnClickListener {
-            requireActivity().supportFragmentManager.popBackStack()
-        }
         val btnCambiarPass = view.findViewById<TextView>(R.id.cambiarPass)
 
         btnCambiarPass.setOnClickListener { v: View? ->
