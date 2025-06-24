@@ -1,17 +1,19 @@
 package mx.edu.unpa.calificacionesunpa.ui.calendarioescolar
 
 import android.os.Bundle
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.WebView
-import android.webkit.WebViewClient
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.github.barteksc.pdfviewer.PDFView
+import com.google.firebase.firestore.FirebaseFirestore
 import mx.edu.unpa.calificacionesunpa.R
 
 class FragmentCalendarioEscolar : Fragment() {
 
-    private lateinit var webView: WebView
+    private lateinit var pdfView: PDFView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -19,14 +21,34 @@ class FragmentCalendarioEscolar : Fragment() {
     ): View {
         val view = inflater.inflate(R.layout.fragment_calendario_escolar, container, false)
 
-        webView = view.findViewById(R.id.webView)
-        webView.settings.javaScriptEnabled = true
-        webView.webViewClient = WebViewClient()
+        pdfView = view.findViewById(R.id.pdfView)
 
-        val fileId = "1qAMJ70t0CcKNHu6XoFDyfWbeIDQ4wQR2"
-        val pdfUrl = "https://drive.google.com/file/d/1rILxFFcWXNrkyZ8Kz0pRVobb0a6Z05zi/view?usp=sharing"
-        webView.loadUrl(pdfUrl)
+        obtenerYMostrarPdfDesdeFirestore("")
 
         return view
+    }
+
+    private fun obtenerYMostrarPdfDesdeFirestore(fileName: String) {
+        val db = FirebaseFirestore.getInstance()
+        val docId=fileName
+        db.collection("storage").document(docId)
+            .get()
+            .addOnSuccessListener { document ->
+                val base64 = document.getString("base64")
+                if (base64 != null) {
+                    val pdfBytes = Base64.decode(base64, Base64.DEFAULT)
+                    val inputStream = pdfBytes.inputStream()
+                    pdfView.fromStream(inputStream)
+                        .enableSwipe(true)
+                        .swipeHorizontal(false)
+                        .enableDoubletap(true)
+                        .load()
+                } else {
+                    Toast.makeText(context, "No se encontró el PDF", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .addOnFailureListener {
+                Toast.makeText(context, "Error: ${it.message}", Toast.LENGTH_LONG).show()
+            }
     }
 }

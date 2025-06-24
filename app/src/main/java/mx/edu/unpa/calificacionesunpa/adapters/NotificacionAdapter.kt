@@ -15,6 +15,7 @@ data class NotificationItem(
     val esGlobal: Boolean = false,
 
     val timestamp: Long = 0L,
+
     val fueLeida : Boolean = true
 ) {
     constructor() : this(0, "", "", false, 0L) // Constructor sin argumentos requerido por Firebase

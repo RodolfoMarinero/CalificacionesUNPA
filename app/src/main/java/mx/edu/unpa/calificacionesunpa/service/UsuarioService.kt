@@ -11,4 +11,5 @@ object UsuarioService {
     fun seleccionarSemestre(semestre: Int) {
         _semestreSeleccionado.value = semestre;
     }
+
 }
