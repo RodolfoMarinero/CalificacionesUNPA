@@ -22,7 +22,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.lifecycle.Observer;
-
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.DocumentReference;
 
@@ -44,16 +43,21 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
-
-
 import mx.edu.unpa.calificacionesunpa.R;
 import mx.edu.unpa.calificacionesunpa.models.Alumno;
 import mx.edu.unpa.calificacionesunpa.models.Materia;
+import mx.edu.unpa.calificacionesunpa.providers.StorageProvider;
 import mx.edu.unpa.calificacionesunpa.service.PromedioCalculatorService;
 import mx.edu.unpa.calificacionesunpa.service.UsuarioService;
 import mx.edu.unpa.calificacionesunpa.ui.dd.SelectorSemestre;
-import mx.edu.unpa.calificacionesunpa.ui.perfil.FragmentPerfil;
-
+import mx.edu.unpa.calificacionesunpa.ui.perfil.FragmentPerfilN;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
+import com.google.firebase.auth.FirebaseAuth;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import java.io.File;
 public class FragmentCalificacionesAnteriores extends Fragment {
     private static final String TAG = "CalifFrag";
 
@@ -95,11 +99,28 @@ public class FragmentCalificacionesAnteriores extends Fragment {
         txtPromedioGeneral   = root.findViewById(R.id.txtPromedioGeneral);
         tvExtraordinariosLabel   = root.findViewById(R.id.tvExtraordinariosLabel);
         tvNombre             = root.findViewById(R.id.tvNombre);
-        //Button btnPdf = root.findViewById(R.id.btnDescargarPdf);
-        //btnPdf.setOnClickListener(this::generarPdf);
 
+        ivPerfil = root.findViewById(R.id.ivPerfil);
 
-        ivPerfil = root.findViewById(R.id.ivPerfil); // asegúrate que tenga este ID en tu layout
+        File file = new File(requireContext().getFilesDir(), "imagen_perfil.png");
+        if (file.exists()) {
+            Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+            ivPerfil.setImageBitmap(bitmap);
+        } else {
+            // Si no está local, aún puedes hacer fallback a Firebase si deseas
+            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            StorageProvider provider = new StorageProvider();
+            provider.getImageByUserId(userId, new OnResultCallback() {
+                @Override
+                public void onResult(@Nullable String base64) {
+                    if (base64 != null) {
+                        byte[] imageBytes = Base64.decode(base64, Base64.DEFAULT);
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                        ivPerfil.setImageBitmap(bitmap);
+                    }
+                }
+            });
+        }
         ivPerfil.setOnClickListener(v -> {
             Bundle bundle = new Bundle();
             bundle.putString("nombre", nombre);
@@ -108,7 +129,7 @@ public class FragmentCalificacionesAnteriores extends Fragment {
             bundle.putString("promedio", txtPromedioGeneral.getText().toString().replace("Promedio: ", ""));
             bundle.putString("codigo", txtMatricula.getText().toString());
 
-            FragmentPerfil fragment = new FragmentPerfil();
+            FragmentPerfilN fragment = new FragmentPerfilN();
             fragment.setArguments(bundle);
 
             requireActivity()
@@ -118,6 +139,8 @@ public class FragmentCalificacionesAnteriores extends Fragment {
                     .addToBackStack(null)
                     .commit();
         });
+
+
 
 
 
@@ -137,7 +160,7 @@ public class FragmentCalificacionesAnteriores extends Fragment {
 
 
         btnAnterior = root.findViewById(R.id.btnIzquierdo);
-        btnSiguiente = root.findViewById(R.id.btnDerecho) ;
+        btnSiguiente = root.findViewById(R.id.btnDerecho);
         btnSemestreActual = root.findViewById(R.id.btnSemestre);
 
         contenedorSpinner = root.findViewById(R.id.rvSemestres);

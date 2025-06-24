@@ -21,6 +21,8 @@
     <string name="cd_carrera">Carrera</string>
     <string name="cd_promedio">Promedio general</string>
     <string name="cd_barcode">Código de barras</string>
+    <string name="default_web_client_id">TU_CLIENT_ID</string>
+
 
 
     <string name="txtTitulo">Notificación</string>

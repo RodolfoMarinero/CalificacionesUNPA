@@ -11,5 +11,6 @@
     <color name="verde_selected">#86DE8E</color>
     <color name="gris_unselected">#8A8A8A</color>
     <color name="gris_disabled">#CFCFCF</color>
+    <color name="verdeBello">#48AF5F</color>
 
 </resources>
