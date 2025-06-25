@@ -52,7 +52,9 @@ class FragmentPerfilN : Fragment() {
     private lateinit var ivProfile: ImageView
     private val PICK_IMAGE_REQUEST = 1001
     private val REQUEST_PERMISSION_CODE = 2001
-
+    private val sharedPrefs: SharedPreferences by lazy {
+        requireContext().getSharedPreferences("profile_prefs", Context.MODE_PRIVATE)
+    }
 
 
     private lateinit var authGoogleProvider: AuthGoogleProvider
@@ -158,14 +160,18 @@ class FragmentPerfilN : Fragment() {
     private fun guardarImagenLocal(bitmap: Bitmap) {
         try {
             val file = File(requireContext().filesDir, "imagen_perfil.png")
-            if (file.exists()) file.delete()
             val outputStream = FileOutputStream(file)
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
             outputStream.flush()
             outputStream.close()
-            Log.d("Perfil", "Imagen guardada localmente")
+
+            // Forzar recarga en ImageView
+            ivProfile.setImageBitmap(bitmap)
+
+            // Notificar cambio
+            sharedPrefs.edit().putLong("last_update", System.currentTimeMillis()).apply()
         } catch (e: Exception) {
-            Log.e("Perfil", "Error al guardar imagen localmente", e)
+            Log.e("Perfil", "Error al guardar imagen", e)
         }
     }
     private fun cargarImagenLocal(): Boolean {
@@ -189,23 +195,27 @@ class FragmentPerfilN : Fragment() {
             val imageUri = data.data
             ivProfile.setImageURI(imageUri)
 
-            // Convertir la imagen a base64
+            // Convertir y guardar localmente inmediatamente
             val base64 = ArchivoUtils.convertirA_Base64(requireContext(), imageUri!!)
             if (base64 != null) {
+                val imageBytes = Base64.decode(base64, Base64.DEFAULT)
+                val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+                guardarImagenLocal(bitmap) // Guardar localmente
+
+                // Actualizar Firebase en segundo plano
                 val userId = FirebaseAuth.getInstance().currentUser?.uid
-                val fileName = "perfil_${System.currentTimeMillis()}.jpg" // nombre único
+                val fileName = "perfil_${System.currentTimeMillis()}.jpg"
                 if (userId != null) {
                     val provider = StorageProvider()
                     provider.uploadImage(base64, fileName, userId) { success ->
                         if (success) {
-                            Log.d("Perfil", "Imagen de perfil actualizada correctamente")
-                        } else {
-                            Log.e("Perfil", "Error al subir la imagen")
+                            Log.d("Perfil", "Imagen actualizada en Firebase")
+
+                            // Notificar a toda la app sobre la actualización
+                            sharedPrefs.edit().putLong("last_update", System.currentTimeMillis()).apply()
                         }
                     }
                 }
-            } else {
-                Log.e("Perfil", "Error al convertir la imagen")
             }
         }
     }
