@@ -14,6 +14,12 @@ import mx.edu.unpa.calificacionesunpa.providers.StorageProvider
 import mx.edu.unpa.calificacionesunpa.service.ArchivoUtils
 
 import mx.edu.unpa.calificacionesunpa.adapters.MatriculaAdapter
+import mx.edu.unpa.calificacionesunpa.adapters.NotificationItem
+import mx.edu.unpa.calificacionesunpa.models.Materia
+import mx.edu.unpa.calificacionesunpa.models.Notificacion
+import mx.edu.unpa.calificacionesunpa.providers.NotificacionProvider
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 /*import android.os.Bundle
 import android.view.View
@@ -50,6 +56,10 @@ class notificaciones_escolares : AppCompatActivity() {
 
     private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val listaMatriculas = mutableListOf<String>()
+
+    private lateinit var notificacion: NotificationItem
+
+    private lateinit var notificacionProvider: NotificacionProvider
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -179,6 +189,18 @@ class notificaciones_escolares : AppCompatActivity() {
 
                     Toast.makeText(this, "Enviando a matrícula: $matricula\nTítulo: $titulo\nMensaje: $mensaje", Toast.LENGTH_LONG).show()
                     // lógica para enviar notificación individual
+                    notificacion = NotificationItem(
+                        iconResId = R.drawable.notification,
+                        destinatarios = listOf(matricula),
+                        titulo = titulo,
+                        mensaje = mensaje,
+                        fueLeida = false,
+                        esGlobal = false,
+                        expiraEn = LocalDate.now().plusDays(3).toString(),
+                        timestamp = 0L,
+                    )
+                    notificacionProvider = NotificacionProvider();
+                    notificacionProvider.enviarNotificacion(notificacion);
                 }
 
                 radioCiertos.isChecked -> {
@@ -191,11 +213,36 @@ class notificaciones_escolares : AppCompatActivity() {
                         "Enviando a: ${listaMatriculas.joinToString(", ")}\nTítulo: $titulo\nMensaje: $mensaje",
                         Toast.LENGTH_LONG).show()
                     // lógica para enviar notificaciones a la lista
+                    notificacion = NotificationItem(
+                        iconResId = R.drawable.notification,
+                        destinatarios = listaMatriculas,
+                        titulo = titulo,
+                        mensaje = mensaje,
+                        fueLeida = false,
+                        esGlobal = false,
+                        expiraEn = LocalDate.now().plusDays(3).toString(),
+                        timestamp = 0L,
+                    )
+                    notificacionProvider = NotificacionProvider();
+                    notificacionProvider.enviarNotificacion(notificacion);
                 }
 
                 radioTodos.isChecked -> {
                     Toast.makeText(this, "Enviando a todos\nTítulo: $titulo\nMensaje: $mensaje", Toast.LENGTH_LONG).show()
                     // lógica para enviar notificación global
+                    // 11111111 -> All
+                    notificacion = NotificationItem(
+                        iconResId = R.drawable.notification,
+                        destinatarios = listOf("11111111"),
+                        titulo = titulo,
+                        mensaje = mensaje,
+                        fueLeida = false,
+                        esGlobal = false,
+                        expiraEn = LocalDate.now().plusDays(3).toString(),
+                        timestamp = 0L,
+                    )
+                    notificacionProvider = NotificacionProvider();
+                    notificacionProvider.enviarNotificacion(notificacion);
                 }
 
                 else -> {
