@@ -19,12 +19,15 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.button.MaterialButton
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.WriterException
 import com.journeyapps.barcodescanner.BarcodeEncoder
 import mx.edu.unpa.calificacionesunpa.R
 import mx.edu.unpa.calificacionesunpa.providers.AuthGoogleProvider
 import mx.edu.unpa.calificacionesunpa.providers.AuthProvider
+import mx.edu.unpa.calificacionesunpa.providers.StorageProvider
+import mx.edu.unpa.calificacionesunpa.service.ArchivoUtils
 import mx.edu.unpa.calificacionesunpa.service.PromedioCalculatorService
 import mx.edu.unpa.calificacionesunpa.ui.changePass.ChangePassword
 import java.io.File
