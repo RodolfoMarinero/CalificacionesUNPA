@@ -18,6 +18,7 @@ import mx.edu.unpa.calificacionesunpa.adapters.NotificationItem
 import mx.edu.unpa.calificacionesunpa.models.Materia
 import mx.edu.unpa.calificacionesunpa.models.Notificacion
 import mx.edu.unpa.calificacionesunpa.providers.NotificacionProvider
+import mx.edu.unpa.calificacionesunpa.ui.sescolares.EscolaresActivity
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -256,6 +257,11 @@ class notificaciones_escolares : AppCompatActivity() {
             inputMensaje.text.clear()
             listaMatriculas.clear()
             layoutListaMatriculas.removeAllViews()
+        }
+        val salir= findViewById<Button>(R.id.salir)
+        salir.setOnClickListener{
+            val intent= Intent(this,EscolaresActivity::class.java)
+            startActivity(intent)
         }
     }
 
