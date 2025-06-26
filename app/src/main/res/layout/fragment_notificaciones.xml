@@ -9,48 +9,31 @@
     android:background="@drawable/bg_gradient"
     android:padding="16dp">
 
-    <!-- Título de Notificaciones con estilo simplificado -->
-    <TextView
-        android:id="@+id/tvTituloNotificaciones"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Notificaciones"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:textColor="#FFFFFF"
-        android:gravity="center"
-        android:paddingVertical="12dp"
-        android:letterSpacing="0.03"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintWidth_percent="0.8" />
-
     <androidx.cardview.widget.CardView
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="10dp"
+        app:cardBackgroundColor="#E6FFFFFF"
         app:cardCornerRadius="16dp"
         app:cardElevation="8dp"
-        app:cardBackgroundColor="#E6FFFFFF"
-    app:layout_constraintTop_toBottomOf="@id/tvTituloNotificaciones"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintWidth_percent="0.95"
-    app:layout_constraintHeight_percent="0.85">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.85"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.95">
 
-    <!-- RecyclerView mejorado -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerNotificaciones"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="8dp"
-        android:clipToPadding="false"
-        android:scrollbars="vertical"
-        tools:listitem="@layout/notification_item" />
+        <!-- RecyclerView mejorado -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerNotificaciones"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:padding="8dp"
+            android:scrollbars="vertical"
+            tools:listitem="@layout/notification_item" />
 
-</androidx.cardview.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
 <TextView
 android:id="@+id/tvEmptyState"
