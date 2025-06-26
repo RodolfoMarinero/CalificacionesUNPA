@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.button.MaterialButton
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.WriterException
 import com.journeyapps.barcodescanner.BarcodeEncoder
@@ -84,12 +85,12 @@ class FragmentPerfilN : Fragment() {
         ivCodigoBarras = view.findViewById(R.id.ivBarcode)
         tvCodigoBarras = view.findViewById(R.id.tvBarcodeNumber)
 
-        val btnCambiarPass = view.findViewById<TextView>(R.id.cambiarPass)
+        /*val btnCambiarPass = view.findViewById<TextView>(R.id.cambiarPass)
 
         btnCambiarPass.setOnClickListener { v: View? ->
             val intent = Intent(activity, ChangePassword::class.java)
             startActivity(intent)
-        }
+        }*/
         authProvider = AuthProvider()
         authGoogleProvider = AuthGoogleProvider()
         auth = FirebaseAuth.getInstance()
@@ -192,7 +193,7 @@ class FragmentPerfilN : Fragment() {
             ivProfile.setImageURI(imageUri)
 
             // Convertir y guardar localmente inmediatamente
-            val base64 = ArchivoUtils.convertirA_Base64(requireContext(), imageUri!!)
+           /* val base64 = ArchivoUtils.convertirA_Base64(requireContext(), imageUri!!)
             if (base64 != null) {
                 val imageBytes = Base64.decode(base64, Base64.DEFAULT)
                 val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
@@ -212,7 +213,7 @@ class FragmentPerfilN : Fragment() {
                         }
                     }
                 }
-            }
+            }*/
         }
     }
 

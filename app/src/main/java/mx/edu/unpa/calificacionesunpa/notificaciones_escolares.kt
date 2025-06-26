@@ -3,6 +3,7 @@ package mx.edu.unpa.calificacionesunpa
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -13,6 +14,13 @@ import mx.edu.unpa.calificacionesunpa.providers.StorageProvider
 import mx.edu.unpa.calificacionesunpa.service.ArchivoUtils
 
 import mx.edu.unpa.calificacionesunpa.adapters.MatriculaAdapter
+import mx.edu.unpa.calificacionesunpa.adapters.NotificationItem
+import mx.edu.unpa.calificacionesunpa.models.Materia
+import mx.edu.unpa.calificacionesunpa.models.Notificacion
+import mx.edu.unpa.calificacionesunpa.providers.NotificacionProvider
+import mx.edu.unpa.calificacionesunpa.ui.sescolares.EscolaresActivity
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 /*import android.os.Bundle
 import android.view.View
@@ -37,23 +45,22 @@ class notificaciones_escolares : AppCompatActivity() {
 
     private lateinit var inputMatriculaIndividual: EditText
     private lateinit var inputMatriculaCiertos: EditText
-
     private lateinit var inputTitulo: EditText
     private lateinit var inputMensaje: EditText
 
     private lateinit var layoutMatricula: LinearLayout
     private lateinit var layoutCiertos: LinearLayout
+    private lateinit var layoutListaMatriculas: LinearLayout
 
     private lateinit var btnAgregarMatricula: Button
-    private lateinit var recyclerMatriculas: RecyclerView
-
     private lateinit var btnEnviar: Button
 
     private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
-
-    // Lista mutable para guardar las matrículas agregadas
     private val listaMatriculas = mutableListOf<String>()
-    private lateinit var adapterMatriculas: MatriculaAdapter
+
+    private lateinit var notificacion: NotificationItem
+
+    private lateinit var notificacionProvider: NotificacionProvider
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,16 +73,14 @@ class notificaciones_escolares : AppCompatActivity() {
 
         inputMatriculaIndividual = findViewById(R.id.inputMatricula)
         inputMatriculaCiertos = findViewById(R.id.inputMatriculaCiertos)
-
         inputTitulo = findViewById(R.id.inputTitulo)
         inputMensaje = findViewById(R.id.inputMensaje)
 
         layoutMatricula = findViewById(R.id.layoutMatricula)
         layoutCiertos = findViewById(R.id.layoutCiertos)
+        layoutListaMatriculas = findViewById(R.id.layoutListaMatriculas)
 
         btnAgregarMatricula = findViewById(R.id.btnAgregarMatricula)
-        recyclerMatriculas = findViewById(R.id.recyclerMatriculas)
-
         btnEnviar = findViewById(R.id.btnEnviar)
         val btnSeleccionarPdf = findViewById<Button>(R.id.btnSeleccionarPdf)
         val btnConvertirBase64 = findViewById<Button>(R.id.btnConvertir)
@@ -101,16 +106,7 @@ class notificaciones_escolares : AppCompatActivity() {
             }
         }
 
-        // Configurar RecyclerView
-        recyclerMatriculas.layoutManager = LinearLayoutManager(this)
-        adapterMatriculas = MatriculaAdapter(listaMatriculas) { matricula ->
-            // Callback para eliminar matrícula
-            listaMatriculas.remove(matricula)
-            adapterMatriculas.notifyDataSetChanged()
-        }
-        recyclerMatriculas.adapter = adapterMatriculas
-
-        // Ocultar layouts inicialmente
+        // Inicialmente ocultar campos
         layoutMatricula.visibility = View.GONE
         layoutCiertos.visibility = View.GONE
         inputTitulo.visibility = View.GONE
@@ -127,6 +123,7 @@ class notificaciones_escolares : AppCompatActivity() {
                     inputMensaje.visibility = View.VISIBLE
                     btnEnviar.visibility = View.VISIBLE
                 }
+
                 R.id.radioCiertos -> {
                     layoutMatricula.visibility = View.GONE
                     layoutCiertos.visibility = View.VISIBLE
@@ -134,6 +131,7 @@ class notificaciones_escolares : AppCompatActivity() {
                     inputMensaje.visibility = View.VISIBLE
                     btnEnviar.visibility = View.VISIBLE
                 }
+
                 R.id.radioTodos -> {
                     layoutMatricula.visibility = View.GONE
                     layoutCiertos.visibility = View.GONE
@@ -141,6 +139,7 @@ class notificaciones_escolares : AppCompatActivity() {
                     inputMensaje.visibility = View.VISIBLE
                     btnEnviar.visibility = View.VISIBLE
                 }
+
                 else -> {
                     layoutMatricula.visibility = View.GONE
                     layoutCiertos.visibility = View.GONE
@@ -151,19 +150,19 @@ class notificaciones_escolares : AppCompatActivity() {
             }
         }
 
-        // Botón para agregar matrícula en "Ciertos alumnos"
         btnAgregarMatricula.setOnClickListener {
-            val matricula = inputMatriculaCiertos.text.toString().trim()
-            if (matricula.isEmpty()) {
+            val nuevaMatricula = inputMatriculaCiertos.text.toString().trim()
+            if (nuevaMatricula.isEmpty()) {
                 Toast.makeText(this, "Ingresa una matrícula válida", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            if (listaMatriculas.contains(matricula)) {
+            if (listaMatriculas.contains(nuevaMatricula)) {
                 Toast.makeText(this, "La matrícula ya fue agregada", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            listaMatriculas.add(matricula)
-            adapterMatriculas.notifyDataSetChanged()
+
+            listaMatriculas.add(nuevaMatricula)
+            agregarMatriculaView(nuevaMatricula)
             inputMatriculaCiertos.text.clear()
         }
 
@@ -175,6 +174,7 @@ class notificaciones_escolares : AppCompatActivity() {
                 Toast.makeText(this, "Por favor ingresa un título", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+
             if (mensaje.isEmpty()) {
                 Toast.makeText(this, "Por favor ingresa un mensaje", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -189,7 +189,19 @@ class notificaciones_escolares : AppCompatActivity() {
                     }
 
                     Toast.makeText(this, "Enviando a matrícula: $matricula\nTítulo: $titulo\nMensaje: $mensaje", Toast.LENGTH_LONG).show()
-                    // Aquí va la lógica para enviar notificación individual
+                    // lógica para enviar notificación individual
+                    notificacion = NotificationItem(
+                        iconResId = R.drawable.notification,
+                        destinatarios = listOf(matricula),
+                        titulo = titulo,
+                        mensaje = mensaje,
+                        fueLeida = false,
+                        esGlobal = false,
+                        expiraEn = LocalDate.now().plusDays(3).toString(),
+                        timestamp = 0L,
+                    )
+                    notificacionProvider = NotificacionProvider();
+                    notificacionProvider.enviarNotificacion(notificacion);
                 }
 
                 radioCiertos.isChecked -> {
@@ -199,28 +211,73 @@ class notificaciones_escolares : AppCompatActivity() {
                     }
 
                     Toast.makeText(this,
-                        "Enviando a matrículas: ${listaMatriculas.joinToString(", ")}\nTítulo: $titulo\nMensaje: $mensaje",
+                        "Enviando a: ${listaMatriculas.joinToString(", ")}\nTítulo: $titulo\nMensaje: $mensaje",
                         Toast.LENGTH_LONG).show()
-                    // Aquí va la lógica para enviar notificación a las matrículas de la lista
+                    // lógica para enviar notificaciones a la lista
+                    notificacion = NotificationItem(
+                        iconResId = R.drawable.notification,
+                        destinatarios = listaMatriculas,
+                        titulo = titulo,
+                        mensaje = mensaje,
+                        fueLeida = false,
+                        esGlobal = false,
+                        expiraEn = LocalDate.now().plusDays(3).toString(),
+                        timestamp = 0L,
+                    )
+                    notificacionProvider = NotificacionProvider();
+                    notificacionProvider.enviarNotificacion(notificacion);
                 }
 
                 radioTodos.isChecked -> {
                     Toast.makeText(this, "Enviando a todos\nTítulo: $titulo\nMensaje: $mensaje", Toast.LENGTH_LONG).show()
-                    // Aquí va la lógica para enviar notificación a todos
+                    // lógica para enviar notificación global
+                    // 11111111 -> All
+                    notificacion = NotificationItem(
+                        iconResId = R.drawable.notification,
+                        destinatarios = listOf("11111111"),
+                        titulo = titulo,
+                        mensaje = mensaje,
+                        fueLeida = false,
+                        esGlobal = false,
+                        expiraEn = LocalDate.now().plusDays(3).toString(),
+                        timestamp = 0L,
+                    )
+                    notificacionProvider = NotificacionProvider();
+                    notificacionProvider.enviarNotificacion(notificacion);
                 }
 
                 else -> {
                     Toast.makeText(this, "Selecciona una opción válida", Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
                 }
             }
 
-            // Limpiar campos después de enviar
+            // Limpiar
             inputMatriculaIndividual.text.clear()
-            listaMatriculas.clear()
-            adapterMatriculas.notifyDataSetChanged()
             inputTitulo.text.clear()
             inputMensaje.text.clear()
+            listaMatriculas.clear()
+            layoutListaMatriculas.removeAllViews()
         }
+        val salir= findViewById<Button>(R.id.salir)
+        salir.setOnClickListener{
+            val intent= Intent(this,EscolaresActivity::class.java)
+            startActivity(intent)
+        }
+    }
+
+    private fun agregarMatriculaView(matricula: String) {
+        val inflater = LayoutInflater.from(this)
+        val view = inflater.inflate(R.layout.item_matricula, layoutListaMatriculas, false)
+
+        val txtMatricula = view.findViewById<TextView>(R.id.txtMatriculaItem)
+        val btnEliminar = view.findViewById<ImageView>(R.id.btnEliminarMatricula)
+
+        txtMatricula.text = matricula
+        btnEliminar.setOnClickListener {
+            layoutListaMatriculas.removeView(view)
+            listaMatriculas.remove(matricula)
+        }
+
+        layoutListaMatriculas.addView(view)
     }
 }

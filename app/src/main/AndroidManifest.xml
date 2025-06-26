@@ -24,12 +24,12 @@
         <activity
             android:name=".ui.sescolares.EscolaresActivity"
             android:exported="false" />
-        <activity
+       <!-- <activity
             android:name=".ui.sescolares.EscolaresActitivty"
             android:exported="false" />
         <activity
             android:name=".ui.sescolares.ActivityEscolares"
-            android:exported="false" />
+            android:exported="false" />-->
         <activity
             android:name=".notificaciones_escolares"
             android:exported="false" />

@@ -140,13 +140,26 @@
                         android:text="Agregar" />
                 </LinearLayout>
 
-                <androidx.recyclerview.widget.RecyclerView
+                <!--<androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerMatriculas"
                     android:layout_width="match_parent"
-                    android:layout_height="150dp"
+                    android:layout_height="100dp"
                     android:layout_marginTop="12dp"
-                    android:background="@android:color/darker_gray"
+                    android:background="#C1D8D2"
+                    android:padding="8dp"
+                    android:overScrollMode="never"
+                    android:nestedScrollingEnabled="false"/>
+                    Esta es para la parte de abajo
+                    android:background="@drawable/bg_gradient"-->
+                <LinearLayout
+                    android:id="@+id/layoutListaMatriculas"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+
+                    android:orientation="vertical"
                     android:padding="8dp" />
+
             </LinearLayout>
 
             <!-- Campos comunes -->
@@ -173,9 +186,23 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:text="Enviar notificación"
-                android:visibility="gone" />
+                android:visibility="gone"
+                android:backgroundTint="#4CAF50"
+                android:textColor="#FFFFFF" />
 
         </LinearLayout>
     </ScrollView>
+
+    <Button
+        android:id="@+id/salir"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:backgroundTint="#4CAF50"
+        android:text="Salir"
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

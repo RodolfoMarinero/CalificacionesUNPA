@@ -6,6 +6,7 @@ import mx.edu.unpa.calificacionesunpa.R
 import mx.edu.unpa.calificacionesunpa.ui.view_holders.NotificationViewHolder
 
 import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.util.Locale
 
 data class NotificationItem(
@@ -13,11 +14,13 @@ data class NotificationItem(
     val titulo: String = "",
     val mensaje: String = "",
     val esGlobal: Boolean = false,
+    val destinatarios: List<String> = listOf(),
+    val expiraEn: String = "",
     val timestamp: Long = 0L,
 
     val fueLeida : Boolean = true
 ) {
-    constructor() : this(0, "", "", false, 0L) // Constructor sin argumentos requerido por Firebase
+    constructor() : this(0, "", "", false, listOf(""), LocalDate.now().plusDays(3).toString(), 0L, false) // Constructor sin argumentos requerido por Firebase
 }
 
 
