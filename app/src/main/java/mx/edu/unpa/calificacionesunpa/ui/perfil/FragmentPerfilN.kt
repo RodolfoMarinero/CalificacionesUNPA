@@ -87,12 +87,12 @@ class FragmentPerfilN : Fragment() {
         ivCodigoBarras = view.findViewById(R.id.ivBarcode)
         tvCodigoBarras = view.findViewById(R.id.tvBarcodeNumber)
 
-        /*val btnCambiarPass = view.findViewById<TextView>(R.id.cambiarPass)
+        val btnCambiarPass = view.findViewById<TextView>(R.id.cambiarPass)
 
         btnCambiarPass.setOnClickListener { v: View? ->
             val intent = Intent(activity, ChangePassword::class.java)
             startActivity(intent)
-        }*/
+        }
         authProvider = AuthProvider()
         authGoogleProvider = AuthGoogleProvider()
         auth = FirebaseAuth.getInstance()

@@ -32,6 +32,7 @@ import mx.edu.unpa.calificacionesunpa.providers.AuthGoogleProvider;
 import mx.edu.unpa.calificacionesunpa.providers.AuthProvider;
 import mx.edu.unpa.calificacionesunpa.providers.NotificacionProvider;
 import mx.edu.unpa.calificacionesunpa.service.UsuarioService;
+import mx.edu.unpa.calificacionesunpa.ui.changePass.ChangePassword;
 import mx.edu.unpa.calificacionesunpa.ui.perfil.FragmentPerfilN;
 import mx.edu.unpa.calificacionesunpa.ui.recuperarContrasena.RecuperarContrasena;
 import mx.edu.unpa.calificacionesunpa.ui.sescolares.EscolaresActivity;
@@ -92,33 +93,40 @@ public class LoginActivity extends AppCompatActivity {
             authProvider.login(email, password)
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
+                            
                             // Limpia los campos
                             etMatricula.setText("");
                             etPassword.setText("");
                             //solicita el alumno
-                            if(matricula.equals("100000")){
-                                Intent intento = new Intent(this, EscolaresActivity.class );
+                            if (matricula.equals("100000")) {
+                                Intent intento = new Intent(this, EscolaresActivity.class);
                                 startActivity(intento);
                                 finish();
-                            }
+                            } else {
                             alumnoProvider = new AlumnoProvider();
                             notificacionProvider = new NotificacionProvider();
                             alumnoProvider.obtenerAlumnoConMateriasDeUsuario(
                                     authProvider.getId(),
                                     alumno -> {
                                         usuarioService.setAlumnoActual(alumno);
-                                        notificacionProvider.cargarNotificacionesDesdeFirestore();
                                         hideLoadingFragment();
-                                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                        intent.putExtra("navigateTo", "calificaciones");
-                                        startActivity(intent);
-                                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                                        finish();
+                                        // Si es su primer acceso, fuerza cambio de contraseña
+                                        if (alumno.getUsuario().getPrimerAcceso()) {
+                                            Intent intent = new Intent(LoginActivity.this, ChangePassword.class);
+                                            intent.putExtra("primerAcceso", true);
+                                            startActivity(intent);
+                                            finish(); // previene que regrese a Login sin cambiar contraseña
+                                        } else {
+                                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                            intent.putExtra("navigateTo", "calificaciones");
+                                            startActivity(intent);
+                                            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                                            finish();
+                                        }
                                         return Unit.INSTANCE;
                                     }
-                            );
-
-
+                                );
+                            }
                         } else {
                             hideLoadingFragment();
 

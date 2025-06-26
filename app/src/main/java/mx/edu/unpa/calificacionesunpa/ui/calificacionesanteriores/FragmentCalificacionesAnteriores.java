@@ -87,6 +87,7 @@ public class FragmentCalificacionesAnteriores extends Fragment {
     private MaterialButton btnAnterior;
     private MaterialButton btnSiguiente;
     private MaterialButton btnSemestreActual;
+    private Button btnPDF;
     private int idxCicloActual = 1; // Índice del ciclo actual, empieza en 1
     private PromedioCalculatorService promedioCalculatorService;
     private SharedPreferences sharedPrefs;
@@ -104,6 +105,9 @@ public class FragmentCalificacionesAnteriores extends Fragment {
         txtPromedioGeneral   = root.findViewById(R.id.txtPromedioGeneral);
         tvExtraordinariosLabel   = root.findViewById(R.id.tvExtraordinariosLabel);
         tvNombre             = root.findViewById(R.id.tvNombre);
+
+        btnPDF = root.findViewById(R.id.btnDescargarPdf);
+        btnPDF.setOnClickListener(this::generarPdf);
 
         ivPerfil = root.findViewById(R.id.ivPerfil);
         sharedPrefs = requireContext().getSharedPreferences("profile_prefs", Context.MODE_PRIVATE);

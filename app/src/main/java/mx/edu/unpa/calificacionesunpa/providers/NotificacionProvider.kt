@@ -9,30 +9,23 @@ import mx.edu.unpa.calificacionesunpa.service.UsuarioService
 
 class NotificacionProvider {
     private val db = FirebaseFirestore.getInstance()
-    // private val alumnoActual = UsuarioService.alumnoActual?.matricula
-    var alumnoActual = "";
 
-    fun cargarNotificacionesDesdeFirestore() {
+    fun cargarNotificacionesDesdeFirestore(onSuccess: (List<NotificationItem>) -> Unit) {
+        val alumnoActual = UsuarioService.alumnoActual?.matricula.toString()
+        val lista: MutableList<NotificationItem> = mutableListOf()
 
-        alumnoActual = UsuarioService.alumnoActual?.matricula.toString();
-
-        val lista: MutableList<NotificationItem> = mutableListOf() // MutableList en vez de List
         db.collection("notificaciones")
             .orderBy("timestamp")
             .get()
             .addOnSuccessListener { documents ->
-                lista.clear()  // Ahora puedes limpiar la lista
+                lista.clear()
                 for (doc in documents) {
                     val notificacion = doc.toObject(NotificationItem::class.java)
-
-                    notificacion.destinatarios.forEach {
-                        // Log.d("Firestore", "Destinatario: $it")
-                        if (alumnoActual == it || it == "11111111") {
-                            lista.add(notificacion) // Añadir notificación a la lista mutable
-                        }
+                    if (notificacion.destinatarios.contains(alumnoActual) || notificacion.destinatarios.contains("11111111")) {
+                        lista.add(notificacion)
                     }
                 }
-                NotificacionesService.listaNotificaciones = lista
+                onSuccess(lista)
             }
             .addOnFailureListener { e ->
                 Log.w("Firestore", "Error al cargar notificaciones", e)
