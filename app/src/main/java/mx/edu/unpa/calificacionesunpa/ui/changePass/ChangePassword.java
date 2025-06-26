@@ -1,5 +1,7 @@
 package mx.edu.unpa.calificacionesunpa.ui.changePass;
 
+import android.content.Intent;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.Button;
@@ -10,6 +12,11 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import mx.edu.unpa.calificacionesunpa.MainActivity;
+
 import mx.edu.unpa.calificacionesunpa.R;
 
 
@@ -92,6 +99,27 @@ public class ChangePassword extends AppCompatActivity {
                         etNuevaPass.setText("");
                         etConfirmarPass.setText("");
                         finish();
+                        if (getIntent().getBooleanExtra("primerAcceso", false)) {
+                            FirebaseFirestore.getInstance()
+                                    .collection("usuarios")
+                                    .document(user.getUid())
+                                    .update("primerAcceso", false)
+                                    .addOnSuccessListener(unused -> {
+                                        Toast.makeText(this, "Contraseña actualizada", Toast.LENGTH_SHORT).show();
+                                        Intent intent = new Intent(this, MainActivity.class);
+                                        intent.putExtra("navigateTo", "calificaciones");
+                                        startActivity(intent);
+                                        finish();
+                                    })
+                                    .addOnFailureListener(e ->
+                                            Toast.makeText(this, "Error al actualizar primer acceso", Toast.LENGTH_LONG).show()
+                                    );
+                        } else {
+                            Toast.makeText(this, "Contraseña actualizada correctamente", Toast.LENGTH_SHORT).show();
+                            etActualPass.setText("");
+                            etNuevaPass.setText("");
+                            etConfirmarPass.setText("");
+                        }
                     } else {
                         Toast.makeText(this, "Error al cambiar la contraseña en Auth", Toast.LENGTH_SHORT).show();
                     }

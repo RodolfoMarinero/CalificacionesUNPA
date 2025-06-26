@@ -1,5 +1,7 @@
 package mx.edu.unpa.calificacionesunpa
 
+//import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+//import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.Companion.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -7,32 +9,23 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Button
-import android.widget.TextView
-import androidx.annotation.NonNull
-import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.navigation.NavigationView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import androidx.drawerlayout.widget.DrawerLayout
-import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.ui.NavigationUI
-import com.google.firebase.Firebase
+import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.auth.auth
-//import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
-//import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.Companion.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
-import com.google.android.material.button.MaterialButton
 import com.google.firebase.messaging.FirebaseMessaging
 import mx.edu.unpa.calificacionesunpa.databinding.ActivityMainBinding
 import mx.edu.unpa.calificacionesunpa.providers.AuthProvider
-import mx.edu.unpa.calificacionesunpa.ui.calificacionesanteriores.FragmentCalificacionesAnteriores
+import mx.edu.unpa.calificacionesunpa.service.UsuarioService.alumnoActual
 import mx.edu.unpa.calificacionesunpa.ui.login.LoginActivity
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -146,13 +139,15 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-//    override fun onStart(){
-//        super.onStart()
-//        if (authProvider.exitsSession()){
-//            val intent = Intent(this, FragmentCalificacionesAnteriores::class.java)
-//            startActivity(intent)
-//        }
-//    }
+    override fun onStart() {
+        super.onStart()
+        val alumno = alumnoActual
+        if (alumno!!.usuario!!.primerAcceso) {
+            Toast.makeText(this, "Debes cambiar tu contraseña primero", Toast.LENGTH_LONG).show()
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+        }
+    }
 
 
     //private fun handleSignIn(credential: Credential) {

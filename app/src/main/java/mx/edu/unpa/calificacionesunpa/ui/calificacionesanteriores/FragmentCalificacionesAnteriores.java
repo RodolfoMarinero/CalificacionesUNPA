@@ -47,6 +47,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
+
+
 import mx.edu.unpa.calificacionesunpa.R;
 import mx.edu.unpa.calificacionesunpa.models.Alumno;
 import mx.edu.unpa.calificacionesunpa.models.Materia;
@@ -105,6 +107,9 @@ public class FragmentCalificacionesAnteriores extends Fragment {
         txtPromedioGeneral   = root.findViewById(R.id.txtPromedioGeneral);
         tvExtraordinariosLabel   = root.findViewById(R.id.tvExtraordinariosLabel);
         tvNombre             = root.findViewById(R.id.tvNombre);
+        Button btnPdf = root.findViewById(R.id.btnDescargarPdf);
+        btnPdf.setOnClickListener(this::generarPdf);
+
 
         btnPDF = root.findViewById(R.id.btnDescargarPdf);
         btnPDF.setOnClickListener(this::generarPdf);
@@ -419,6 +424,15 @@ public class FragmentCalificacionesAnteriores extends Fragment {
                 ? String.format(Locale.getDefault(), "%.1f", v)
                 : "-";
     }
+    private boolean tieneAnterior() {
+        return idxCicloActual > 1;
+    }
+
+    private boolean tieneSiguiente() {
+        int maxIdx = semestresMapa.keySet().stream().max(Integer::compareTo).orElse(1);
+        return idxCicloActual < maxIdx;
+    }
+
 
     public void generarPdf(View view) {
         PdfDocument documento = new PdfDocument();
@@ -621,14 +635,5 @@ public class FragmentCalificacionesAnteriores extends Fragment {
 
 
 
-
-    private boolean tieneAnterior() {
-        return idxCicloActual > 1;
-    }
-
-    private boolean tieneSiguiente() {
-        int maxIdx = semestresMapa.keySet().stream().max(Integer::compareTo).orElse(1);
-        return idxCicloActual < maxIdx;
-    }
 
 }

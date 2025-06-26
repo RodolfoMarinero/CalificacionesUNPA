@@ -45,7 +45,7 @@ public class LoginActivity extends AppCompatActivity {
     private AuthProvider authProvider;
     private AlumnoProvider alumnoProvider;
     private UsuarioService usuarioService = UsuarioService.INSTANCE;
-    private NotificacionProvider notificacionProvider;
+
     private FirebaseUser userGoogle;
     private LoadingFragment loadingFragment;
     private  String matricula;
@@ -93,7 +93,7 @@ public class LoginActivity extends AppCompatActivity {
             authProvider.login(email, password)
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
-                            
+
                             // Limpia los campos
                             etMatricula.setText("");
                             etPassword.setText("");
@@ -104,7 +104,6 @@ public class LoginActivity extends AppCompatActivity {
                                 finish();
                             } else {
                             alumnoProvider = new AlumnoProvider();
-                            notificacionProvider = new NotificacionProvider();
                             alumnoProvider.obtenerAlumnoConMateriasDeUsuario(
                                     authProvider.getId(),
                                     alumno -> {
