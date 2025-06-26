@@ -1,32 +1,47 @@
 package mx.edu.unpa.calificacionesunpa.service
 
-class CalendarioService(private val provider: CalendarioProvider) {
+import android.util.Base64
+import mx.edu.unpa.calificacionesunpa.providers.StorageProvider
 
-    private var calendarioCache: ByteArray? = null
+class CalendarioService(private val storageProvider: StorageProvider) {
 
+    private var cache: ByteArray? = null
+
+    /**
+     * Obtiene el PDF del calendario escolar en formato ByteArray.
+     * Usa cache para evitar múltiples lecturas si ya se ha cargado antes.
+     */
     fun obtenerCalendarioPdf(
-        idDocumento: String,
+        fileId: String,
         onSuccess: (ByteArray) -> Unit,
         onError: (String) -> Unit
     ) {
-        if (calendarioCache != null) {
-            onSuccess(calendarioCache!!)
+        // Usa cache si ya fue cargado anteriormente
+        cache?.let {
+            onSuccess(it)
             return
         }
 
-        provider.obtenerCalendarioBase64(idDocumento,
-            onSuccess = { base64 ->
-                val pdfBytes = Base64.decode(base64, Base64.DEFAULT)
-                calendarioCache = pdfBytes
-                onSuccess(pdfBytes)
-            },
-            onError = { error ->
-                onError(error)
+        // Solicita el archivo a Firestore usando StorageProvider
+        storageProvider.getFile(fileId) { base64 ->
+            if (!base64.isNullOrEmpty()) {
+                try {
+                    val pdfBytes = Base64.decode(base64, Base64.DEFAULT)
+                    cache = pdfBytes
+                    onSuccess(pdfBytes)
+                } catch (e: Exception) {
+                    onError("Error al decodificar el PDF: ${e.message}")
+                }
+            } else {
+                onError("No se pudo obtener el calendario.")
             }
-        )
+        }
     }
 
+    /**
+     * Limpia la caché del calendario escolar.
+     */
     fun limpiarCache() {
-        calendarioCache = null
+        cache = null
     }
 }

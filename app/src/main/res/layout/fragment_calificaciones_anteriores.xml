@@ -143,19 +143,19 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <HorizontalScrollView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-            >
+                android:fillViewport="false">
 
-            <!-- Tabla de calificaciones -->
-            <TableLayout
-                android:id="@+id/tablaCalificaciones"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_table_light"
-                android:padding="8dp">
-            </TableLayout>
+                <TableLayout
+                    android:id="@+id/tablaCalificaciones"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_table_light"
+                    android:padding="8dp"
+                    android:stretchColumns="1,2,3,4,5,6" />
             </HorizontalScrollView>
+
             <!-- Extraordinarios -->
             <TextView
                 android:id="@+id/tvExtraordinariosLabel"

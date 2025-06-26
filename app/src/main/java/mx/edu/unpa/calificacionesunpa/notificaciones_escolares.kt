@@ -76,30 +76,6 @@ class notificaciones_escolares : AppCompatActivity() {
         btnAgregarMatricula = findViewById(R.id.btnAgregarMatricula)
         recyclerMatriculas = findViewById(R.id.recyclerMatriculas)
 
-        btnEnviar = findViewById(R.id.btnEnviar)
-        val btnSeleccionarPdf = findViewById<Button>(R.id.btnSeleccionarPdf)
-        val btnConvertirBase64 = findViewById<Button>(R.id.btnConvertir)
-        val txtNombreArchivo = findViewById<TextView>(R.id.txtNombreArchivo)
-        btnSeleccionarPdf.setOnClickListener {
-            val intent = Intent(Intent.ACTION_GET_CONTENT)
-            intent.type = "application/pdf"
-            startActivityForResult(intent, REQUEST_CODE_PDF)
-        }
-        btnConvertirBase64.setOnClickListener {
-            uriPDF?.let {
-                val base64 = ArchivoUtils.convertirA_Base64(this, it)
-                if (base64 != null) {
-                    val storageProvider = StorageProvider()
-                    storageProvider.uploadFile(base64, txtNombreArchivo.toString()) { success ->
-                        if (success) {
-                            Toast.makeText(this, "Archivo subido exitosamente", Toast.LENGTH_SHORT).show()
-                        } else {
-                            Toast.makeText(this, "Error al subir el archivo", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                }
-            }
-        }
 
         // Configurar RecyclerView
         recyclerMatriculas.layoutManager = LinearLayoutManager(this)

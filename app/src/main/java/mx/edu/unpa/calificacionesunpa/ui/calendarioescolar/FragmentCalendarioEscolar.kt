@@ -1,29 +1,30 @@
 package mx.edu.unpa.calificacionesunpa.ui.calendarioescolar
 
 import android.os.Bundle
-import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.github.barteksc.pdfviewer.PDFView
-import com.google.firebase.firestore.FirebaseFirestore
 import mx.edu.unpa.calificacionesunpa.R
-
+import mx.edu.unpa.calificacionesunpa.providers.StorageProvider
+import mx.edu.unpa.calificacionesunpa.service.CalendarioService
 
 class FragmentCalendarioEscolar : Fragment() {
 
     private lateinit var pdfView: PDFView
-    private val calendarioService = CalendarioService(CalendarioProvider())
+    private lateinit var calendarioService: CalendarioService
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         val view = inflater.inflate(R.layout.fragment_calendario_escolar, container, false)
-
         pdfView = view.findViewById(R.id.pdfView)
+
+        // Usar StorageProvider real
+        calendarioService = CalendarioService(StorageProvider())
 
         cargarCalendario("calendario_2025")
 
@@ -40,8 +41,8 @@ class FragmentCalendarioEscolar : Fragment() {
                     .enableDoubletap(true)
                     .load()
             },
-            onError = { error ->
-                Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show()
+            onError = { mensaje ->
+                Toast.makeText(requireContext(), mensaje, Toast.LENGTH_SHORT).show()
             }
         )
     }

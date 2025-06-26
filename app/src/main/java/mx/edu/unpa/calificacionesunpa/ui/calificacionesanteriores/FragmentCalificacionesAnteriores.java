@@ -2,6 +2,7 @@ package mx.edu.unpa.calificacionesunpa.ui.calificacionesanteriores;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -326,14 +328,18 @@ public class FragmentCalificacionesAnteriores extends Fragment {
             if (alumnoActual.getEsRegular()) {
                 TableRow row = new TableRow(requireContext());
                 row.setGravity(Gravity.CENTER);
-                addCell(row, mat.getMateria());
-                addCell(row, format(mat.getCalificaciones().getParcial1() != null ? mat.getCalificaciones().getParcial1() : null));
-                addCell(row, format(mat.getCalificaciones().getParcial2() != null ? mat.getCalificaciones().getParcial2() : null));
-                addCell(row, format(mat.getCalificaciones().getParcial3() != null ? mat.getCalificaciones().getParcial3() : null));
-                addCell(row, format(mat.getPromedioParciales() != 0.0 ? mat.getPromedioParciales() : null));
-                addCell(row, format(mat.getCalificaciones().getOrdinario() != null ? mat.getCalificaciones().getOrdinario() : null));
-                addCell(row, format(mat.getCalificaciones().getPFinal() != null ? mat.getCalificaciones().getPFinal() : null));
+
+                addCell(row, mat.getMateria(),true);
+                addCell(row, format(mat.getCalificaciones().getParcial1()),false);
+                addCell(row, format(mat.getCalificaciones().getParcial2()),false);
+                addCell(row, format(mat.getCalificaciones().getParcial3()),false);
+                addCell(row, format(mat.getPromedioParciales()),false);
+                addCell(row, format(mat.getCalificaciones().getOrdinario()),false);
+                addCell(row, format(mat.getCalificaciones().getPFinal()),false);
+
                 tablaCalificaciones.addView(row);
+
+
             }
 
             // Extraordinarios
@@ -348,11 +354,14 @@ public class FragmentCalificacionesAnteriores extends Fragment {
                 hasExtra[0] = true;
                 TableRow rowEx = new TableRow(requireContext());
                 rowEx.setGravity(Gravity.START);
-                addCell(rowEx, mat.getMateria());
-                addCell(rowEx, format(mat.getCalificaciones().getExtraOrdinario1()));
-                addCell(rowEx, format(mat.getCalificaciones().getExtraOrdinario2()));
-                addCell(rowEx, format(mat.getCalificaciones().getEspecial()));
+
+                addCell(rowEx, mat.getMateria(),true);
+                addCell(rowEx, format(mat.getCalificaciones().getExtraOrdinario1()),false);
+                addCell(rowEx, format(mat.getCalificaciones().getExtraOrdinario2()),false);
+                addCell(rowEx, format(mat.getCalificaciones().getEspecial()),false);
+
                 tablaExtraordinarios.addView(rowEx);
+
             }
         }
     }
@@ -360,36 +369,45 @@ public class FragmentCalificacionesAnteriores extends Fragment {
     private void addHeaderRow() {
         TableRow headerRow = new TableRow(requireContext());
         headerRow.setGravity(Gravity.CENTER);
-        addCell(headerRow, "Materia");
-        addCell(headerRow, "1er.");
-        addCell(headerRow, "2o.");
-        addCell(headerRow, "3er.");
-        addCell(headerRow, "P.P");
-        addCell(headerRow, "E.F");
-        addCell(headerRow, "CAL.DEF");
+
+        addCell(headerRow, "Materia",true);
+        addCell(headerRow, "1er.",false);
+        addCell(headerRow, "2o.",false);
+        addCell(headerRow, "3er.",false);
+        addCell(headerRow, "P.P",false);
+        addCell(headerRow, "E.F",false);
+        addCell(headerRow, "CAL.DEF",false);
+
         tablaCalificaciones.addView(headerRow);
     }
 
-    private void addCell(TableRow row, String texto) {
+
+    private void addCell(TableRow row, String texto, boolean esMateria) {
         TextView tv = new TextView(requireContext());
         tv.setText(texto);
         tv.setPadding(8, 8, 8, 8);
-
-        tv.setGravity(Gravity.START);
-        tv.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
-
         tv.setSingleLine(false);
-        tv.setMaxLines(3);
+        tv.setEllipsize(TextUtils.TruncateAt.END);
 
-        // Esta es la clave
+        if (esMateria) {
+            tv.setLines(2);  // fija altura para 2 líneas
+            tv.setEllipsize(TextUtils.TruncateAt.END); // corta si no cabe
+            tv.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
+            tv.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
+        } else {
+            tv.setMaxLines(1);
+            tv.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            tv.setGravity(Gravity.CENTER);
+        }
+
         TableRow.LayoutParams lp = new TableRow.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
         );
         tv.setLayoutParams(lp);
-
         row.addView(tv);
     }
+
 
 
     private String format(Double v) {
