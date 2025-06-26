@@ -26,6 +26,8 @@ import com.journeyapps.barcodescanner.BarcodeEncoder
 import mx.edu.unpa.calificacionesunpa.R
 import mx.edu.unpa.calificacionesunpa.providers.AuthGoogleProvider
 import mx.edu.unpa.calificacionesunpa.providers.AuthProvider
+import mx.edu.unpa.calificacionesunpa.providers.StorageProvider
+import mx.edu.unpa.calificacionesunpa.service.ArchivoUtils
 import mx.edu.unpa.calificacionesunpa.service.PromedioCalculatorService
 import mx.edu.unpa.calificacionesunpa.ui.changePass.ChangePassword
 import java.io.File

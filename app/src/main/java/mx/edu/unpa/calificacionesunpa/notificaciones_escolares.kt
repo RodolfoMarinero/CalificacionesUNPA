@@ -81,6 +81,10 @@ class notificaciones_escolares : AppCompatActivity() {
         layoutListaMatriculas = findViewById(R.id.layoutListaMatriculas)
 
         btnAgregarMatricula = findViewById(R.id.btnAgregarMatricula)
+<<<<<<< devxd
+        recyclerMatriculas = findViewById(R.id.recyclerMatriculas)
+
+=======
         btnEnviar = findViewById(R.id.btnEnviar)
         val btnSeleccionarPdf = findViewById<Button>(R.id.btnSeleccionarPdf)
         val btnConvertirBase64 = findViewById<Button>(R.id.btnConvertir)
@@ -105,6 +109,7 @@ class notificaciones_escolares : AppCompatActivity() {
                 }
             }
         }
+>>>>>>> develop
 
         // Inicialmente ocultar campos
         layoutMatricula.visibility = View.GONE

@@ -96,7 +96,7 @@ public class LoginActivity extends AppCompatActivity {
                             etMatricula.setText("");
                             etPassword.setText("");
                             //solicita el alumno
-                            if(matricula.equals("20010043")){
+                            if(matricula.equals("100000")){
                                 Intent intento = new Intent(this, EscolaresActivity.class );
                                 startActivity(intento);
                                 finish();
@@ -109,7 +109,12 @@ public class LoginActivity extends AppCompatActivity {
                                         usuarioService.setAlumnoActual(alumno);
                                         notificacionProvider.cargarNotificacionesDesdeFirestore();
                                         hideLoadingFragment();
+                                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                        intent.putExtra("navigateTo", "calificaciones");
+                                        startActivity(intent);
 
+<<<<<<< devxd
+=======
                                         if ("100000".equals(matricula)) {
                                             Intent intent = new Intent(LoginActivity.this, RecuperarContrasena.class);
                                             startActivity(intent);
@@ -118,6 +123,7 @@ public class LoginActivity extends AppCompatActivity {
                                             intent.putExtra("navigateTo", "notificaciones");
                                             startActivity(intent);
                                         }
+>>>>>>> develop
                                         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                                         finish();
                                         return Unit.INSTANCE;
