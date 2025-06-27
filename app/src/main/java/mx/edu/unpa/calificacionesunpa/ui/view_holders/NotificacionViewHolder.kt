@@ -14,5 +14,6 @@ class NotificationViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     val title: TextView = itemView.findViewById(R.id.tvNotificationTitle)
     val message: TextView = itemView.findViewById(R.id.tvNotificationMessage)
     val date: TextView = itemView.findViewById(R.id.tvNotificationDate)
+    val sender: TextView = itemView.findViewById(R.id.tvNotificationSender)
     val btnEliminar: ImageButton   = itemView.findViewById(R.id.btnEliminar)
 }

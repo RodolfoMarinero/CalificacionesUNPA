@@ -158,6 +158,9 @@ class notificaciones_escolares : AppCompatActivity() {
                         esGlobal = false,
                         expiraEn = LocalDate.now().plusDays(3).toString(),
                         timestamp = Date(),
+                        remitente = "Servicios Escolares"
+                                //remitente = UsuarioService.alumnoActual?.nombre ?: "Desconocido"
+
                     )
                     notificacionProvider = NotificacionProvider();
                     notificacionProvider.enviarNotificacion(notificacion);
@@ -182,6 +185,7 @@ class notificaciones_escolares : AppCompatActivity() {
                         esGlobal = false,
                         expiraEn = LocalDate.now().plusDays(3).toString(),
                         timestamp = Date(),
+                        remitente = "Servicios Escolares"
                     )
                     notificacionProvider = NotificacionProvider();
                     notificacionProvider.enviarNotificacion(notificacion);
@@ -200,6 +204,7 @@ class notificaciones_escolares : AppCompatActivity() {
                         esGlobal = false,
                         expiraEn = LocalDate.now().plusDays(3).toString(),
                         timestamp = Date(),
+                        remitente = "Servicios Escolares"
                     )
                     notificacionProvider = NotificacionProvider();
                     notificacionProvider.enviarNotificacion(notificacion);

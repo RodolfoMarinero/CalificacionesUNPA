@@ -1,5 +1,7 @@
 package mx.edu.unpa.calificacionesunpa.fragments
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -15,6 +17,7 @@ import mx.edu.unpa.calificacionesunpa.R
 import mx.edu.unpa.calificacionesunpa.adapters.NotificationAdapter
 import mx.edu.unpa.calificacionesunpa.adapters.NotificationItem
 import mx.edu.unpa.calificacionesunpa.providers.NotificacionProvider
+import mx.edu.unpa.calificacionesunpa.service.UsuarioService
 
 import kotlin.jvm.java
 
@@ -24,7 +27,9 @@ class NotificacionFragment : Fragment(R.layout.fragment_notificaciones) {
     private lateinit var adapter: NotificationAdapter
     private lateinit var emptyView: TextView
     private lateinit var provider: NotificacionProvider
-
+    private val alumnoActual: String by lazy {
+        UsuarioService.alumnoActual?.matricula ?: "desconocido"
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         emptyView = view.findViewById(R.id.tvEmptyState)
@@ -46,16 +51,45 @@ class NotificacionFragment : Fragment(R.layout.fragment_notificaciones) {
         recyclerView.itemAnimator = DefaultItemAnimator()
 
         provider = NotificacionProvider()
+        cargarNotificaciones()
+
+    }
+    private fun cargarNotificaciones() {
         provider.cargarNotificacionesDesdeFirestore { lista ->
+            val eliminadas = obtenerIdsEliminadas(alumnoActual)
+            val visibles = lista.filter { it.id !in eliminadas }
+
             notificationsList.clear()
-            notificationsList.addAll(lista)
+            notificationsList.addAll(visibles)
             adapter.notifyDataSetChanged()
             toggleEmptyState()
         }
     }
     private fun eliminarNotificacion(notificacion: NotificationItem) {
-        // Eliminar de Firestore y actualizar lista
+        guardarNotificacionEliminada(alumnoActual, notificacion.id)
+        notificationsList.remove(notificacion)
+        adapter.notifyDataSetChanged()
+        toggleEmptyState()
     }
+    private fun getSharedPrefs(): SharedPreferences {
+        return requireContext().getSharedPreferences("notificaciones_prefs", Context.MODE_PRIVATE)
+    }
+
+    private fun guardarNotificacionEliminada(usuarioId: String, idNotificacion: String) {
+        val prefs = getSharedPrefs()
+        val key = "eliminadas_$usuarioId"
+        val eliminadas = prefs.getStringSet(key, mutableSetOf())?.toMutableSet() ?: mutableSetOf()
+        eliminadas.add(idNotificacion)
+        prefs.edit().putStringSet(key, eliminadas).apply()
+    }
+
+    private fun obtenerIdsEliminadas(usuarioId: String): Set<String> {
+        val prefs = getSharedPrefs()
+        val key = "eliminadas_$usuarioId"
+        return prefs.getStringSet(key, emptySet()) ?: emptySet()
+    }
+
+
     private fun toggleEmptyState() {
         if (notificationsList.isEmpty()) {
             emptyView.visibility = View.VISIBLE

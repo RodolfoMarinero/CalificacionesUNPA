@@ -26,10 +26,11 @@ class NotificacionProvider {
             .addOnSuccessListener { documents ->
                 lista.clear()
                 for (doc in documents) {
-                    val notificacion = doc.toObject(NotificationItem::class.java)
+                    val notificacion = doc.toObject(NotificationItem::class.java).copy(id = doc.id)
                     if (notificacion.destinatarios.contains(alumnoActual) || notificacion.destinatarios.contains("11111111")) {
                         lista.add(notificacion)
                     }
+
                 }
                 onSuccess(lista)
             }

@@ -12,6 +12,7 @@ import androidx.core.app.NotificationCompat
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.google.firebase.messaging.remoteMessage
 import mx.edu.unpa.calificacionesunpa.MainActivity
 import mx.edu.unpa.calificacionesunpa.R
 import kotlin.apply
@@ -27,7 +28,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val esGlobal = remoteMessage.data["esGlobal"]?.toBoolean() ?: false
 
         showNotification(titulo, mensaje)
-        guardarNotificacionEnFirestore(titulo, mensaje, esGlobal)
+        guardarNotificacionEnFirestore(titulo, mensaje, esGlobal,remoteMessage)
     }
 
     override fun onNewToken(token: String) {
@@ -67,7 +68,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         notificationManager.notify(System.currentTimeMillis().toInt(), notification)
     }
 
-    private fun guardarNotificacionEnFirestore(titulo: String, mensaje: String, esGlobal: Boolean) {
+    private fun guardarNotificacionEnFirestore(titulo: String, mensaje: String, esGlobal: Boolean,remoteMessage: RemoteMessage) {
         val db = FirebaseFirestore.getInstance()
         val matricula = UsuarioService.alumnoActual?.matricula
 
@@ -75,6 +76,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             Log.d("Firestore", "No se guarda notificación: usuario no autenticado")
             return
         }
+        val remitente = remoteMessage.data["remitente"] ?: "Sistema" // <-- NUEVO
+
 
         val notificacion = hashMapOf(
             "titulo" to titulo,
@@ -82,7 +85,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             "esGlobal" to esGlobal,
             "destinatarios" to if (esGlobal) emptyList<String>() else listOf(matricula!!),
             "timestamp" to System.currentTimeMillis(),
-            "fueLeida" to false
+            "fueLeida" to false,
+            "remitente" to remitente
         )
 
         db.collection("notificaciones")
