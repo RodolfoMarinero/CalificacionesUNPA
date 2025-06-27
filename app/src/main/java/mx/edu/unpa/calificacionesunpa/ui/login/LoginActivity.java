@@ -115,9 +115,28 @@ public class LoginActivity extends AppCompatActivity {
                             etPassword.setText("");
                             //solicita el alumno
                             if (matricula.equals("100000")) {
-                                Intent intento = new Intent(this, EscolaresActivity.class);
-                                startActivity(intento);
-                                finish();
+                                alumnoProvider = new AlumnoProvider();
+                                alumnoProvider.obtenerBanderaPrimerAcceso(
+                                        matricula,
+                                        bandera -> {
+                                            if(bandera!=null){
+                                                Intent intento;
+                                                if (bandera) {
+
+                                                    intento = new Intent(this, ChangePassword.class);
+                                                    intento.putExtra("primerAcceso", true);
+                                                    intento.putExtra("esSE", true);
+                                                    intento.putExtra("matricula", matricula);
+
+                                                } else {
+                                                    intento = new Intent(this, EscolaresActivity.class);
+                                                }
+                                                startActivity(intento);
+                                                finish();
+                                            }
+                                            return Unit.INSTANCE;
+                                        }
+                                );
                             } else {
                             alumnoProvider = new AlumnoProvider();
                             alumnoProvider.obtenerAlumnoConMateriasDeUsuario(

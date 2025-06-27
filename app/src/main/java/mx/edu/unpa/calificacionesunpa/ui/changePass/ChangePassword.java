@@ -89,12 +89,14 @@ public class ChangePassword extends AppCompatActivity {
         if (primerAcceso) {
             etActualPass.setVisibility(View.GONE);
             layoutPassAct.setVisibility(View.GONE);
-
         }
 
 
         btnCambiar.setOnClickListener(view -> {
-            String actualPass = etActualPass.getText().toString().trim();
+            String actualPass = "";
+            if(!primerAcceso){
+                actualPass = etActualPass.getText().toString().trim();
+            }
             String nuevaPass = etNuevaPass.getText().toString().trim();
             String confirmacion = etConfirmarPass.getText().toString().trim();
             cambiarPassword(actualPass, nuevaPass, confirmacion);
@@ -107,7 +109,10 @@ public class ChangePassword extends AppCompatActivity {
     private void cambiarPassword(String actualPass, String nuevaPass, String confirmacion) {
         FirebaseUser user = auth.getCurrentUser();
         boolean primerAcceso = getIntent().getBooleanExtra("primerAcceso", false);
-
+        boolean esSE = getIntent().getBooleanExtra("esSE", false);
+        if (primerAcceso) {
+            actualPass = getIntent().getStringExtra("matricula");
+        }
         if (!primerAcceso) {
             if (TextUtils.isEmpty(actualPass) || TextUtils.isEmpty(nuevaPass) || TextUtils.isEmpty(confirmacion)) {
                 Toast.makeText(this, "Completa todos los campos", Toast.LENGTH_SHORT).show();

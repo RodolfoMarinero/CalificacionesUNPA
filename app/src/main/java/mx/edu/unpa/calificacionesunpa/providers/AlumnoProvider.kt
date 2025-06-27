@@ -109,5 +109,25 @@ class AlumnoProvider {
         }
     }
 
+    fun obtenerBanderaPrimerAcceso(
+        usuarioId: String,
+        callback: (Boolean?) -> Unit
+    ) {
+        usuariosCollection.document(usuarioId)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val primerAcceso = document.getBoolean("primerAcceso")
+                    callback(primerAcceso)
+                } else {
+                    Log.e("AlumnoProvider", "Usuario no encontrado")
+                    callback(null)
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.e("AlumnoProvider", "Error al obtener el usuario", exception)
+                callback(null)
+            }
+    }
 
 }
