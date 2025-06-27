@@ -12,8 +12,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.credentials.CredentialManager
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -28,10 +30,19 @@ import mx.edu.unpa.calificacionesunpa.providers.AuthGoogleProvider
 import mx.edu.unpa.calificacionesunpa.providers.AuthProvider
 import mx.edu.unpa.calificacionesunpa.providers.StorageProvider
 import mx.edu.unpa.calificacionesunpa.service.ArchivoUtils
+import mx.edu.unpa.calificacionesunpa.service.ProfilePictureService
 import mx.edu.unpa.calificacionesunpa.service.PromedioCalculatorService
 import mx.edu.unpa.calificacionesunpa.ui.changePass.ChangePassword
 import java.io.File
 import java.io.FileOutputStream
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import mx.edu.unpa.calificacionesunpa.fragments.LoadingFragment
+import mx.edu.unpa.calificacionesunpa.service.CarreraPromedioService
+import mx.edu.unpa.calificacionesunpa.service.OnBitmapResultCallback
+import mx.edu.unpa.calificacionesunpa.service.OnBooleanResultCallback
+
 
 class FragmentPerfilN : Fragment() {
 
@@ -55,6 +66,8 @@ class FragmentPerfilN : Fragment() {
         requireContext().getSharedPreferences("profile_prefs", Context.MODE_PRIVATE)
     }
 
+    private lateinit var profilePictureService: ProfilePictureService
+
 
     private lateinit var authGoogleProvider: AuthGoogleProvider
 
@@ -65,7 +78,8 @@ class FragmentPerfilN : Fragment() {
         val view = inflater.inflate(R.layout.fragment_perfil, container, false)
 
         ivProfile = view.findViewById(R.id.ivProfile)
-
+        profilePictureService = ProfilePictureService.getInstance(requireContext())
+        loadProfilePicture()
         ivProfile.setOnClickListener {
             if (hasPermission()) {
                 abrirGaleria()
@@ -119,10 +133,44 @@ class FragmentPerfilN : Fragment() {
         }
         return view
     }
+    private fun loadProfilePicture() {
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user == null) {
+            ivProfile.setImageResource(R.drawable.ic_perfil)
+            return
+        }
+
+        profilePictureService.getProfilePicture(user.uid, object : OnBitmapResultCallback {
+            override fun onResult(bitmap: Bitmap?) {
+                requireActivity().runOnUiThread {
+                    if (bitmap != null) {
+                        ivProfile.setImageBitmap(bitmap)
+                    } else {
+                        ivProfile.setImageResource(R.drawable.ic_perfil)
+                    }
+                }
+            }
+        })
+    }
+    private var promedioCache: Double? = null
 
     override fun onStart() {
         super.onStart()
         authGoogleProvider.updateUI(auth.currentUser,requireActivity());
+
+        if(promedioCache == null) {
+            calcularPromedio()
+        } else {
+            tvPromedio.text = String.format("%.1f", promedioCache)
+        }
+    }
+    private fun calcularPromedio() {
+        lifecycleScope.launch {
+            showLoading()
+            promedioCache = CarreraPromedioService.obtenerPromedioCarrera()
+            tvPromedio.text = String.format("%.1f", promedioCache)
+            hideLoading()
+        }
     }
     private fun hasPermission(): Boolean {
         val permission = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU)
@@ -145,6 +193,33 @@ class FragmentPerfilN : Fragment() {
             Log.e(TAG, "Permiso denegado para acceder a la galería")
         }
     }
+    private fun showLoading() {
+        Log.d(TAG, "Mostrar loading")
+        val container = view?.findViewById<FrameLayout>(R.id.loadingContainer)
+        container?.visibility = View.VISIBLE
+
+        if (childFragmentManager.findFragmentByTag("loading_fragment") == null) {
+            childFragmentManager.beginTransaction()
+                .add(R.id.loadingContainer, LoadingFragment(), "loading_fragment")
+                .commitAllowingStateLoss()
+        }
+    }
+
+    private fun hideLoading() {
+        Log.d(TAG, "Ocultar loading")
+        val container = view?.findViewById<FrameLayout>(R.id.loadingContainer)
+        container?.visibility = View.GONE
+
+        val fragment = childFragmentManager.findFragmentByTag("loading_fragment")
+        if (fragment != null) {
+            childFragmentManager.beginTransaction()
+                .remove(fragment)
+                .commitAllowingStateLoss()
+        }
+    }
+
+
+
 
     private fun generarCodigoBarras(texto: String) {
         try {
@@ -156,33 +231,7 @@ class FragmentPerfilN : Fragment() {
         }
     }
 
-    private fun guardarImagenLocal(bitmap: Bitmap) {
-        try {
-            val file = File(requireContext().filesDir, "imagen_perfil.png")
-            val outputStream = FileOutputStream(file)
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
-            outputStream.flush()
-            outputStream.close()
 
-            // Forzar recarga en ImageView
-            ivProfile.setImageBitmap(bitmap)
-
-            // Notificar cambio
-            sharedPrefs.edit().putLong("last_update", System.currentTimeMillis()).apply()
-        } catch (e: Exception) {
-            Log.e("Perfil", "Error al guardar imagen", e)
-        }
-    }
-    private fun cargarImagenLocal(): Boolean {
-        val file = File(requireContext().filesDir, "imagen_perfil.png")
-        return if (file.exists()) {
-            val bitmap = BitmapFactory.decodeFile(file.absolutePath)
-            ivProfile.setImageBitmap(bitmap)
-            true
-        } else {
-            false
-        }
-    }
 
 
     companion object {
@@ -190,33 +239,36 @@ class FragmentPerfilN : Fragment() {
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null && data.data != null) {
-            val imageUri = data.data
-            ivProfile.setImageURI(imageUri)
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null) {
+            val imageUri = data.data ?: return
 
-            // Convertir y guardar localmente inmediatamente
-           /* val base64 = ArchivoUtils.convertirA_Base64(requireContext(), imageUri!!)
-            if (base64 != null) {
-                val imageBytes = Base64.decode(base64, Base64.DEFAULT)
-                val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-                guardarImagenLocal(bitmap) // Guardar localmente
+            // Mostrar spinner
+            showLoading()
 
-                // Actualizar Firebase en segundo plano
+            // Guardar imagen y actualizar UI solo si el guardado fue exitoso
+            lifecycleScope.launch {
                 val userId = FirebaseAuth.getInstance().currentUser?.uid
-                val fileName = "perfil_${System.currentTimeMillis()}.jpg"
                 if (userId != null) {
-                    val provider = StorageProvider()
-                    provider.uploadImage(base64, fileName, userId) { success ->
-                        if (success) {
-                            Log.d("Perfil", "Imagen actualizada en Firebase")
-
-                            // Notificar a toda la app sobre la actualización
-                            sharedPrefs.edit().putLong("last_update", System.currentTimeMillis()).apply()
+                    profilePictureService.saveProfilePicture(requireContext(), imageUri, userId, object : OnBooleanResultCallback {
+                        override fun onResult(success: Boolean) {
+                            requireActivity().runOnUiThread {
+                                hideLoading()
+                                if (success) {
+                                    // Actualiza la imagen con la que guardaste en Firebase
+                                    loadProfilePicture()
+                                } else {
+                                    // Opcional: mensaje de error
+                                    Toast.makeText(requireContext(), "Error al guardar la imagen", Toast.LENGTH_SHORT).show()
+                                }
+                            }
                         }
-                    }
+                    })
+                } else {
+                    hideLoading()
                 }
-            }*/
+            }
         }
     }
+
 
 }
