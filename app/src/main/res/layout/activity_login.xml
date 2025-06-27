@@ -47,7 +47,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Bienvenido a UNPA Scholar"
+                android:text="Bienvenido a UNPA GRADES"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:textColor="#333333"
@@ -59,21 +59,42 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:hint="Matricula"
+                android:singleLine="true"
+                android:imeOptions="actionDone"
                 android:background="@drawable/bg_edittext"
                 android:padding="12dp"
                 android:layout_marginBottom="12dp"
                 android:textColor="#000" />
 
-            <EditText
-                android:id="@+id/cp_txtPassword"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:hint="Contraseña"
-                android:inputType="textPassword"
-                android:background="@drawable/bg_edittext"
-                android:padding="12dp"
-                android:layout_marginBottom="12dp"
-                android:textColor="#000" />
+                android:layout_marginBottom="12dp">
+
+                <EditText
+                    android:id="@+id/cp_txtPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="Contraseña"
+                    android:inputType="textPassword"
+                    android:singleLine="true"
+                    android:imeOptions="actionDone"
+                    android:background="@drawable/bg_edittext"
+                    android:padding="12dp"
+                    android:textColor="#000"
+                    android:layout_alignParentStart="true"
+                    android:layout_toStartOf="@+id/togglePassword" />
+
+                <ImageView
+                    android:id="@+id/togglePassword"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="12dp"
+                    android:src="@drawable/ic_visibility_off"
+                    android:contentDescription="Mostrar/Ocultar contraseña" />
+            </RelativeLayout>
 
             <Button
                 android:id="@+id/cp_changepass"
@@ -88,12 +109,12 @@
                 android:id="@+id/btnRecuperar_contrasena"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="¿Olvidaste tu contraseña?"
+                android:text="* NOTA: Para recuperar tu contraseña acude a Servicios Escolares"
                 android:textColor="#5D5D5D"
                 android:textSize="14sp"
                 android:layout_marginTop="16dp"
                 android:layout_gravity="center_horizontal"
-                android:clickable="true" />
+                android:clickable="false" />
 
         </LinearLayout>
 

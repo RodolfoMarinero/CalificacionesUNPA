@@ -4,8 +4,11 @@ import android.content.Intent;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.auth.AuthCredential;
@@ -28,6 +31,7 @@ public class ChangePassword extends AppCompatActivity {
     private Button btnCambiar;
     private Button btnCancelar;
     private FirebaseAuth auth;
+    private RelativeLayout layoutPassAct;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +44,54 @@ public class ChangePassword extends AppCompatActivity {
         btnCambiar = findViewById(R.id.cp_changepass);
         btnCancelar= findViewById(R.id.cp_cancelchangepass);
         auth = FirebaseAuth.getInstance();
+        layoutPassAct = findViewById(R.id.layout_actual_password);
+
+        ImageView togglePassword = findViewById(R.id.toggleActual);
+        togglePassword.setOnClickListener(v -> {
+            if (etActualPass.getInputType() == (android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD)) {
+                etActualPass.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                togglePassword.setImageResource(R.drawable.ic_visibility);
+            } else {
+                etActualPass.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                togglePassword.setImageResource(R.drawable.ic_visibility_off);
+            }
+            etActualPass.setSelection(etActualPass.length());
+        });
+
+        ImageView togglePasswordN = findViewById(R.id.toggleNew);
+        togglePasswordN.setOnClickListener(v -> {
+            if (etNuevaPass.getInputType() == (android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD)) {
+                etNuevaPass.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                togglePasswordN.setImageResource(R.drawable.ic_visibility);
+            } else {
+                etNuevaPass.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                togglePasswordN.setImageResource(R.drawable.ic_visibility_off);
+            }
+            etNuevaPass.setSelection(etNuevaPass.length());
+        });
+
+        ImageView togglePasswordNC = findViewById(R.id.toggleConfirm);
+        togglePasswordNC.setOnClickListener(v -> {
+            if (etConfirmarPass.getInputType() == (android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD)) {
+                etConfirmarPass.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                togglePasswordNC.setImageResource(R.drawable.ic_visibility);
+            } else {
+                etConfirmarPass.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                togglePasswordNC.setImageResource(R.drawable.ic_visibility_off);
+            }
+            etConfirmarPass.setSelection(etConfirmarPass.length());
+        });
+
+
+
+        boolean primerAcceso = getIntent().getBooleanExtra("primerAcceso", false);
+
+        if (primerAcceso) {
+            etActualPass.setVisibility(View.GONE);
+            layoutPassAct.setVisibility(View.GONE);
+
+        }
+
 
         btnCambiar.setOnClickListener(view -> {
             String actualPass = etActualPass.getText().toString().trim();
@@ -136,5 +188,4 @@ public class ChangePassword extends AppCompatActivity {
         etConfirmarPass.setText("");
         finish();
     }
-
 }

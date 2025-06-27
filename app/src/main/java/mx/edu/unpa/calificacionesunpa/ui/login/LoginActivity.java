@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -69,6 +70,21 @@ public class LoginActivity extends AppCompatActivity {
         btnRegistro     = findViewById(R.id.btnRegistro);
         tvForgotPassword= findViewById(R.id.btnRecuperar_contrasena);
 
+        ImageView togglePassword = findViewById(R.id.togglePassword);
+        togglePassword.setOnClickListener(v -> {
+            if (etPassword.getInputType() == (android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD)) {
+                // Mostrar contraseña
+                etPassword.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                togglePassword.setImageResource(R.drawable.ic_visibility); // Cambiar ícono
+            } else {
+                // Ocultar contraseña
+                etPassword.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                togglePassword.setImageResource(R.drawable.ic_visibility_off); // Cambiar ícono
+            }
+
+            // Mueve el cursor al final
+            etPassword.setSelection(etPassword.length());
+        });
         authProvider = new AuthProvider();
         auth = FirebaseAuth.getInstance();
 
