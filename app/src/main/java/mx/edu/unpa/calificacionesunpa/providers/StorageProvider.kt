@@ -5,7 +5,6 @@ import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.ktx.app
-import mx.edu.unpa.calificacionesunpa.ui.calificacionesanteriores.OnResultCallback
 import java.util.*
 import androidx.core.content.edit
 import mx.edu.unpa.calificacionesunpa.models.PdfData
@@ -36,6 +35,9 @@ class StorageProvider {
             .addOnFailureListener {
                 onResult(false)
             }
+    }
+    interface OnResultCallback {
+        fun onResult(base64: String?)
     }
 
     fun uploadFile(
