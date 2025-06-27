@@ -166,6 +166,7 @@ public class LoginActivity extends AppCompatActivity {
                     true
             );
         });
+
     }
 
     private boolean isValidateForm() {

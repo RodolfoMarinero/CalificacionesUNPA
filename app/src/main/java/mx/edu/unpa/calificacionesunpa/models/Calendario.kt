@@ -13,5 +13,5 @@ data class Calendario(
     val p1: String = "",
     val p2: String = "",
     val p3: String = "",
-    val plan: String = "",
+    val ciclo: String = "",
 )

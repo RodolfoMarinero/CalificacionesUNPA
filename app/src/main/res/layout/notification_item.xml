@@ -63,6 +63,7 @@
             app:layout_constraintEnd_toStartOf="@id/btnEliminar"
             app:layout_constraintHorizontal_chainStyle="packed"/>
 
+
         <!-- Mensaje -->
         <TextView
             android:id="@+id/tvNotificationMessage"
@@ -77,6 +78,17 @@
             app:layout_constraintTop_toBottomOf="@id/tvNotificationTitle"
             app:layout_constraintStart_toEndOf="@+id/ivNotificationIcon"
             app:layout_constraintEnd_toEndOf="parent"/>
+        <TextView
+            android:id="@+id/tvNotificationSender"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Enviado por: SE"
+            android:textColor="@color/gris_unselected"
+            android:textSize="12sp"
+            app:layout_constraintTop_toBottomOf="@id/tvNotificationMessage"
+            app:layout_constraintStart_toStartOf="@id/tvNotificationMessage"
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <!-- Fecha -->
         <TextView
@@ -87,9 +99,9 @@
             android:text="16/05/25 14:32"
             android:textColor="@color/gris_unselected"
             android:textSize="12sp"
-            app:layout_constraintTop_toBottomOf="@+id/tvNotificationMessage"
+            app:layout_constraintTop_toBottomOf="@+id/tvNotificationSender"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/tvNotificationMessage"/>
+            app:layout_constraintStart_toStartOf="@+id/tvNotificationSender"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

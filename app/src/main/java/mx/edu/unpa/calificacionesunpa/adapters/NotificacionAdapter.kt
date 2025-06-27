@@ -11,6 +11,7 @@ import java.time.LocalDate
 import java.util.Locale
 
 data class NotificationItem(
+    val id: String = "",
     val iconResId: Int = R.drawable.notification,
     val titulo: String = "",
     val mensaje: String = "",
@@ -19,9 +20,10 @@ data class NotificationItem(
     val expiraEn: String = "",
     val timestamp: java.util.Date = java.util.Date(),
 
-    val fueLeida : Boolean = true
+    val fueLeida : Boolean = true,
+    val remitente: String = ""
 ) {
-    constructor() : this(0, "", "", false, listOf(""), LocalDate.now().plusDays(3).toString(), java.util.Date(), false) // Constructor sin argumentos requerido por Firebase
+    constructor() : this(id = "",0, "", "", false, listOf(""), LocalDate.now().plusDays(3).toString(), java.util.Date(), false) // Constructor sin argumentos requerido por Firebase
 }
 
 
@@ -54,6 +56,8 @@ class NotificationAdapter(
         holder.itemView.setOnClickListener {
             onClick?.invoke(item)
         }
+        holder.sender.text = "Enviado por: ${item.remitente}"
+
         holder.btnEliminar.setOnClickListener {
             onDelete?.invoke(item)
         }
