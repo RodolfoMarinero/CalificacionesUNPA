@@ -353,8 +353,8 @@ public class FragmentCalificacionesAnteriores extends Fragment {
 
             // Extraordinarios
             boolean tieneExtra = (
-                    mat.getCalificaciones().getExtraOrdinario1() != null||
-                            mat.getCalificaciones().getExtraOrdinario2() != null ||
+                    mat.getCalificaciones().getExtraordinario1() != null||
+                            mat.getCalificaciones().getExtraordinario2() != null ||
                             mat.getCalificaciones().getEspecial() != null
             );
             if (tieneExtra) {
@@ -365,8 +365,8 @@ public class FragmentCalificacionesAnteriores extends Fragment {
                 rowEx.setGravity(Gravity.START);
 
                 addCell(rowEx, mat.getMateria(),true);
-                addCell(rowEx, format(mat.getCalificaciones().getExtraOrdinario1()),false);
-                addCell(rowEx, format(mat.getCalificaciones().getExtraOrdinario2()),false);
+                addCell(rowEx, format(mat.getCalificaciones().getExtraordinario1()),false);
+                addCell(rowEx, format(mat.getCalificaciones().getExtraordinario2()),false);
                 addCell(rowEx, format(mat.getCalificaciones().getEspecial()),false);
 
                 tablaExtraordinarios.addView(rowEx);

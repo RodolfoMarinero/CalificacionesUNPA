@@ -12,7 +12,7 @@ class Calificacion() {
     var parcial3: Double? = null
     var ordinario: Double? = null
     var pFinal: Double? = null
-    var extraOrdinario1: Double? = null
-    var extraOrdinario2: Double? = null
+    var Extraordinario1: Double? = null
+    var Extraordinario2: Double? = null
     var especial : Double? = null
 }
