@@ -288,7 +288,12 @@ public class FragmentCalificacionesAnteriores extends Fragment {
     }
     private void loadGradesForCycle() {
         tablaCalificaciones.removeAllViews();
-        addHeaderRow();
+        agregarEncabezado(tablaCalificaciones,
+                new String[]{"Materia", "1er.", "2o.", "3er.", "P.P", "E.F", "CAL.DEF"},
+                true);
+        agregarEncabezado(tablaExtraordinarios,
+                new String[]{"Materia", "E1", "E2", "ESP"},
+                true);
         String cicloEscolar = semestresMapa.get(idxCicloActual);
         Log.d(TAG, "loadGradesForCycle ciclo=" + cicloEscolar);
         btnSemestreActual.setText(cicloEscolar);
@@ -343,6 +348,7 @@ public class FragmentCalificacionesAnteriores extends Fragment {
                             mat.getCalificaciones().getEspecial() != null
             );
             if (tieneExtra) {
+
                 tablaExtraordinarios.setVisibility(View.VISIBLE);
                 tvExtraordinariosLabel.setVisibility(View.VISIBLE);
                 hasExtra[0] = true;
@@ -360,19 +366,16 @@ public class FragmentCalificacionesAnteriores extends Fragment {
         }
     }
 
-    private void addHeaderRow() {
+    private void agregarEncabezado(TableLayout tabla, String[] titulos, boolean alinearPrimeraIzquierda) {
         TableRow headerRow = new TableRow(requireContext());
         headerRow.setGravity(Gravity.CENTER);
 
-        addCell(headerRow, "Materia",true);
-        addCell(headerRow, "1er.",false);
-        addCell(headerRow, "2o.",false);
-        addCell(headerRow, "3er.",false);
-        addCell(headerRow, "P.P",false);
-        addCell(headerRow, "E.F",false);
-        addCell(headerRow, "CAL.DEF",false);
+        for (int i = 0; i < titulos.length; i++) {
+            boolean esMateria = alinearPrimeraIzquierda && i == 0;
+            addCell(headerRow, titulos[i], esMateria);
+        }
 
-        tablaCalificaciones.addView(headerRow);
+        tabla.addView(headerRow);
     }
 
 

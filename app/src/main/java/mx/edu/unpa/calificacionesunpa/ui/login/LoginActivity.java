@@ -148,6 +148,7 @@ public class LoginActivity extends AppCompatActivity {
                                         if (alumno.getUsuario().getPrimerAcceso()) {
                                             Intent intent = new Intent(LoginActivity.this, ChangePassword.class);
                                             intent.putExtra("primerAcceso", true);
+                                            intent.putExtra("matricula", matricula);
                                             startActivity(intent);
                                             finish(); // previene que regrese a Login sin cambiar contraseña
                                         } else {

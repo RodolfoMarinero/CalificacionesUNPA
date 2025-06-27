@@ -168,22 +168,22 @@
                 android:layout_marginTop="24dp"
                 android:gravity="center" />
 
-            <TableLayout
-                android:id="@+id/tablaExtraordinarios"
+            <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:stretchColumns="*"
-                android:background="@drawable/bg_table_light"
-                android:padding="8dp"
-                android:layout_marginBottom="24dp">
+                android:fillViewport="false">
 
-                <TableRow>
-                    <TextView style="@style/CalifHeader" android:text="Materia" android:textColor="#000000" />
-                    <TextView style="@style/CalifHeader" android:text="1er" android:textColor="#000000" />
-                    <TextView style="@style/CalifHeader" android:text="2o" android:textColor="#000000" />
-                    <TextView style="@style/CalifHeader" android:text="E.E" android:textColor="#000000" />
-                </TableRow>
-            </TableLayout>
+                <TableLayout
+                    android:id="@+id/tablaExtraordinarios"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_table_light"
+                    android:padding="8dp"
+                    android:stretchColumns="1,2,3,4,5,6"
+                    android:layout_marginBottom="24dp">
+
+                </TableLayout>
+            </HorizontalScrollView>
 
             <!-- Tipo de calificación -->
 

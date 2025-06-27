@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -109,7 +110,6 @@ public class ChangePassword extends AppCompatActivity {
     private void cambiarPassword(String actualPass, String nuevaPass, String confirmacion) {
         FirebaseUser user = auth.getCurrentUser();
         boolean primerAcceso = getIntent().getBooleanExtra("primerAcceso", false);
-        boolean esSE = getIntent().getBooleanExtra("esSE", false);
         if (primerAcceso) {
             actualPass = getIntent().getStringExtra("matricula");
         }
@@ -170,8 +170,10 @@ public class ChangePassword extends AppCompatActivity {
                                         startActivity(intent);
                                         finish();
                                     })
-                                    .addOnFailureListener(e ->
-                                            Toast.makeText(this, "Error al actualizar primer acceso", Toast.LENGTH_LONG).show()
+                                    .addOnFailureListener(e ->{
+                                                Toast.makeText(this, "Error al actualizar primer acceso", Toast.LENGTH_LONG).show();
+                                                Log.e("ChangePassword", "Error al actualizar primer acceso", e);
+                                            }
                                     );
                         } else {
                             Toast.makeText(this, "Contraseña actualizada correctamente", Toast.LENGTH_SHORT).show();
