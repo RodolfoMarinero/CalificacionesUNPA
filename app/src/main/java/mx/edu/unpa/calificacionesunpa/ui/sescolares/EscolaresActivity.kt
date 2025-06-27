@@ -10,8 +10,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import mx.edu.unpa.calificacionesunpa.R
 import mx.edu.unpa.calificacionesunpa.notificaciones_escolares
+import mx.edu.unpa.calificacionesunpa.providers.AuthProvider
 import mx.edu.unpa.calificacionesunpa.providers.StorageProvider
 import mx.edu.unpa.calificacionesunpa.ui.documentos.ListaDocumentosActivity
+import mx.edu.unpa.calificacionesunpa.ui.login.LoginActivity
 import java.io.InputStream
 
 class EscolaresActivity : AppCompatActivity() {
@@ -20,12 +22,14 @@ class EscolaresActivity : AppCompatActivity() {
 
     private lateinit var btnNotificaciones: Button
     private lateinit var btnSeleccionarPdf: Button
+    private lateinit var btnCerrarSesion: Button
+
     private lateinit var btnVerDocs: Button
     private lateinit var txtNombreArchivo: TextView
     private lateinit var cbCalendarioActual: CheckBox
 
     private lateinit var storageProvider: StorageProvider
-
+    private lateinit var authProvider: AuthProvider
 
     // Nuevo launcher para seleccionar archivo PDF
     private val activityResultLauncher = registerForActivityResult(
@@ -61,10 +65,18 @@ class EscolaresActivity : AppCompatActivity() {
         cbCalendarioActual = findViewById(R.id.cbCalendarioActual)
         btnNotificaciones = findViewById(R.id.btnNotificaciones)
         btnSeleccionarPdf = findViewById(R.id.btnSeleccionarPdf)
+        btnCerrarSesion = findViewById(R.id.btnCerrarSesion)
         btnVerDocs = findViewById(R.id.btnVerDocumentos)
         txtNombreArchivo = findViewById(R.id.txtNombreArchivo)
 
         storageProvider = StorageProvider()
+        authProvider = AuthProvider()
+
+        btnCerrarSesion.setOnClickListener {
+            authProvider.exitSession()
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+        }
 
         btnNotificaciones.setOnClickListener {
             startActivity(Intent(this, notificaciones_escolares::class.java))
