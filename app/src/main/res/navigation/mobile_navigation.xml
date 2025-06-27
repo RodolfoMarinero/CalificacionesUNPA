@@ -57,8 +57,8 @@
     <fragment
         android:id="@+id/nav_calendarioExamen"
         android:name="mx.edu.unpa.calificacionesunpa.ui.calendario.CalendarioFragment"
-        android:label="Examenes"
-        tools:layout="@layout/calendario_examenes"/>
+        android:label="Calendario de exámenes"
+        tools:layout="@layout/calendario_examenes" />
 
     <fragment
         android:id="@+id/nav_calendarioEscolar"

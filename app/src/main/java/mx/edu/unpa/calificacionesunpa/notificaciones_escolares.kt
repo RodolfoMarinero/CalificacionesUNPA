@@ -7,13 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.FirebaseFirestore
-import mx.edu.unpa.calificacionesunpa.providers.StorageProvider
-import mx.edu.unpa.calificacionesunpa.service.ArchivoUtils
-
-import mx.edu.unpa.calificacionesunpa.adapters.MatriculaAdapter
 import mx.edu.unpa.calificacionesunpa.adapters.NotificationItem
 import mx.edu.unpa.calificacionesunpa.models.Materia
 import mx.edu.unpa.calificacionesunpa.models.Notificacion
@@ -21,20 +15,8 @@ import mx.edu.unpa.calificacionesunpa.providers.NotificacionProvider
 import mx.edu.unpa.calificacionesunpa.ui.sescolares.EscolaresActivity
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.util.Date
 
-/*import android.os.Bundle
-import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.RadioButton
-import android.widget.RadioGroup
-import android.widget.Spinner
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import com.google.firebase.firestore.FirebaseFirestore*/
 
 class notificaciones_escolares : AppCompatActivity() {
     private lateinit var radioIndividual: RadioButton
@@ -175,7 +157,7 @@ class notificaciones_escolares : AppCompatActivity() {
                         fueLeida = false,
                         esGlobal = false,
                         expiraEn = LocalDate.now().plusDays(3).toString(),
-                        timestamp = 0L,
+                        timestamp = Date(),
                     )
                     notificacionProvider = NotificacionProvider();
                     notificacionProvider.enviarNotificacion(notificacion);
@@ -199,7 +181,7 @@ class notificaciones_escolares : AppCompatActivity() {
                         fueLeida = false,
                         esGlobal = false,
                         expiraEn = LocalDate.now().plusDays(3).toString(),
-                        timestamp = 0L,
+                        timestamp = Date(),
                     )
                     notificacionProvider = NotificacionProvider();
                     notificacionProvider.enviarNotificacion(notificacion);
@@ -217,7 +199,7 @@ class notificaciones_escolares : AppCompatActivity() {
                         fueLeida = false,
                         esGlobal = false,
                         expiraEn = LocalDate.now().plusDays(3).toString(),
-                        timestamp = 0L,
+                        timestamp = Date(),
                     )
                     notificacionProvider = NotificacionProvider();
                     notificacionProvider.enviarNotificacion(notificacion);
@@ -235,11 +217,16 @@ class notificaciones_escolares : AppCompatActivity() {
             listaMatriculas.clear()
             layoutListaMatriculas.removeAllViews()
         }
-        val salir= findViewById<Button>(R.id.salir)
+        val salir= findViewById<Button>(R.id.btnBack)
         salir.setOnClickListener{
             val intent= Intent(this,EscolaresActivity::class.java)
             startActivity(intent)
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        radioTodos.isChecked = true
     }
 
     private fun agregarMatriculaView(matricula: String) {

@@ -10,6 +10,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import mx.edu.unpa.calificacionesunpa.R
 import mx.edu.unpa.calificacionesunpa.notificaciones_escolares
+import mx.edu.unpa.calificacionesunpa.providers.StorageProvider
+import mx.edu.unpa.calificacionesunpa.ui.documentos.ListaDocumentosActivity
 import java.io.InputStream
 
 class EscolaresActivity : AppCompatActivity() {
@@ -18,30 +20,51 @@ class EscolaresActivity : AppCompatActivity() {
 
     private lateinit var btnNotificaciones: Button
     private lateinit var btnSeleccionarPdf: Button
-    private lateinit var btnConvertir: Button
+    private lateinit var btnVerDocs: Button
     private lateinit var txtNombreArchivo: TextView
+    private lateinit var cbCalendarioActual: CheckBox
+
+    private lateinit var storageProvider: StorageProvider
+
 
     // Nuevo launcher para seleccionar archivo PDF
     private val activityResultLauncher = registerForActivityResult(
         ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri?.let {
+            val esActual = cbCalendarioActual.isChecked
             uriPDF = it
-            btnConvertir.isEnabled = true
-            txtNombreArchivo.text = "Seleccionado: ${obtenerNombreArchivo(it)}"
+
+            val respuesta: (Boolean) -> Unit = { exito ->
+                val mensaje = if (exito) {
+                    "Calendario subido con éxito"
+                } else {
+                    "No se pudo subir el archivo"
+                }
+                Toast.makeText(this, mensaje, Toast.LENGTH_LONG).show()
+            }
+
+            storageProvider.uploadFile(
+                convertirA_Base64(it),
+                obtenerNombreArchivo(it),
+                esActual,
+                respuesta
+            )
         }
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.attivity_escolares)
 
+        cbCalendarioActual = findViewById(R.id.cbCalendarioActual)
         btnNotificaciones = findViewById(R.id.btnNotificaciones)
         btnSeleccionarPdf = findViewById(R.id.btnSeleccionarPdf)
-        btnConvertir = findViewById(R.id.btnConvertir)
+        btnVerDocs = findViewById(R.id.btnVerDocumentos)
         txtNombreArchivo = findViewById(R.id.txtNombreArchivo)
 
-        btnConvertir.isEnabled = false
+        storageProvider = StorageProvider()
 
         btnNotificaciones.setOnClickListener {
             startActivity(Intent(this, notificaciones_escolares::class.java))
@@ -51,15 +74,8 @@ class EscolaresActivity : AppCompatActivity() {
             activityResultLauncher.launch("application/pdf")
         }
 
-        btnConvertir.setOnClickListener {
-            uriPDF?.let {
-                val base64 = convertirA_Base64(it)
-                if (base64 != null) {
-                    Toast.makeText(this, "Convertido (longitud: ${base64.length})", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(this, "Error al convertir archivo", Toast.LENGTH_SHORT).show()
-                }
-            }
+        btnVerDocs.setOnClickListener {
+            startActivity(Intent(this, ListaDocumentosActivity::class.java))
         }
     }
 
