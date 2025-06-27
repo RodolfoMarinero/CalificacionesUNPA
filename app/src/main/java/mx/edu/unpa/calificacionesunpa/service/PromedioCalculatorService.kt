@@ -9,20 +9,11 @@ object PromedioCalculatorService {
         private set
 
     fun calcularPromedioGeneral(materias: List<Materia>): Double {
-        if (materias.isEmpty()) {
-            promedioGeneral = 0.0
-            return promedioGeneral
-        }
+        if (materias.isEmpty()) return 0.0
 
-        val materiasPorSemestre = materias.groupBy { it.semestre }
-
-        val promediosPorSemestre = materiasPorSemestre.values.map { calcularPromedioSemestre(it) }
-            .filter { it > 0 }
-
-        promedioGeneral = if (promediosPorSemestre.isEmpty()) 0.0
-        else redondear(promediosPorSemestre.average())
-
-        return promedioGeneral
+        val suma = materias.sumOf { it.calificaciones.pFinal ?: 0.0 }
+        val promedio = suma / materias.size
+        return redondear(promedio)
     }
 
     fun calcularPromedioSemestre(materias: List<Materia>): Double {

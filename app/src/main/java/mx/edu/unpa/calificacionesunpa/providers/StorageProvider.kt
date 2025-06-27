@@ -4,7 +4,6 @@ import android.content.Context
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.ktx.app
-import mx.edu.unpa.calificacionesunpa.ui.calificacionesanteriores.OnResultCallback
 import java.util.*
 
 class StorageProvider {
@@ -35,7 +34,9 @@ class StorageProvider {
                 onResult(false)
             }
     }
-
+    interface OnResultCallback {
+        fun onResult(base64: String?)
+    }
     fun uploadFile(fileB64: String, fileName: String, onResult: (Boolean) -> Unit) {
         val data = hashMapOf(
             "fileName" to fileName,

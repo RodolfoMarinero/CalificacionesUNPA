@@ -1,5 +1,7 @@
 package mx.edu.unpa.calificacionesunpa.ui.calificacionesanteriores;
 
+import static kotlinx.coroutines.CoroutineScopeKt.CoroutineScope;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -24,9 +26,14 @@ import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleEventObserver;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LifecycleOwnerKt;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.lifecycle.Observer;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 
 import android.content.ContentResolver;
@@ -49,10 +56,14 @@ import java.io.IOException;
 import java.util.*;
 
 
+import kotlinx.coroutines.Dispatchers;
+import kotlinx.coroutines.Job;
 import mx.edu.unpa.calificacionesunpa.R;
 import mx.edu.unpa.calificacionesunpa.models.Alumno;
 import mx.edu.unpa.calificacionesunpa.models.Materia;
 import mx.edu.unpa.calificacionesunpa.providers.StorageProvider;
+import mx.edu.unpa.calificacionesunpa.service.OnBitmapResultCallback;
+import mx.edu.unpa.calificacionesunpa.service.ProfilePictureService;
 import mx.edu.unpa.calificacionesunpa.service.PromedioCalculatorService;
 import mx.edu.unpa.calificacionesunpa.service.UsuarioService;
 import mx.edu.unpa.calificacionesunpa.ui.dd.SelectorSemestre;
@@ -89,11 +100,9 @@ public class FragmentCalificacionesAnteriores extends Fragment {
     private MaterialButton btnAnterior;
     private MaterialButton btnSiguiente;
     private MaterialButton btnSemestreActual;
-    private Button btnPDF;
     private int idxCicloActual = 1; // Índice del ciclo actual, empieza en 1
     private PromedioCalculatorService promedioCalculatorService;
-    private SharedPreferences sharedPrefs;
-    private long lastUpdateTime = 0;
+    private ProfilePictureService profilePictureService;
     @Nullable @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
@@ -111,32 +120,10 @@ public class FragmentCalificacionesAnteriores extends Fragment {
         btnPdf.setOnClickListener(this::generarPdf);
 
 
-        btnPDF = root.findViewById(R.id.btnDescargarPdf);
-        btnPDF.setOnClickListener(this::generarPdf);
+
 
         ivPerfil = root.findViewById(R.id.ivPerfil);
-        sharedPrefs = requireContext().getSharedPreferences("profile_prefs", Context.MODE_PRIVATE);
-        lastUpdateTime = sharedPrefs.getLong("last_update", 0);
 
-        File file = new File(requireContext().getFilesDir(), "imagen_perfil.png");
-        if (file.exists()) {
-            Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
-            ivPerfil.setImageBitmap(bitmap);
-        } else {
-            // Si no está local, aún puedes hacer fallback a Firebase si deseas
-            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            StorageProvider provider = new StorageProvider();
-            provider.getImageByUserId(userId, new OnResultCallback() {
-                @Override
-                public void onResult(@Nullable String base64) {
-                    if (base64 != null) {
-                        byte[] imageBytes = Base64.decode(base64, Base64.DEFAULT);
-                        Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-                        ivPerfil.setImageBitmap(bitmap);
-                    }
-                }
-            });
-        }
         ivPerfil.setOnClickListener(v -> {
             Bundle bundle = new Bundle();
             bundle.putString("nombre", nombre);
@@ -155,10 +142,8 @@ public class FragmentCalificacionesAnteriores extends Fragment {
                     .addToBackStack(null)
                     .commit();
         });
-
-
-
-
+        profilePictureService = ProfilePictureService.Companion.getInstance(requireContext());
+        loadProfileImage();
 
         txtPromedioGeneral.setVisibility(View.GONE);
 
@@ -218,40 +203,40 @@ public class FragmentCalificacionesAnteriores extends Fragment {
         ocultarSpinnerSiVisible();
         return root;
     }
+
+
     @Override
     public void onResume() {
         super.onResume();
-        loadProfileImage(); // Verificar actualizaciones al volver al fragmento
+        if (profilePictureService.shouldRefreshProfile()) {
+            loadProfileImage();
+        }
     }
+
+
     private void loadProfileImage() {
-        long currentUpdateTime = sharedPrefs.getLong("last_update", 0);
-
-        // Recargar solo si ha habido una actualización
-        if (currentUpdateTime > lastUpdateTime) {
-            lastUpdateTime = currentUpdateTime;
-            ivPerfil.setImageDrawable(null); // Forzar recarga
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            ivPerfil.setImageResource(R.drawable.ic_perfil);
+            return;
         }
 
-        File file = new File(requireContext().getFilesDir(), "imagen_perfil.png");
-        if (file.exists()) {
-            Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
-            ivPerfil.setImageBitmap(bitmap);
-        } else {
-            // Si no está local, aún puedes hacer fallback a Firebase si deseas
-            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            StorageProvider provider = new StorageProvider();
-            provider.getImageByUserId(userId, new OnResultCallback() {
-                @Override
-                public void onResult(@Nullable String base64) {
-                    if (base64 != null) {
-                        byte[] imageBytes = Base64.decode(base64, Base64.DEFAULT);
-                        Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+        String userId = currentUser.getUid();
+
+        profilePictureService.getProfilePicture(userId, new OnBitmapResultCallback() {
+            @Override
+            public void onResult(Bitmap bitmap) {
+                requireActivity().runOnUiThread(() -> {
+                    if (bitmap != null) {
                         ivPerfil.setImageBitmap(bitmap);
+                    } else {
+                        ivPerfil.setImageResource(R.drawable.ic_perfil);
                     }
-                }
-            });
-        }
+                });
+            }
+        });
     }
+
 
     private void setupSemestreSelector(){
         Set<DocumentReference> ciclosUnicos = new LinkedHashSet<>();
