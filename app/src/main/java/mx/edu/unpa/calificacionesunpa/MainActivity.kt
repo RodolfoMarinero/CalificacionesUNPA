@@ -23,6 +23,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.messaging.FirebaseMessaging
 import mx.edu.unpa.calificacionesunpa.databinding.ActivityMainBinding
 import mx.edu.unpa.calificacionesunpa.providers.AuthProvider
+import mx.edu.unpa.calificacionesunpa.providers.NotificacionProvider
 import mx.edu.unpa.calificacionesunpa.service.UsuarioService.alumnoActual
 import mx.edu.unpa.calificacionesunpa.ui.login.LoginActivity
 
@@ -37,7 +38,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        //instancia de notificaciones para que se ejecute batch de limpieza
+        NotificacionProvider()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         authProvider = AuthProvider()

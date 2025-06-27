@@ -25,14 +25,13 @@ class FragmentCalendarioEscolar : Fragment() {
 
         // Usar StorageProvider real
         calendarioService = CalendarioService(StorageProvider())
-
-        cargarCalendario("calendario_2025")
+        cargarCalendario()
 
         return view
     }
 
-    private fun cargarCalendario(idDocumento: String) {
-        calendarioService.obtenerCalendarioPdf(idDocumento,
+    private fun cargarCalendario() {
+        calendarioService.obtenerCalendarioPdf(
             onSuccess = { pdfBytes ->
                 val inputStream = pdfBytes.inputStream()
                 pdfView.fromStream(inputStream)

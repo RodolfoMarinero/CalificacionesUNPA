@@ -12,7 +12,6 @@ class CalendarioService(private val storageProvider: StorageProvider) {
      * Usa cache para evitar múltiples lecturas si ya se ha cargado antes.
      */
     fun obtenerCalendarioPdf(
-        fileId: String,
         onSuccess: (ByteArray) -> Unit,
         onError: (String) -> Unit
     ) {
@@ -23,7 +22,7 @@ class CalendarioService(private val storageProvider: StorageProvider) {
         }
 
         // Solicita el archivo a Firestore usando StorageProvider
-        storageProvider.getFile(fileId) { base64 ->
+        storageProvider.getSeleccionado { base64 ->
             if (!base64.isNullOrEmpty()) {
                 try {
                     val pdfBytes = Base64.decode(base64, Base64.DEFAULT)

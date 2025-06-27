@@ -2,6 +2,7 @@ package mx.edu.unpa.calificacionesunpa.adapters
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.google.type.Date
 import mx.edu.unpa.calificacionesunpa.R
 import mx.edu.unpa.calificacionesunpa.ui.view_holders.NotificationViewHolder
 
@@ -16,11 +17,11 @@ data class NotificationItem(
     val esGlobal: Boolean = false,
     val destinatarios: List<String> = listOf(),
     val expiraEn: String = "",
-    val timestamp: Long = 0L,
+    val timestamp: java.util.Date = java.util.Date(),
 
     val fueLeida : Boolean = true
 ) {
-    constructor() : this(0, "", "", false, listOf(""), LocalDate.now().plusDays(3).toString(), 0L, false) // Constructor sin argumentos requerido por Firebase
+    constructor() : this(0, "", "", false, listOf(""), LocalDate.now().plusDays(3).toString(), java.util.Date(), false) // Constructor sin argumentos requerido por Firebase
 }
 
 
