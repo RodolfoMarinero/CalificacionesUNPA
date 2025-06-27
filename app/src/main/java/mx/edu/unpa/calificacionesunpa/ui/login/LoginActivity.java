@@ -117,7 +117,7 @@ public class LoginActivity extends AppCompatActivity {
                             if (matricula.equals("100000")) {
                                 alumnoProvider = new AlumnoProvider();
                                 alumnoProvider.obtenerBanderaPrimerAcceso(
-                                        matricula,
+                                        authProvider.getId(),
                                         bandera -> {
                                             if(bandera!=null){
                                                 Intent intento;
