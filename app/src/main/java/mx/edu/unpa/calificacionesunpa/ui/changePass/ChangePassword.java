@@ -106,12 +106,14 @@ public class ChangePassword extends AppCompatActivity {
 
     private void cambiarPassword(String actualPass, String nuevaPass, String confirmacion) {
         FirebaseUser user = auth.getCurrentUser();
+        boolean primerAcceso = getIntent().getBooleanExtra("primerAcceso", false);
 
-        if (TextUtils.isEmpty(actualPass) || TextUtils.isEmpty(nuevaPass) || TextUtils.isEmpty(confirmacion)) {
-            Toast.makeText(this, "Completa todos los campos", Toast.LENGTH_SHORT).show();
-            return;
+        if (!primerAcceso) {
+            if (TextUtils.isEmpty(actualPass) || TextUtils.isEmpty(nuevaPass) || TextUtils.isEmpty(confirmacion)) {
+                Toast.makeText(this, "Completa todos los campos", Toast.LENGTH_SHORT).show();
+                return;
+            }
         }
-
         if (actualPass.equals(nuevaPass)) {
             Toast.makeText(this, "La nueva contraseña debe ser distinta a la actual", Toast.LENGTH_SHORT).show();
             return;
