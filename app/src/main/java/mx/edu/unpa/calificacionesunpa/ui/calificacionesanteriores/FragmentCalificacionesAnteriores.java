@@ -12,7 +12,6 @@ import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -54,6 +53,7 @@ import mx.edu.unpa.calificacionesunpa.models.Alumno;
 import mx.edu.unpa.calificacionesunpa.models.Materia;
 import mx.edu.unpa.calificacionesunpa.providers.StorageProvider;
 import mx.edu.unpa.calificacionesunpa.service.PromedioCalculatorService;
+import mx.edu.unpa.calificacionesunpa.service.TextUtils;
 import mx.edu.unpa.calificacionesunpa.service.UsuarioService;
 import mx.edu.unpa.calificacionesunpa.ui.dd.SelectorSemestre;
 import mx.edu.unpa.calificacionesunpa.ui.perfil.FragmentPerfilN;
@@ -392,18 +392,29 @@ public class FragmentCalificacionesAnteriores extends Fragment {
 
 
     private void addCell(TableRow row, String texto, boolean esMateria) {
-        TextView tv = new TextView(requireContext());
-        tv.setText(texto);
+        TextView tv = new TextView(getContext());
         tv.setPadding(8, 8, 8, 8);
-        tv.setSingleLine(false);
-        tv.setEllipsize(TextUtils.TruncateAt.END);
+        tv.setEllipsize(android.text.TextUtils.TruncateAt.END);
 
         if (esMateria) {
-            tv.setLines(2);  // fija altura para 2 líneas
-            tv.setEllipsize(TextUtils.TruncateAt.END); // corta si no cabe
+            // Calcula el tamaño de texto en SP a partir de pixels
+            float textSizePx = tv.getTextSize();
+            float scaledDensity = requireContext().getResources().getDisplayMetrics().scaledDensity;
+            float textSizeSp = textSizePx / scaledDensity;
+
+            // Ajusta el texto a dos líneas si supera el 60% del ancho de pantalla
+            String ajustado = TextUtils.INSTANCE.splitTextIfTooLong(
+                    getContext(),
+                    texto,
+                    textSizeSp,
+                    60f  // umbral en porcentaje
+            );
+            tv.setText(ajustado);
+            tv.setLines(2);
             tv.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
             tv.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
         } else {
+            tv.setText(texto);
             tv.setMaxLines(1);
             tv.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
             tv.setGravity(Gravity.CENTER);
@@ -631,7 +642,6 @@ public class FragmentCalificacionesAnteriores extends Fragment {
 
         return lineas;
     }
-
 
 
 
