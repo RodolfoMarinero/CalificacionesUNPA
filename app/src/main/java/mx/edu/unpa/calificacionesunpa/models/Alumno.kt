@@ -1,23 +1,29 @@
 package mx.edu.unpa.calificacionesunpa.models
 
+import com.google.gson.annotations.SerializedName
 
-import com.google.firebase.firestore.IgnoreExtraProperties
-
-@IgnoreExtraProperties
 data class Alumno(
-    val apMaterno: String = "",
-    val apPaterno: String = "",
-    val nombre: String = "",
-    var esRegular: Boolean=true,
-    @Transient
-    var materias: List<Materia>? = null, // Se ignora al guardar en Firestore
-    @Transient
-    var nombreCarrera : String? = null,
-    @Transient
+    @SerializedName("matricula")
     var matricula: String = "",
 
+    @SerializedName("apMaterno") // En el log viene como "apMaterno"
+    val apMaterno: String = "",
+
+    @SerializedName("apPaterno") // En el log viene como "apPaterno"
+    val apPaterno: String = "",
+
+    @SerializedName("nombre")    // En el log viene como "nombre"
+    val nombre: String = "",
+
+    @SerializedName("esRegular")
+    var esRegular: Boolean = true,
+
+    @SerializedName("nombreCarrera")
+    var nombreCarrera : String? = null, // En el log viene "nombreCarrera"
+
+    @Transient
+    var materias: List<Materia>? = null,
+
+    @Transient
     var usuario: Usuario? = null
-
-
 )
-

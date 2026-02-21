@@ -1,18 +1,13 @@
-import kotlin.collections.getOrNull
-import kotlin.collections.indices
-import kotlin.ranges.reversed
-import kotlin.text.format
-import kotlin.text.isNotBlank
-import kotlin.text.isNullOrBlank
-import kotlin.text.toDouble
+import com.google.gson.annotations.SerializedName
 
 class Calificacion() {
     var parcial1: Double? = null
     var parcial2: Double? = null
     var parcial3: Double? = null
     var ordinario: Double? = null
+    @SerializedName("pfinal")
     var pFinal: Double? = null
-    var Extraordinario1: Double? = null
-    var Extraordinario2: Double? = null
+    var extra1: Double? = null
+    var extra2: Double? = null
     var especial : Double? = null
 }

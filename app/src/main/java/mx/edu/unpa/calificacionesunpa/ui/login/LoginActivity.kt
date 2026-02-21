@@ -1,277 +1,169 @@
 package mx.edu.unpa.calificacionesunpa.ui.login;
 
-import static androidx.lifecycle.LifecycleOwnerKt.getLifecycleScope;
+import android.content.Intent
+import android.os.Bundle
+import android.text.InputType
+import android.widget.Button
+import android.widget.EditText
+import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import mx.edu.unpa.calificacionesunpa.MainActivity
+import mx.edu.unpa.calificacionesunpa.R
+import mx.edu.unpa.calificacionesunpa.data.persistent.UsuarioService
+import mx.edu.unpa.calificacionesunpa.ui.actualizarpassword.ActualizarPasswordActivity
+import mx.edu.unpa.calificacionesunpa.ui.fragments.LoadingFragment
+import mx.edu.unpa.calificacionesunpa.ui.sescolares.EscolaresActivity
+import mx.edu.unpa.calificacionesunpa.utils.Utilerias
 
-import android.content.Context;
-import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.credentials.CredentialManager;
-import androidx.lifecycle.LifecycleCoroutineScope;
-import androidx.lifecycle.LifecycleOwner;
 
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.FirebaseNetworkException;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import kotlin.Unit;
-import mx.edu.unpa.calificacionesunpa.MainActivity;
-import mx.edu.unpa.calificacionesunpa.R;
-import mx.edu.unpa.calificacionesunpa.fragments.LoadingFragment;
-import mx.edu.unpa.calificacionesunpa.providers.AlumnoProvider;
-import mx.edu.unpa.calificacionesunpa.providers.AuthGoogleProvider;
-import mx.edu.unpa.calificacionesunpa.providers.AuthProvider;
-import mx.edu.unpa.calificacionesunpa.providers.NotificacionProvider;
-import mx.edu.unpa.calificacionesunpa.service.UsuarioService;
-import mx.edu.unpa.calificacionesunpa.ui.changePass.ChangePassword;
-import mx.edu.unpa.calificacionesunpa.ui.perfil.FragmentPerfilN;
-import mx.edu.unpa.calificacionesunpa.ui.recuperarContrasena.RecuperarContrasena;
-import mx.edu.unpa.calificacionesunpa.ui.sescolares.EscolaresActivity;
+@AndroidEntryPoint
+class LoginActivity : AppCompatActivity() {
 
-public class LoginActivity extends AppCompatActivity {
-    private static final String TAG = "LoginActivity";
-    private EditText etMatricula, etPassword;
-    private Button btnLogin, btnRegistro;
-    private TextView tvForgotPassword;
-    private AuthProvider authProvider;
-    private AlumnoProvider alumnoProvider;
-    private UsuarioService usuarioService = UsuarioService.INSTANCE;
+    private val viewModel: LoginViewModel by viewModels()
 
-    private FirebaseUser userGoogle;
-    private LoadingFragment loadingFragment;
-    private  String matricula;
-    private FirebaseAuth auth;
-    LifecycleOwner lifecycleOwner = this;
-    LifecycleCoroutineScope scope = getLifecycleScope(lifecycleOwner);
+    //Permite definir atributos static
+    companion object {
+        private const val TAG = "LoginActivity"
+    }
 
-    private boolean isFragmentVisible = false;
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+    private lateinit var etMatricula: EditText
+    private lateinit var etPassword: EditText
+    private lateinit var btnLogin: Button
+    private lateinit var btnRegistro: Button
+    private lateinit var tvForgotPassword: TextView
 
-        FirebaseApp.initializeApp(this);
+    private val usuarioService = UsuarioService
+    private var loadingFragment: LoadingFragment? = null
+    private var matricula: String? = null
 
-        // Cambiar el id en el layout a et_matricula para mayor claridad,
-        // pero si no lo cambias, sigue usando R.id.et_correo aquí:
-        etMatricula     = findViewById(R.id.cp_txtConfirmPassword);
-        etPassword      = findViewById(R.id.cp_txtPassword);
-        btnLogin        = findViewById(R.id.cp_changepass);
-        btnRegistro     = findViewById(R.id.btnRegistro);
-        tvForgotPassword= findViewById(R.id.btnRecuperar_contrasena);
 
-        ImageView togglePassword = findViewById(R.id.togglePassword);
-        togglePassword.setOnClickListener(v -> {
-            if (etPassword.getInputType() == (android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD)) {
-                // Mostrar contraseña
-                etPassword.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-                togglePassword.setImageResource(R.drawable.ic_visibility); // Cambiar ícono
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_login)
+
+        // Inicialización de vistas
+        etMatricula = findViewById(R.id.cp_txtConfirmPassword)
+        etPassword = findViewById(R.id.cp_txtPassword)
+        btnLogin = findViewById(R.id.cp_changepass)
+        btnRegistro = findViewById(R.id.btnRegistro)
+        tvForgotPassword = findViewById(R.id.btnRecuperar_contrasena)
+        val togglePassword: ImageView = findViewById(R.id.togglePassword)
+
+        // Mostrar/ocultar contraseña
+        togglePassword.setOnClickListener {
+            if (etPassword.inputType == (InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD)) {
+                etPassword.inputType =
+                    InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                togglePassword.setImageResource(R.drawable.ic_visibility)
             } else {
-                // Ocultar contraseña
-                etPassword.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                togglePassword.setImageResource(R.drawable.ic_visibility_off); // Cambiar ícono
+                etPassword.inputType =
+                    InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                togglePassword.setImageResource(R.drawable.ic_visibility_off)
             }
+            etPassword.setSelection(etPassword.length())
+        }
 
-            // Mueve el cursor al final
-            etPassword.setSelection(etPassword.length());
-        });
-        authProvider = new AuthProvider();
-        auth = FirebaseAuth.getInstance();
 
-        btnLogin.setOnClickListener(v -> {
-            if (!isValidateForm()) return;
-
-            if (!isNetworkAvailable()) {
-                Toast.makeText(this,
-                        "Sin conexión a Internet. Revisa tu red.",
-                        Toast.LENGTH_SHORT).show();
-                return;
-            }
-            showLoadingFragment();
-
-            // Leemos matrícula en lugar de correo
-            String matricula = etMatricula.getText().toString().trim();
-            String password  = etPassword.getText().toString().trim();
-
-            // Generamos el correo de Firebase a partir de la matrícula
-            String email = matricula + "@unpaloma.com";
-
-            authProvider.login(email, password)
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-
-                            // Limpia los campos
-                            etMatricula.setText("");
-                            etPassword.setText("");
-                            //solicita el alumno
-                            if (matricula.equals("100000")) {
-                                alumnoProvider = new AlumnoProvider();
-                                alumnoProvider.obtenerBanderaPrimerAcceso(
-                                        authProvider.getId(),
-                                        bandera -> {
-                                            if(bandera!=null){
-                                                Intent intento;
-                                                if (bandera) {
-
-                                                    intento = new Intent(this, ChangePassword.class);
-                                                    intento.putExtra("primerAcceso", true);
-                                                    intento.putExtra("esSE", true);
-                                                    intento.putExtra("matricula", matricula);
-
-                                                } else {
-                                                    intento = new Intent(this, EscolaresActivity.class);
-                                                }
-                                                startActivity(intento);
-                                                finish();
-                                            }
-                                            return Unit.INSTANCE;
-                                        }
-                                );
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.alumnoState.collect { result ->
+                    result?.let {
+                        it.onSuccess { alumno ->
+                            usuarioService.alumnoActual = alumno
+                            val activitySRC: Intent
+                            if (viewModel.esPrimerAcceso()) {
+                                activitySRC = Intent(
+                                    this@LoginActivity,
+                                    ActualizarPasswordActivity::class.java
+                                )
                             } else {
-                            alumnoProvider = new AlumnoProvider();
-                            alumnoProvider.obtenerAlumnoConMateriasDeUsuario(
-                                    authProvider.getId(),
-                                    alumno -> {
-                                        usuarioService.setAlumnoActual(alumno);
-                                        hideLoadingFragment();
-                                        // Si es su primer acceso, fuerza cambio de contraseña
-                                        if (alumno.getUsuario().getPrimerAcceso()) {
-                                            Intent intent = new Intent(LoginActivity.this, ChangePassword.class);
-                                            intent.putExtra("primerAcceso", true);
-                                            intent.putExtra("matricula", matricula);
-                                            startActivity(intent);
-                                            finish(); // previene que regrese a Login sin cambiar contraseña
-                                        } else {
-                                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                            intent.putExtra("navigateTo", "calificaciones");
-                                            startActivity(intent);
-                                            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                                            finish();
-                                        }
-                                        return Unit.INSTANCE;
-                                    }
-                                );
+                                activitySRC = if (alumno.usuario?.matricula == "100000") {
+                                    Intent(this@LoginActivity, EscolaresActivity::class.java)
+                                } else {
+                                    Intent(this@LoginActivity, MainActivity::class.java)
+                                        .apply { putExtra("navigateTo", "calificaciones") }
+                                }
                             }
-                        } else {
-                            hideLoadingFragment();
-
-                            String err = task.getException() != null
-                                    ? task.getException().getMessage()
-                                    : "Error desconocido";
-                            Log.w(TAG, "Login failed: " + err);
-                            Toast.makeText(this, "Falló el login: " + err, Toast.LENGTH_LONG).show();
+                            hideLoadingFragment()
+                            startActivity(activitySRC)
+                            finish()
                         }
-                    })
-                    .addOnFailureListener(e -> {
-                        hideLoadingFragment();
 
-                        Log.e(TAG, "Login exception", e);
-                        if (e instanceof FirebaseNetworkException) {
-                            Toast.makeText(this, "Error de red: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                        } else {
-                            Toast.makeText(this, "Error inesperado: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        it.onFailure { error ->
+                            hideLoadingFragment()
+                            Toast.makeText(
+                                this@LoginActivity,
+                                "Error al obtener alumno: ${error.message}",
+                                Toast.LENGTH_LONG
+                            ).show()
                         }
-                    });
-        });
-        tvForgotPassword.setOnClickListener(v ->
-                startActivity(new Intent(LoginActivity.this, RecuperarContrasena.class))
-        );
+                    }
+                }
+            }
+        }
 
-        Button btnGoogle = findViewById(R.id.btnGoogle);
 
-        btnGoogle.setOnClickListener(view -> {
-            AuthGoogleProvider authGoogleProvider = new AuthGoogleProvider();
+        // --- BOTÓN LOGIN ---
+        btnLogin.setOnClickListener {
+            if (!formIsValid()) return@setOnClickListener
+            if (!Utilerias.isNetworkAvailable(this)) {
+                Toast.makeText(this, "Sin conexión a Internet. Revisa tu red.", Toast.LENGTH_SHORT)
+                    .show()
+                return@setOnClickListener
+            }
+            showLoadingFragment()
+            val matricula = etMatricula.text.toString().trim()
+            val password = etPassword.text.toString().trim()
+            viewModel.iniciarSesion(matricula, password)
 
-            authGoogleProvider.callSignInGoogle(
-                    view,
-                    this,
-                    scope,
-                    CredentialManager.create(this),
-                    getString(R.string.default_web_client_id),
-                    FirebaseAuth.getInstance(),
-                    true
-            );
-        });
+        }
+
+
 
     }
 
-    private boolean isValidateForm() {
-        String matricula = etMatricula.getText().toString().trim();
-        String password  = etPassword.getText().toString().trim();
-
+    private fun formIsValid(): Boolean {
+        val matricula = etMatricula.text.toString().trim()
+        val password = etPassword.text.toString().trim()
         if (matricula.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this,
-                    "Por favor, completa todos los campos",
-                    Toast.LENGTH_SHORT).show();
-            return false;
+            Toast.makeText(this, "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show()
+            return false
         }
-        return true;
+        return true
     }
 
-    private boolean isNetworkAvailable() {
-        ConnectivityManager cm =
-                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo ni = cm != null ? cm.getActiveNetworkInfo() : null;
-        return ni != null && ni.isConnected();
-    }
-    private void showLoadingFragment() {
-        FrameLayout container = findViewById(R.id.loadingFragmentContainer);
-        container.setVisibility(View.VISIBLE);
 
+    private fun showLoadingFragment() {
+        val container: FrameLayout = findViewById(R.id.loadingFragmentContainer)
+        container.visibility = FrameLayout.VISIBLE
         if (loadingFragment == null) {
-            loadingFragment = new LoadingFragment();
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .add(R.id.loadingFragmentContainer, loadingFragment)
-                    .commit();
+            loadingFragment = LoadingFragment()
+            supportFragmentManager.beginTransaction()
+                .add(R.id.loadingFragmentContainer, loadingFragment!!)
+                .commit()
         }
     }
 
-    private void hideLoadingFragment() {
-        FrameLayout container = findViewById(R.id.loadingFragmentContainer);
-        container.setVisibility(View.GONE);
+    private fun hideLoadingFragment() {
+        val container: FrameLayout = findViewById(R.id.loadingFragmentContainer)
+        container.visibility = FrameLayout.GONE
 
         if (loadingFragment != null) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .remove(loadingFragment)
-                    .commitAllowingStateLoss();
-
-            loadingFragment = null;
+            supportFragmentManager.beginTransaction()
+                .remove(loadingFragment as Fragment)
+                .commitAllowingStateLoss()
+            loadingFragment = null
         }
     }
-
-    public void loginGoogle(String matriculaFirestore) {
-        this.matricula = matriculaFirestore;
-
-        alumnoProvider = new AlumnoProvider();
-        alumnoProvider.obtenerAlumnoConMateriasDeUsuario(
-                matricula,
-                alumno -> {
-                    if (alumno == null) {
-                        Toast.makeText(this, "No se pudo cargar el alumno", Toast.LENGTH_LONG).show();
-                        return Unit.INSTANCE;
-                    }
-
-                    usuarioService.setAlumnoActual(alumno);
-
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    intent.putExtra("navigateTo", "calificaciones");
-                    startActivity(intent);
-                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                    finish();
-                    return Unit.INSTANCE;
-                }
-        );
-    }
 }
+

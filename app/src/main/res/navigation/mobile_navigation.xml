@@ -30,7 +30,7 @@
     <!-- Fragmento de Calificaciones Actuales -->
     <fragment
         android:id="@+id/nav_calificaciones_actuales"
-        android:name="mx.edu.unpa.calificacionesunpa.ui.calificacionesactuales.FragmentCalificacionesActuales"
+        android:name="mx.edu.unpa.calificacionesunpa.ui.calificacionesactuales.CalificacionesActualesFragment"
         android:label="Calificaciones Actuales"
         tools:layout="@layout/fragment_calificaciones_actuales" />
 
@@ -44,19 +44,19 @@
     <!-- Fragmento de Notificaciones -->
     <fragment
         android:id="@+id/nav_notificaciones"
-        android:name="mx.edu.unpa.calificacionesunpa.fragments.NotificacionFragment"
+        android:name="mx.edu.unpa.calificacionesunpa.ui.notificaciones.NotificacionFragment"
         android:label="Notificaciones"
         tools:layout="@layout/fragment_notificaciones" />
 
     <fragment
         android:id="@+id/nav_perfil"
-        android:name="mx.edu.unpa.calificacionesunpa.ui.perfil.FragmentPerfil"
+        android:name="mx.edu.unpa.calificacionesunpa.ui.perfil.FragmentPerfilN"
         android:label="Perfil"
         tools:layout="@layout/fragment_perfil" />
 
     <fragment
         android:id="@+id/nav_calendarioExamen"
-        android:name="mx.edu.unpa.calificacionesunpa.ui.calendario.CalendarioFragment"
+        android:name="mx.edu.unpa.calificacionesunpa.ui.calendarioexamenes.CalendarioFragment"
         android:label="Calendario de exámenes"
         tools:layout="@layout/calendario_examenes" />
 

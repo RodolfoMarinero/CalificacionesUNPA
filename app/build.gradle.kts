@@ -1,7 +1,11 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.google.gms.google.services)
+    id("com.android.application")
+    kotlin("android")
+    kotlin("kapt")
+    id("com.google.dagger.hilt.android")
+    
+
+
 }
 
 android {
@@ -27,65 +31,79 @@ android {
             )
         }
     }
+
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "11"
+
+    kotlin {
+        jvmToolchain(17)
     }
+
     buildFeatures {
         viewBinding = true
     }
 }
 
+
 dependencies {
+
+    // Hilt
+    implementation("com.google.dagger:hilt-android:2.57.1")
+    implementation(libs.androidx.material3)
+    kapt("com.google.dagger:hilt-android-compiler:2.57.1")
+
+    // AndroidX
+    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
-    implementation(libs.androidx.cardview)
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-    implementation(libs.androidx.constraintlayout)
-    implementation(libs.androidx.lifecycle.livedata.ktx)
-    implementation(libs.androidx.lifecycle.viewmodel.ktx)
-    implementation(libs.androidx.navigation.fragment.ktx)
-    implementation(libs.androidx.navigation.ui.ktx)
-    implementation(libs.firebase.auth)
-    implementation(libs.androidx.datastore.core.android)
-    //implementation(libs.play.services.gcm)
-    implementation(libs.androidx.activity)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    implementation(platform("com.google.firebase:firebase-bom:33.14.0"))
-    //implementation("androidx.credentials:credentials:1.3.0")
-    // implementation("androidx.credentials:credentials-play-services-auth:1.3.0")
-    implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
-    //implementation(platform("com.google.firebase:firebase-bom:33.14.0"))
-    implementation("com.google.firebase:firebase-auth")
-    implementation("com.google.firebase:firebase-firestore:25.1.3")
-    implementation("com.google.firebase:firebase-firestore-ktx")
-    implementation("com.google.android.gms:play-services-auth:21.3.0")
-    implementation("androidx.credentials:credentials:1.2.0-alpha02")
-    //implementation("androidx.credentials:credentials-play-services-auth:1.1.0-alpha01")
-
-
-    implementation("com.google.firebase:firebase-firestore-ktx:24.11.1")
-    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.2.0")
     implementation("androidx.recyclerview:recyclerview:1.3.2")
-    implementation("com.beust:klaxon:5.5")
-    implementation(libs.lottie)
-    implementation("com.google.firebase:firebase-inappmessaging-display")
-    implementation("com.google.firebase:firebase-messaging")
-    implementation("com.google.firebase:firebase-analytics")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
 
+    // Coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 
+    // Retrofit + OkHttp
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
-    implementation("com.google.firebase:firebase-storage-ktx")
-
+    // PDF Viewer
     implementation("com.github.mhiew:android-pdf-viewer:3.2.0-beta.3")
 
-   // implementation("com.github.barteksc:android-pdf-viewer:3.2.0-beta.1")
+
+
+    // AndroidX lifecycle (para ViewModel con Hilt)
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.6")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.6")
+
+    // Retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+
+    // Para PDF Viewer
+    implementation("com.google.android.material:material:1.4.0")
+
+    implementation("androidx.navigation:navigation-fragment-ktx:2.8.3")
+    implementation("androidx.navigation:navigation-ui-ktx:2.8.3")
+
+    implementation("com.airbnb.android:lottie:6.5.0")
+
+    implementation("com.squareup.retrofit2:converter-scalars:2.11.0")
+
+    implementation("com.beust:klaxon:5.5")
+
+    implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
+
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+
+
+
 
 }

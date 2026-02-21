@@ -1,7 +1,5 @@
 package mx.edu.unpa.calificacionesunpa
 
-//import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
-//import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.Companion.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -10,6 +8,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
@@ -19,50 +18,37 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.messaging.FirebaseMessaging
+import dagger.hilt.android.AndroidEntryPoint
+import mx.edu.unpa.calificacionesunpa.data.persistent.UsuarioService
 import mx.edu.unpa.calificacionesunpa.databinding.ActivityMainBinding
-import mx.edu.unpa.calificacionesunpa.providers.AuthProvider
-import mx.edu.unpa.calificacionesunpa.providers.NotificacionProvider
-import mx.edu.unpa.calificacionesunpa.service.UsuarioService.alumnoActual
 import mx.edu.unpa.calificacionesunpa.ui.login.LoginActivity
 
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-
+    private val viewModel: MainViewModel by viewModels()
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
-    private lateinit var authProvider: AuthProvider
-    private lateinit var auth: FirebaseAuth
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(
+            androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
+        )
+
         super.onCreate(savedInstanceState)
-        //instancia de notificaciones para que se ejecute batch de limpieza
-        NotificacionProvider()
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        authProvider = AuthProvider()
-
         setSupportActionBar(binding.appBarMain.toolbar)
         supportActionBar?.title = "UNIVERSIDAD DEL PAPALOAPAN"
 
-        val drawerLayout: DrawerLayout   = binding.drawerLayout
-        val navView: NavigationView       = binding.navView
+        val drawerLayout: DrawerLayout = binding.drawerLayout
+        val navView: NavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         solicitarPermisoNotificaciones()
-        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
-            if (!task.isSuccessful) {
-                Log.w("FCM", "Fetching FCM registration token failed", task.exception)
-                return@addOnCompleteListener
-            }
 
-            // Obtener el token FCM
-            val token = task.result
-            Log.d("FCM", "Token FCM: $token")
-        }
-
-        // ① Defino los destinos top‑level de mi Drawer
+        // Destinos
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.nav_home,
@@ -73,24 +59,29 @@ class MainActivity : AppCompatActivity() {
             drawerLayout
         )
 
-        // ② Conecto la Toolbar con NavController + AppBarConfig
+        // Conectar la Toolbar con NavController + AppBarConfig
         setupActionBarWithNavController(navController, appBarConfiguration)
 
         // Cambiar color del ícono hamburguesa a negro
-        binding.appBarMain.toolbar.navigationIcon?.setTint(resources.getColor(android.R.color.black, theme))
+        binding.appBarMain.toolbar.navigationIcon?.setTint(
+            resources.getColor(
+                android.R.color.black,
+                theme
+            )
+        )
 
-        // ③ Conecto el NavigationView con NavController
+        // Conectar NavigationView con NavController
         navView.setupWithNavController(navController)
 
-        // ④ Manejo “Cerrar sesión” manualmente
+        // “Cerrar sesión” manualmente
         navView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.nav_logout -> {
                     logout()
                     true
                 }
+
                 else -> {
-                    // Para el resto de items, que NavController haga la navegación
                     NavigationUI.onNavDestinationSelected(menuItem, navController)
                     drawerLayout.closeDrawers()
                     true
@@ -103,13 +94,14 @@ class MainActivity : AppCompatActivity() {
     private fun solicitarPermisoNotificaciones() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) !=
-                PackageManager.PERMISSION_GRANTED) {
+                PackageManager.PERMISSION_GRANTED
+            ) {
                 requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 1001)
             }
         }
     }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.main, menu)
         return true
     }
@@ -122,47 +114,46 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.nav_logout -> {
-                // Aquí implementamos el cierre de sesión manualmente
+                Log.e("Ariel Main", "Entra a Logout")
                 logout()
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
 
-    // Método para el cierre de sesión
     private fun logout() {
-        // Limpia cualquier sesión guardada o SharedPreferences aquí si es necesario
-        authProvider.exitSession()
-        // Redirige a la actividad de Login
+        viewModel.exitSession()
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
-        finish() // Finaliza la actividad actual para no poder volver atrás
+        finish()
     }
 
 
     override fun onStart() {
         super.onStart()
-        val alumno = alumnoActual
-        if (alumno!!.usuario!!.primerAcceso) {
-            Toast.makeText(this, "Debes cambiar tu contraseña primero", Toast.LENGTH_LONG).show()
-            startActivity(Intent(this, LoginActivity::class.java))
-            finish()
+        val alumno = UsuarioService.alumnoActual
+        if(alumno!=null) {
+            if(alumno.usuario!=null) {
+                if (alumno.usuario!!.esPrimerAcceso) {
+                    Toast.makeText(this, "Debes cambiar tu contraseña primero", Toast.LENGTH_LONG)
+                        .show()
+                    startActivity(Intent(this, LoginActivity::class.java))
+                    finish()
+                }
+            }else{
+                Log.e("Ariel Main Activity","No se tiene datos del usuario")
+                Toast.makeText(this, "No se tiene datos del usuario", Toast.LENGTH_LONG)
+                    .show()
+                //deberiamos regresarlo al login
+            }
+        }else{
+            Log.e("Ariel Main Activity","No se pudieron cargar tus datos ")
+            Toast.makeText(this, "No se pudieron cargar tus datos ", Toast.LENGTH_LONG)
+                .show()
+            //deberiamos regresarlo al login
         }
     }
-
-
-    //private fun handleSignIn(credential: Credential) {
-        // Check if credential is of type Google ID
-        //if (credential is CustomCredential && credential.type == TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
-            // Create Google ID Token
-          //  val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
-
-            // Sign in to Firebase with using the token
-            //firebaseAuthWithGoogle(googleIdTokenCredential.idToken)
-        //} else {
-           // Log.w(TAG, "Credential is not of type Google ID!")
-       // }
-    //}
 
 }

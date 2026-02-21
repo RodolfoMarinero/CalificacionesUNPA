@@ -2,37 +2,32 @@ package mx.edu.unpa.calificacionesunpa.models
 
 
 import Calificacion
-import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.IgnoreExtraProperties
-
-/**
- * Representa una materia con calificaciones y referencia al ciclo escolar.
- * Se utiliza una clase regular con un constructor vacío para compatibilidad con Firestore.
- */
-@IgnoreExtraProperties
 class Materia() {
-    var activo: Boolean = false
-    var calificaciones: Calificacion = Calificacion()
-    var ciclo: DocumentReference? = null
+    var clave: String=""
     var materia: String = ""
-    var examenes : DocumentReference? = null;
     var semestre: Int=-1;
+    var activo: Boolean = false
+    var ciclo: String? = null
+    var calendarioExamenes : Calendario? = null;
+    var calificaciones: Calificacion = Calificacion()
 
     /** Constructor secundario para crear instancias manualmente */
     constructor(
+        clave: String,
         activo: Boolean,
         calificacion: Calificacion,
-        ciclo: DocumentReference?,
+        ciclo: String?,
         materia: String,
         semestre: Int,
-        examenes : DocumentReference?
+        calendario : Calendario?
     ) : this() {
+        this.clave=clave
         this.activo = activo
         this.calificaciones = calificacion
         this.ciclo = ciclo
         this.materia = materia
         this.semestre = semestre
-        this.examenes = examenes
+        this.calendarioExamenes = calendario
     }
 
     fun getPromedioParciales(): Double {

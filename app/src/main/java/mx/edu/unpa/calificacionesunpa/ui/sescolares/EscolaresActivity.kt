@@ -1,19 +1,24 @@
 package mx.edu.unpa.calificacionesunpa.ui.sescolares
 
+//import mx.edu.unpa.calificacionesunpa.api.RetrofitClient
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.OpenableColumns
 import android.util.Base64
-import android.widget.*
+import android.widget.Button
+import android.widget.CheckBox
+import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import mx.edu.unpa.calificacionesunpa.R
-import mx.edu.unpa.calificacionesunpa.notificaciones_escolares
-import mx.edu.unpa.calificacionesunpa.providers.AuthProvider
-import mx.edu.unpa.calificacionesunpa.providers.StorageProvider
-import mx.edu.unpa.calificacionesunpa.ui.documentos.ListaDocumentosActivity
+import mx.edu.unpa.calificacionesunpa.data.repository.LoginRepository
+import mx.edu.unpa.calificacionesunpa.data.repository.StorageRepository
 import mx.edu.unpa.calificacionesunpa.ui.login.LoginActivity
+import mx.edu.unpa.calificacionesunpa.ui.notificaciones.notificaciones_escolares
 import java.io.InputStream
 
 class EscolaresActivity : AppCompatActivity() {
@@ -28,8 +33,8 @@ class EscolaresActivity : AppCompatActivity() {
     private lateinit var txtNombreArchivo: TextView
     private lateinit var cbCalendarioActual: CheckBox
 
-    private lateinit var storageProvider: StorageProvider
-    private lateinit var authProvider: AuthProvider
+    private lateinit var storageProvider: StorageRepository
+    private lateinit var authProvider: LoginRepository
 
     // Nuevo launcher para seleccionar archivo PDF
     private val activityResultLauncher = registerForActivityResult(
@@ -48,12 +53,19 @@ class EscolaresActivity : AppCompatActivity() {
                 Toast.makeText(this, mensaje, Toast.LENGTH_LONG).show()
             }
 
-            storageProvider.uploadFile(
-                convertirA_Base64(it),
-                obtenerNombreArchivo(it),
-                esActual,
-                respuesta
-            )
+            lifecycleScope.launch {
+                val exito = storageProvider.uploadFile(
+                    convertirA_Base64(it),
+                    obtenerNombreArchivo(it),
+                    esActual
+                )
+
+                if (exito) {
+                    Toast.makeText(this@EscolaresActivity, "Archivo subido correctamente", Toast.LENGTH_LONG).show()
+                } else {
+                    Toast.makeText(this@EscolaresActivity, "Error al subir el archivo", Toast.LENGTH_LONG).show()
+                }
+            }
         }
     }
 
@@ -69,8 +81,14 @@ class EscolaresActivity : AppCompatActivity() {
         btnVerDocs = findViewById(R.id.btnVerDocumentos)
         txtNombreArchivo = findViewById(R.id.txtNombreArchivo)
 
-        storageProvider = StorageProvider()
-        authProvider = AuthProvider()
+
+
+
+        val token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxODA4MDA2OCIsImlhdCI6MTc1NjMxNjI2MSwiZXhwIjoxNzU2MzUyMjYxfQ.bR6CliCRb4wnXSoRaZJJ5GFiHpl-X43tmuZlrZgm3Xu8BKI41FXRqQBTrKYL0jUCJywlNtHjIoe5kL7d-kSF9Q"
+        //val api = RetrofitClient.create(token)
+        //storageProvider = StorageRepository(CalendarioEscolarService(api),this)
+
+        //authProvider = LoginRepository(this, AuthApiMock())
 
         btnCerrarSesion.setOnClickListener {
             authProvider.exitSession()
@@ -87,7 +105,7 @@ class EscolaresActivity : AppCompatActivity() {
         }
 
         btnVerDocs.setOnClickListener {
-            startActivity(Intent(this, ListaDocumentosActivity::class.java))
+            //startActivity(Intent(this, ListaDocumentosActivity::class.java))
         }
     }
 
