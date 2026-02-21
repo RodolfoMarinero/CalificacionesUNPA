@@ -1,16 +1,16 @@
 package mx.edu.unpa.calificacionesunpa.ui.dd
 
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import com.unpa.calificaciones.adapters.SemestreAdapter
 import mx.edu.unpa.calificacionesunpa.R
-import mx.edu.unpa.calificacionesunpa.service.UsuarioService
+import mx.edu.unpa.calificacionesunpa.data.persistent.UsuarioService
 
 class SelectorSemestre : Fragment() {
 

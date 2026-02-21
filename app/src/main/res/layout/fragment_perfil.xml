@@ -2,6 +2,8 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -25,6 +27,7 @@
                 android:layout_width="120dp"
                 android:layout_height="120dp"
                 android:layout_gravity="center"
+                android:layout_marginTop="60dp"
                 android:src="@drawable/ic_perfil"
                 android:background="@drawable/bg_circle"
                 android:padding="8dp"
@@ -144,19 +147,6 @@
             </LinearLayout>
 
 
-            <TextView
-                android:id="@+id/tvGoogle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:background="@drawable/bg_button_google"
-                android:gravity="center"
-                android:text="Asociar con google"
-                android:textColor="#000000"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-
-
             <!-- Código de barras -->
 
 
@@ -198,10 +188,61 @@
                     android:contentDescription="@string/cd_barcode"
                     android:src="@drawable/barcode_placeholder" />
 
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnDescargarHistorial"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="32dp"
+                    android:layout_marginTop="16dp"
+                    android:text="Descargar Historial Académico"
+                    android:backgroundTint="#C1D8D2"
+                    android:textColor="#000000"
+                    android:gravity="center"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnDescargarConstancia"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="32dp"
+                    android:layout_marginTop="8dp"
+                    android:text="Descargar Constancia de Estudios"
+                    android:backgroundTint="#C1D8D2"
+                    android:textColor="#000000"
+                    android:gravity="center"/>
+
+                <Button
+                    android:id="@+id/btnBack"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Regresar" />
+
             </LinearLayout>
 
         </LinearLayout>
     </ScrollView>
+
+    <!-- Header con botón back y título -->
+    <LinearLayout
+        android:id="@+id/headerPerfil"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="8dp"
+        android:background="@color/white">
+
+        <TextView
+            android:id="@+id/tvTituloPerfil"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:text="Perfil"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#000000" />
+
+    </LinearLayout>
+
     <FrameLayout
         android:id="@+id/loadingContainer"
         android:layout_width="match_parent"

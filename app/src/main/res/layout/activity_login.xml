@@ -25,6 +25,8 @@
             android:layout_marginTop="24dp"
             android:layout_marginBottom="8dp" />
 
+
+
         <!-- Logo de UNPA -->
         <ImageView
             android:id="@+id/logo_universidad"
@@ -47,7 +49,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Bienvenido a UNPA GRADES"
+                android:text="Bienvenido(a)"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:textColor="#333333"
@@ -130,16 +132,20 @@
             android:textColor="#2E7D32"
             android:visibility="gone" />
 
-        <!-- Botón de Google (con error corregido) -->
-        <Button
-            android:id="@+id/btnGoogle"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_margin="16dp"
-            android:background="@drawable/bg_button_google"
-            android:onClick="loginGoogle"
-            android:text="Inicia Sesión con Google"
-            android:textColor="#000000" />
+        <!-- Texto inferior -->
+        <TextView
+            android:id="@+id/tvFooter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Desarrollado por alumnos y profesores de Ingeniería en Computación"
+            android:textSize="14sp"
+            android:textColor="#777777"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="16dp"
+            android:gravity="center"
+            android:layout_gravity="center_horizontal"/>
+
+
 
     </LinearLayout>
     </ScrollView>
