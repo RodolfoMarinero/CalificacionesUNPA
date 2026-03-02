@@ -31,7 +31,8 @@ import java.util.concurrent.TimeUnit
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-    private const val BASE_URL = "http://201.144.254.11/vm2/"
+//    private const val BASE_URL = "http://201.144.254.11/vm2/"
+    private const val BASE_URL = "http://192.168.1.71:8080/"
     // Retrofit global
 
     @Provides

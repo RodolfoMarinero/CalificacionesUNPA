@@ -28,12 +28,15 @@ class LoginViewModel @Inject constructor(
     fun iniciarSesion(usuario: String, contrasena: String) {
         viewModelScope.launch {
             try {
-                // 1. Intentar Login
                 val esValido = loginRepository.login(usuario, contrasena)
 
                 if (esValido.isSuccess) {
+                    val respuesta = esValido.getOrNull() // Extraemos el objeto para no llamarlo múltiples veces
 
-                    UsuarioService.token = esValido?.getOrNull()?.token
+                    // Guardamos ambos datos en el Singleton
+                    UsuarioService.token = respuesta?.token
+                    UsuarioService.campus = respuesta?.campus // <-- ¡LA MAGIA OCURRE AQUÍ!
+
                     if (usuario == contrasena) {
                         esPrimerAcceso = true
                     }
