@@ -20,6 +20,8 @@ import mx.edu.unpa.calificacionesunpa.data.api.login.AuthInterceptor
 import mx.edu.unpa.calificacionesunpa.data.api.users.UsuarioAPI
 import mx.edu.unpa.calificacionesunpa.data.repository.StorageRepository
 import mx.edu.unpa.calificacionesunpa.data.service.StorageService
+import mx.edu.unpa.calificacionesunpa.data.api.TutorAPI
+import mx.edu.unpa.calificacionesunpa.data.repository.TutorRepository
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -144,7 +146,17 @@ object AppModule {
         UserRepository(service)
 
      */
+    @Provides
+    @Singleton
+    fun provideTutorAPI(retrofit: Retrofit): TutorAPI {
+        return retrofit.create(TutorAPI::class.java)
+    }
 
+    @Provides
+    @Singleton
+    fun provideTutorRepository(api: TutorAPI): TutorRepository {
+        return TutorRepository(api)
+    }
     @Provides
     @Singleton
     fun provideReportesAPI(retrofit: Retrofit): mx.edu.unpa.calificacionesunpa.data.api.reportes.ReportesAPI =

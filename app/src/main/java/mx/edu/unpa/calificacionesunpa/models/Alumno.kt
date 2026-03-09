@@ -24,6 +24,9 @@ data class Alumno(
     @Transient
     var materias: List<Materia>? = null,
 
+    @SerializedName("correo")
+    var correo: String? = null,
+
     @Transient
     var usuario: Usuario? = null
 )

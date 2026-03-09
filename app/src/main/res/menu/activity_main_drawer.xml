@@ -31,5 +31,22 @@
             android:id="@+id/nav_logout"
             android:icon="@drawable/ic_logout"
             android:title="Cerrar sesión" />
+        <item
+            android:id="@+id/nav_ver_tutor"
+            android:icon="@drawable/ic_person"
+            android:title="Mi Tutor" />
+
+        <item
+            android:id="@+id/nav_solicitar_tutor"
+            android:icon="@drawable/ic_person_add"
+            android:title="Cambiar Tutor" />
+        <item
+            android:id="@+id/nav_historial_tutores"
+            android:icon="@drawable/ic_history"
+            android:title="Historial de Tutores" />
+        <item
+            android:id="@+id/nav_actualizar_correo"
+            android:icon="@drawable/ic_email"
+            android:title="Actualizar Correo" />
     </group>
 </menu>

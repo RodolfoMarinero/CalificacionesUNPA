@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    app:cardElevation="2dp"
+    app:cardCornerRadius="12dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <!-- Icono de persona -->
+        <ImageView
+            android:id="@+id/iconDocente"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_person"
+            android:background="@drawable/circle_background"
+            android:backgroundTint="#e0e7ff"
+            android:padding="10dp"
+            app:tint="#3730a3"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <!-- Nombre -->
+        <TextView
+            android:id="@+id/tvNombreDocente"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Nombre del Docente"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#1e293b"
+            android:layout_marginStart="12dp"
+            android:maxLines="2"
+            android:ellipsize="end"
+            app:layout_constraintTop_toTopOf="@id/iconDocente"
+            app:layout_constraintStart_toEndOf="@id/iconDocente"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Carrera -->
+        <TextView
+            android:id="@+id/tvCarreraDocente"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Carrera"
+            android:textSize="13sp"
+            android:textColor="#64748b"
+            android:layout_marginStart="12dp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            app:layout_constraintTop_toBottomOf="@id/tvNombreDocente"
+            app:layout_constraintStart_toEndOf="@id/iconDocente"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Label "Disponibilidad" -->
+        <TextView
+            android:id="@+id/labelDisponibilidad"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Carga actual:"
+            android:textSize="12sp"
+            android:textColor="#94a3b8"
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/iconDocente"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <!-- Disponibilidad (0/13) -->
+        <TextView
+            android:id="@+id/tvDisponibilidad"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0/13"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="#1e293b"
+            android:layout_marginStart="4dp"
+            app:layout_constraintTop_toTopOf="@id/labelDisponibilidad"
+            app:layout_constraintBottom_toBottomOf="@id/labelDisponibilidad"
+            app:layout_constraintStart_toEndOf="@id/labelDisponibilidad" />
+
+        <!-- ProgressBar -->
+        <ProgressBar
+            android:id="@+id/progressCarga"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="8dp"
+            android:layout_marginTop="8dp"
+            android:progressDrawable="@drawable/progress_rounded"
+            android:max="100"
+            android:progress="0"
+            app:layout_constraintTop_toBottomOf="@id/labelDisponibilidad"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

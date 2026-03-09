@@ -1,9 +1,11 @@
 package mx.edu.unpa.calificacionesunpa.ui.login
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,7 +19,8 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val alumnoRepository: AlumnoRepository,
-    private val loginRepository: LoginRepository
+    private val loginRepository: LoginRepository,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val _alumnoState = MutableStateFlow<Result<Alumno>?>(null)
@@ -33,7 +36,13 @@ class LoginViewModel @Inject constructor(
 
                 if (esValido.isSuccess) {
 
-                    UsuarioService.token = esValido?.getOrNull()?.token
+                    val tokenRecibido = esValido.getOrNull()?.token
+                    UsuarioService.token = tokenRecibido
+
+                    // GUARDA EL TOKEN EN SHAREDPREFERENCES AQUÍ
+                    val prefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+                    prefs.edit().putString("jwt_token", tokenRecibido).apply()
+
                     if (usuario == contrasena) {
                         esPrimerAcceso = true
                     }
@@ -49,6 +58,13 @@ class LoginViewModel @Inject constructor(
 
                             // Actualizamos el Singleton
                             UsuarioService.alumnoActual = alumno
+                            UsuarioService.guardarMatricula(context, alumno.matricula)
+
+                            // ✅ NUEVO: Calcular y guardar periodo actual
+                            val periodoActual = calcularPeriodoActual(alumno)
+                            guardarPeriodoActual(periodoActual)
+
+                            Log.d("LoginViewModel", "Periodo actual calculado: $periodoActual")
                         }
 
                         _alumnoState.value = result
@@ -61,7 +77,25 @@ class LoginViewModel @Inject constructor(
             }
         }
     }
+    private fun calcularPeriodoActual(alumno: Alumno): String {
+        val materias = alumno.materias ?: emptyList()
 
+        // Extraer ciclos únicos de las materias
+        val ciclos = materias
+            .mapNotNull { it.ciclo }
+            .distinct()
+            .sorted()  // Orden cronológico ascendente
+
+        // El último ciclo es el más reciente
+        return ciclos.lastOrNull() ?: "25-26A"  // Default si no hay materias
+    }
+
+
+    private fun guardarPeriodoActual(periodo: String) {
+        val prefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        prefs.edit().putString("periodo_actual", periodo).apply()
+        Log.d("LoginViewModel", "Periodo guardado en SharedPreferences: $periodo")
+    }
     fun esPrimerAcceso(): Boolean {
         // Aseguramos que el objeto usuario tenga el flag correcto
         UsuarioService.alumnoActual?.usuario?.esPrimerAcceso = esPrimerAcceso

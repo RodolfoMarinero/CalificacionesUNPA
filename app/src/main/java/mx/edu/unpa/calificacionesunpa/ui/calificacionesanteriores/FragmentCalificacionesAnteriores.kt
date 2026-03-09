@@ -125,16 +125,28 @@ class FragmentCalificacionesAnteriores : Fragment() {
 
         // 4) Traer alumno básico
 
-        alumnoActual = usuarioService!!.alumnoActual
+        alumnoActual = usuarioService?.alumnoActual
 
-        todasMaterias = alumnoActual!!.materias as MutableList<Materia>?
-        Log.e("CalificacionesAnterioresAriel", "Lista Materias " + todasMaterias)
-        for (m in todasMaterias!!) {
-            Log.d("CalificacionesAnterioresAriel", "Materia " + m.materia)
+        // Protegemos la app si el alumno es nulo
+        if (alumnoActual == null) {
+            Toast.makeText(requireContext(), "Error: Datos de alumno no cargados", Toast.LENGTH_SHORT).show()
+            return root
         }
 
-        promedioCalculatorService!!.calcularPromedioGeneral(todasMaterias!!)
-        txtMatricula!!.setText(alumnoActual!!.matricula)
+        // Protegemos la app si las materias son nulas
+        todasMaterias = alumnoActual?.materias?.toMutableList() ?: mutableListOf()
+
+        if (todasMaterias.isNullOrEmpty()) {
+            Toast.makeText(requireContext(), "No hay materias registradas", Toast.LENGTH_SHORT).show()
+        } else {
+            Log.e("CalificacionesAnterioresAriel", "Lista Materias " + todasMaterias)
+            for (m in todasMaterias!!) {
+                Log.d("CalificacionesAnterioresAriel", "Materia " + m.materia)
+            }
+            promedioCalculatorService?.calcularPromedioGeneral(todasMaterias!!)
+        }
+
+        txtMatricula?.setText(alumnoActual?.matricula ?: "Sin matrícula")
         alumnoActual = usuarioService!!.alumnoActual
 
 // --- AGREGA ESTOS LOGS ---
