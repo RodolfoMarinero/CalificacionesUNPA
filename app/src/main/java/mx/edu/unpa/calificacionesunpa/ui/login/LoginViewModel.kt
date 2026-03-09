@@ -35,11 +35,12 @@ class LoginViewModel @Inject constructor(
                 val esValido = loginRepository.login(usuario, contrasena)
 
                 if (esValido.isSuccess) {
+                    val respuesta = esValido.getOrNull() // Extraemos el objeto para no llamarlo múltiples veces
 
-                    val tokenRecibido = esValido.getOrNull()?.token
+                    val tokenRecibido = respuesta?.token
                     UsuarioService.token = tokenRecibido
+                    UsuarioService.campus = respuesta?.campus
 
-                    // GUARDA EL TOKEN EN SHAREDPREFERENCES AQUÍ
                     val prefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
                     prefs.edit().putString("jwt_token", tokenRecibido).apply()
 
@@ -48,19 +49,16 @@ class LoginViewModel @Inject constructor(
                     }
 
                     if (usuario != "100000") { // Es un alumno
-                        // 2. Descargar información completa
                         val result: Result<Alumno> = alumnoRepository.getAlumnoConMaterias(usuario)
 
-                        // --- ESTA ES LA MEJORA ---
-                        // Actualizamos el UsuarioService AQUÍ MISMO apenas llegan los datos
                         result.onSuccess { alumno ->
                             Log.d("LoginViewModel", "Alumno descargado: ${alumno.nombre} ${alumno.apPaterno}")
 
                             // Actualizamos el Singleton
                             UsuarioService.alumnoActual = alumno
-                            UsuarioService.guardarMatricula(context, alumno.matricula)
 
-                            // ✅ NUEVO: Calcular y guardar periodo actual
+                            // Guardamos matrícula y periodo (Lo tuyo)
+                            UsuarioService.guardarMatricula(context, alumno.matricula)
                             val periodoActual = calcularPeriodoActual(alumno)
                             guardarPeriodoActual(periodoActual)
 

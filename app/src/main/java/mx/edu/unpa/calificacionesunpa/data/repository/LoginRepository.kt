@@ -66,7 +66,13 @@ class LoginRepository @Inject constructor(
     suspend fun login(matricula: String, password: String): Result<AuthResponse> {
         return try {
             val response = api.login(LoginRequest(matricula, password))
-            prefs.edit().putString("jwt_token", response.token).apply()
+
+            // Guardamos AMBOS valores de una sola vez
+            prefs.edit()
+                .putString("jwt_token", response.token)
+                .putString("campus_id", response.campus) // <-- NUEVA LÍNEA
+                .apply()
+
             Result.success(response)
         } catch (e: Exception) {
             Result.failure(e)

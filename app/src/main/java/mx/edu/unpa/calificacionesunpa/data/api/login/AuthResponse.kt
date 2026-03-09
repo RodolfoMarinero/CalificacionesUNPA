@@ -7,4 +7,7 @@ package mx.edu.unpa.calificacionesunpa.data.api.login
     val expiresIn: Long? = null
 )*/
 
-data class AuthResponse (   val token: String )
+data class AuthResponse(
+    val token: String,
+    val campus: String // <-- Agregamos el nuevo campo
+)

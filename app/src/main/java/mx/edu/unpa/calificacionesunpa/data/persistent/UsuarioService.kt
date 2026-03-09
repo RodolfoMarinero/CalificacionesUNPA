@@ -7,6 +7,7 @@ import mx.edu.unpa.calificacionesunpa.models.Alumno
 
 object UsuarioService {
     var alumnoActual: Alumno? = null
+    var campus: String? = null
     var token: String? = null
     private val _semestreSeleccionado = MutableLiveData<Int>()
     val semestreSeleccionado: LiveData<Int> = _semestreSeleccionado
