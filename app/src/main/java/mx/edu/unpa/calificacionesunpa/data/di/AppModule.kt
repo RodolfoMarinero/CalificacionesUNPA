@@ -32,7 +32,11 @@ import java.util.concurrent.TimeUnit
 object AppModule {
 
 //    private const val BASE_URL = "http://201.144.254.11/vm2/"
-    private const val BASE_URL = "http://192.168.1.71:8080/"
+//    private const val BASE_URL = "http://192.168.1.71:8080/"
+
+//    private const val BASE_URL = "http://192.168.1.76:8080/"
+private const val BASE_URL = "https://calificaciones.unpa.edu.mx/vm2/"
+
     // Retrofit global
 
     @Provides

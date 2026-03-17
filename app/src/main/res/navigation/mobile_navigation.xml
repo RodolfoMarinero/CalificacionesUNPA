@@ -65,4 +65,10 @@
         android:name="mx.edu.unpa.calificacionesunpa.ui.calendarioescolar.FragmentCalendarioEscolar"
         android:label="Calendario Escolar"
         tools:layout="@layout/fragment_calendario_escolar" />
+
+    <fragment
+        android:id="@+id/nav_acerca_de"
+        android:name="mx.edu.unpa.calificacionesunpa.ui.acercade.AcercaDeFragment"
+        android:label="Acerca de"
+        tools:layout="@layout/fragment_acerca_de" />
 </navigation>
