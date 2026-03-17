@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:padding="20dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <ImageView
+            android:id="@+id/ivLogoUnpa"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:src="@drawable/ic_logo"
+            android:contentDescription="Logotipo UNPA" />
+
+        <ImageView
+            android:id="@+id/ivFotoEquipo"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="10dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/foto_equipo"
+            android:visibility="gone"
+            android:contentDescription="Equipo de Desarrollo" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="UNPA GRADES"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:layout_marginTop="16dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Orgullosamente desarrollada por estudiantes."
+            android:textSize="16sp"
+            android:textStyle="italic"
+            android:textAlignment="center"
+            android:layout_marginTop="4dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Esta aplicación es una iniciativa del grupo de 10° semestre de Ingeniería en Computación con el fin de optimizar la experiencia digital de nuestros compañeros en la Universidad del Papaloapan."
+            android:textSize="16sp"
+            android:textAlignment="center"
+            android:layout_marginTop="16dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="\nFunciones principales:\n• Consulta de calificaciones\n• Acceso rápido a Calendario Escolar\n• Acceso rápido a Calendario de Exámenes\n• Notificaciones de Servicios Escolares"
+            android:textSize="16sp"
+            android:layout_marginTop="12dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="\nEquipo de Desarrollo:\nTodo el grupo de la Generación 2021-2026\nRodolfo, Maritza, Adrián, Amarany, César, Gerardo, Saúl, Yenedith, Carlos."
+            android:textSize="16sp"
+            android:layout_marginTop="12dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="\nBajo la asesoría de: el profe Ariel / Ingeniería en Computación"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="12dp"/>
+
+        <Button
+            android:id="@+id/btnPrivacidad"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Política de Privacidad"
+            android:layout_marginTop="24dp"
+            android:backgroundTint="#0056b3" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hecho con ❤️ en Loma Bonita, Oaxaca, México, 2026."
+            android:textSize="14sp"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="20dp"
+            android:textAlignment="center"/>
+
+    </LinearLayout>
+</ScrollView>
