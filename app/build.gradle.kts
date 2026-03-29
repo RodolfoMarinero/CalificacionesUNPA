@@ -104,6 +104,8 @@ dependencies {
 
     implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
 
+    implementation("com.applandeo:material-calendar-view:1.9.0")
+
 
 
 

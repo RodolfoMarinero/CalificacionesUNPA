@@ -1,97 +1,147 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
-    android:padding="20dp">
+    android:background="#EAEAEA"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:padding="24dp"
         android:gravity="center_horizontal">
 
-        <ImageView
-            android:id="@+id/ivLogoUnpa"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:src="@drawable/ic_logo"
-            android:contentDescription="Logotipo UNPA" />
-
-        <ImageView
-            android:id="@+id/ivFotoEquipo"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_marginTop="10dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/foto_equipo"
-            android:visibility="gone"
-            android:contentDescription="Equipo de Desarrollo" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardLogo"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_gravity="center"
+                app:cardCornerRadius="60dp"
+                app:cardElevation="4dp"
+                android:visibility="visible">
+                <ImageView
+                    android:id="@+id/ivLogoUnpa"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/he_logo_unpa"
+                    android:padding="20dp"
+                    android:clickable="true"
+                    android:focusable="true"/>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardFotoEquipo"
+                android:layout_width="match_parent"
+                android:layout_height="220dp"
+                android:visibility="gone"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="6dp">
+                <ImageView
+                    android:id="@+id/ivFotoEquipo"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/foto_equipo"
+                    android:scaleType="centerCrop" />
+            </androidx.cardview.widget.CardView>
+        </FrameLayout>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="UNPA GRADES"
-            android:textSize="28sp"
+            android:textSize="26sp"
             android:textStyle="bold"
-            android:textColor="#000000"
+            android:textColor="@color/unpa_bg_dark"
             android:layout_marginTop="16dp"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Orgullosamente desarrollada por estudiantes."
-            android:textSize="16sp"
-            android:textStyle="italic"
-            android:textAlignment="center"
-            android:layout_marginTop="4dp"/>
 
-        <TextView
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Esta aplicación es una iniciativa del grupo de 10° semestre de Ingeniería en Computación con el fin de optimizar la experiencia digital de nuestros compañeros en la Universidad del Papaloapan."
-            android:textSize="16sp"
-            android:textAlignment="center"
-            android:layout_marginTop="16dp"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="\nFunciones principales:\n• Consulta de calificaciones\n• Acceso rápido a Calendario Escolar\n• Acceso rápido a Calendario de Exámenes\n• Notificaciones de Servicios Escolares"
-            android:textSize="16sp"
-            android:layout_marginTop="12dp"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="\nEquipo de Desarrollo:\nTodo el grupo de la Generación 2021-2026\nRodolfo, Maritza, Adrián, Amarany, César, Gerardo, Saúl, Yenedith, Carlos."
-            android:textSize="16sp"
-            android:layout_marginTop="12dp"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="\nBajo la asesoría de: el profe Ariel / Ingeniería en Computación"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginTop="12dp"/>
-
-        <Button
-            android:id="@+id/btnPrivacidad"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Política de Privacidad"
             android:layout_marginTop="24dp"
-            android:backgroundTint="#0056b3" />
+            app:cardCornerRadius="20dp"
+            app:cardElevation="2dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nuestra Misión"
+                    android:textColor="@color/unpa_primary_teal"
+                    android:textStyle="bold"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Iniciativa de Ingeniería en Computación para optimizar la experiencia digital de la comunidad universitaria en la Universidad del Papaloapan."
+                    android:textColor="#444444"
+                    android:lineSpacingExtra="3dp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#EEEEEE"
+                    android:layout_marginVertical="16dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Equipo de Desarrollo"
+                    android:textColor="@color/unpa_primary_teal"
+                    android:textStyle="bold"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Generación 2021-2026\nRodolfo, Maritza, Adrián, Amarany, César, Gerardo, Saúl, Yenedith, Carlos."
+                    android:textColor="#444444" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="Asesoría técnica:\nIng. Ariel - Ingeniería en Computación"
+                    android:textColor="@color/unpa_bg_dark"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPrivacidad"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginTop="24dp"
+            android:text="Política de Privacidad"
+            android:textColor="@color/unpa_primary_teal"
+            app:cornerRadius="25dp"
+            app:strokeColor="@color/unpa_primary_teal" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Hecho con ❤️ en Loma Bonita, Oaxaca, México, 2026."
-            android:textSize="14sp"
-            android:layout_marginTop="30dp"
-            android:layout_marginBottom="20dp"
-            android:textAlignment="center"/>
+            android:text="Hecho con ❤️ en Loma Bonita, Oaxaca."
+            android:textSize="12sp"
+            android:textColor="#999999"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="20dp"/>
 
     </LinearLayout>
 </ScrollView>

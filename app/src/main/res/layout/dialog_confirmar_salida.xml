@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:layout_margin="20dp"
+    android:elevation="12dp"
+    android:background="@drawable/bg_exit_fondo"
+    android:backgroundTint="#FFFFFF"> <ImageView
+    android:layout_width="64dp"
+    android:layout_height="64dp"
+    android:layout_gravity="center"
+    android:src="@drawable/ic_warning"
+    app:tint="@color/unpa_primary_teal" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="¿Cerrar Sesión?"
+        android:textAlignment="center"
+        android:textColor="#004D40" android:textSize="22sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="Tendrás que ingresar tus credenciales nuevamente para acceder a tus calificaciones."
+        android:textAlignment="center"
+        android:textColor="#424242" android:textSize="15sp"
+        android:lineSpacingExtra="4dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCancelarSalida"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Cancelar"
+            android:textColor="@color/unpa_primary_teal"
+            app:cornerRadius="12dp"
+            app:strokeColor="@color/unpa_primary_teal"
+            android:paddingVertical="12dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnConfirmarSalida"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="12dp"
+            android:text="Salir"
+            android:textColor="@color/unpa_white"
+            app:backgroundTint="#8B0000"
+            app:cornerRadius="12dp"
+            android:paddingVertical="12dp" />
+
+    </LinearLayout>
+</LinearLayout>

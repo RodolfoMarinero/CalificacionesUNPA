@@ -55,7 +55,7 @@ class LoginActivity : AppCompatActivity() {
         etMatricula = findViewById(R.id.cp_txtConfirmPassword)
         etPassword = findViewById(R.id.cp_txtPassword)
         btnLogin = findViewById(R.id.cp_changepass)
-        btnRegistro = findViewById(R.id.btnRegistro)
+        //btnRegistro = findViewById(R.id.btnRegistro)
         tvForgotPassword = findViewById(R.id.btnRecuperar_contrasena)
         val togglePassword: ImageView = findViewById(R.id.togglePassword)
 
@@ -94,7 +94,7 @@ class LoginActivity : AppCompatActivity() {
                                         .apply { putExtra("navigateTo", "calificaciones") }
                                 }
                             }
-                            hideLoadingFragment()
+                            //hideLoadingFragment()
                             startActivity(activitySRC)
                             finish()
                         }

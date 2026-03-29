@@ -15,7 +15,7 @@ import mx.edu.unpa.calificacionesunpa.R
 
 class AcercaDeFragment : Fragment() {
 
-    // Variables para el Huevo de Pascua
+    // Variables para el Huevo de Pascua (Easter Egg)
     private var contadorToques = 0
     private var ultimoToque: Long = 0
 
@@ -23,20 +23,24 @@ class AcercaDeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflamos el XML que creamos en el paso anterior
-        val view = inflater.inflate(R.layout.fragment_acerca_de, container, false)
+        // Inflamos el XML con la nueva estructura de LinearLayout
+        return inflater.inflate(R.layout.fragment_acerca_de, container, false)
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // 1. Referencias a la UI
         val ivLogoUnpa = view.findViewById<ImageView>(R.id.ivLogoUnpa)
-        val ivFotoEquipo = view.findViewById<ImageView>(R.id.ivFotoEquipo)
+        val cardLogo = view.findViewById<View>(R.id.cardLogo)
+        val cardFotoEquipo = view.findViewById<View>(R.id.cardFotoEquipo)
         val btnPrivacidad = view.findViewById<Button>(R.id.btnPrivacidad)
 
-        // ----------------------------------------------------
-        // LÓGICA DEL HUEVO DE PASCUA (EASTER EGG)
-        // ----------------------------------------------------
-        ivLogoUnpa.setOnClickListener {
+        // 2. Lógica del Huevo de Pascua (Easter Egg)
+        ivLogoUnpa?.setOnClickListener {
             val tiempoActual = SystemClock.elapsedRealtime()
 
-            // Si pasa más de 1 segundo (1000 ms) entre toques, el combo se reinicia
+            // Si pasa más de 1 segundo entre toques, el combo se reinicia
             if (tiempoActual - ultimoToque > 1000) {
                 contadorToques = 0
             }
@@ -44,28 +48,36 @@ class AcercaDeFragment : Fragment() {
             ultimoToque = tiempoActual
             contadorToques++
 
-            // Si llegamos a los 5 toques seguidos
             if (contadorToques == 5) {
-                // Magia: Ocultamos el logo y mostramos la foto del equipo
-                ivLogoUnpa.visibility = View.GONE
-                ivFotoEquipo.visibility = View.VISIBLE
+                // --- TRANSICIÓN ELEGANTE ---
 
-                Toast.makeText(requireContext(), "¡Conoce al equipo de Gen 2021-2026!", Toast.LENGTH_LONG).show()
-                contadorToques = 0 // Reiniciamos por si acaso
+                // Desvanecemos el logo
+                cardLogo?.animate()?.alpha(0f)?.setDuration(300)?.withEndAction {
+                    cardLogo.visibility = View.GONE
+
+                    // Hacemos aparecer la foto del equipo en grande
+                    cardFotoEquipo?.visibility = View.VISIBLE
+                    cardFotoEquipo?.alpha = 0f
+                    cardFotoEquipo?.animate()
+                        ?.alpha(1f)
+                        ?.setDuration(600)
+                        ?.start()
+                }?.start()
+
+                Toast.makeText(requireContext(), "🚀 ¡Generación 2021-2026 presente!", Toast.LENGTH_LONG).show()
+                contadorToques = 0
             }
         }
 
-        // ----------------------------------------------------
-        // LÓGICA DEL BOTÓN DE PRIVACIDAD
-        // ----------------------------------------------------
-        btnPrivacidad.setOnClickListener {
-            // Aquí pegas el link real de tu Google Site
+        // 3. Lógica del Botón de Privacidad
+        btnPrivacidad?.setOnClickListener {
             val urlPrivacidad = "https://sites.google.com/view/unpa-grades-privacidad/inicio"
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(urlPrivacidad))
-            startActivity(intent)
+            try {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(urlPrivacidad))
+                startActivity(intent)
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "No se pudo abrir el navegador", Toast.LENGTH_SHORT).show()
+            }
         }
-
-
-        return view
     }
 }

@@ -1,67 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:background="#EAEAEA"> <androidx.core.widget.NestedScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/bg_gradient"
-        android:padding="16dp">
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingHorizontal="24dp"
+        android:paddingBottom="40dp"
+        android:paddingTop="16dp"> <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:text="Calendario Escolar"
+        android:textColor="@color/unpa_bg_dark"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvSemestreCalendario"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="Cargando..."
+            android:textColor="#555555"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tvFechaActual"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:background="@drawable/bg_button_modern"
+            android:backgroundTint="@color/unpa_green_medium"
+            android:paddingHorizontal="32dp"
+            android:paddingVertical="12dp"
+            android:text="Cargando..."
+            android:textColor="@color/unpa_white"
+            android:textSize="18sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:background="@drawable/bg_button_modern_white"
+            android:elevation="2dp"
             android:orientation="vertical"
-            android:layout_marginTop="60dp"
-            android:gravity="center_horizontal">
-            <!-- Tabla de calificaciones -->
-            <TableLayout
-                android:id="@+id/tablaCalendario"
-                android:layout_width="wrap_content"
+            android:padding="16dp">
+
+            <com.applandeo.materialcalendarview.CalendarView
+                android:id="@+id/calendarView"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:stretchColumns="*"
-                android:background="@drawable/bg_table_light"
-                android:padding="8dp">
-
-                <TableRow>
-                    <TextView
-                        style="@style/CalifHeader"
-                        android:text="Materia"
-                        android:textColor="#000000" />
-                    <TextView
-                        style="@style/CalifHeader"
-                        android:text="1er."
-                        android:textColor="#000000" />
-                    <TextView
-                        style="@style/CalifHeader"
-                        android:text="2o."
-                        android:textColor="#000000" />
-                    <TextView
-                        style="@style/CalifHeader"
-                        android:text="3er."
-                        android:textColor="#000000" />
-                    <TextView
-                        style="@style/CalifHeader"
-                        android:text="Ord."
-                        android:textColor="#000000" />
-                    <TextView
-                        style="@style/CalifHeader"
-                        android:text="Extra1"
-                        android:textColor="#000000" />
-                    <TextView
-                        style="@style/CalifHeader"
-                        android:text="Extra2"
-                        android:textColor="#000000" />
-                    <TextView
-                        style="@style/CalifHeader"
-                        android:text="Especial"
-                        android:textColor="#000000" />
-                </TableRow>
-
-            </TableLayout>
-
+                app:headerColor="@color/unpa_bg_dark"
+                app:headerLabelColor="@color/unpa_white"
+                app:eventsEnabled="true" />
         </LinearLayout>
-    </ScrollView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvExamenesDelMes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>
 </FrameLayout>

@@ -12,5 +12,11 @@
     <color name="gris_unselected">#8A8A8A</color>
     <color name="gris_disabled">#CFCFCF</color>
     <color name="verdeBello">#48AF5F</color>
+    <color name="unpa_bg_dark">#0E5247</color>
+    <color name="unpa_primary_teal">#46D2BB</color>
+    <color name="unpa_green_medium">#007D68</color>
+    <color name="unpa_cyan_light">#7EFCE7</color>
+    <color name="unpa_cyan_xlight">#AAFFF1</color>
+    <color name="unpa_white">#FFFFFF</color>
 
 </resources>

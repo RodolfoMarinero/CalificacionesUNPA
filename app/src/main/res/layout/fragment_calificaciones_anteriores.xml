@@ -1,230 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#EAEAEA"> <ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="24dp"
+    android:paddingHorizontal="24dp"
+    android:paddingBottom="80dp"> <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
-    <!-- Contenido principal desplazable -->
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/bg_gradient"
-        android:padding="16dp">
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:layout_marginBottom="32dp">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <ImageView
+            android:id="@+id/btnIzquierdo"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_back"
+            app:tint="@color/unpa_bg_dark" />
+
+        <TextView
+            android:id="@+id/btnSemestre"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:text="2022-2023-B"
+            android:textSize="16sp"
+            android:textColor="@color/unpa_bg_dark"
+            android:background="@drawable/bg_edittext_modern" android:paddingHorizontal="24dp"
+            android:paddingVertical="8dp"
+            android:layout_marginHorizontal="16dp"/>
 
-            <!-- Encabezado -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="16dp"
-                android:paddingHorizontal="8dp">
+        <ImageView
+            android:id="@+id/btnDerecho"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_next"
+            app:tint="@color/unpa_bg_dark" />
+    </LinearLayout>
 
-                <!-- Logo UNPA a la izquierda -->
-                <ImageView
-                    android:layout_width="62dp"
-                    android:layout_height="72dp"
-                    android:src="@drawable/he_logo_unpa"
-                    android:layout_marginEnd="16dp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_button_modern" android:backgroundTint="@color/unpa_green_medium"
+        android:paddingHorizontal="24dp"
+        android:paddingVertical="12dp"
+        android:layout_marginBottom="16dp"
+        android:orientation="horizontal">
 
-                <!-- Contenedor para nombre, matrícula y foto a la derecha -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="horizontal"
-                    android:gravity="end|center_vertical">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Materia"
+            android:textColor="@color/unpa_white"
+            android:textSize="18sp" />
 
-                    <!-- Nombre y matrícula -->
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_marginEnd="8dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cal. Def."
+            android:textColor="@color/unpa_white"
+            android:textSize="18sp" />
+    </LinearLayout>
 
-                        <TextView
-                            android:id="@+id/tvNombre"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Nombre completo"
-                            android:textSize="14sp"
-                            android:textColor="#000000" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvCalificaciones"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:nestedScrollingEnabled="false"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-                        <TextView
-                            android:id="@+id/txtMatricula"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="123456789"
-                            android:textStyle="bold"
-                            android:textSize="14sp"
-                            android:textColor="#000000" />
-                    </LinearLayout>
+</LinearLayout>
+</ScrollView>
 
-                    <!-- Imagen perfil -->
-                    <ImageView
-                        android:id="@+id/ivPerfil"
-                        android:layout_width="59dp"
-                        android:layout_height="61dp"
-                        android:background="@drawable/bg_circle"
-                        android:padding="4dp"
-                        android:scaleType="centerCrop"
-                        android:clipToOutline="true"
-                        android:src="@drawable/ic_perfil" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <!-- Título -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="CALIFICACIONES"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#000000"
-                android:layout_gravity="center"
-                android:layout_marginBottom="12dp" />
-
-            <!-- Selector de semestre -->
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/tvPerfil"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@color/cardview_light_background"
-                android:padding="8dp">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnIzquierdo"
-                    android:layout_width="54dp"
-                    android:layout_height="45dp"
-                    app:backgroundTint="@color/white"
-                    app:icon="@drawable/ic_back"
-                    app:iconTint="@color/black"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/btnSemestre"
-                    app:layout_constraintHorizontal_bias="0.333"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.0" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnSemestre"
-                    android:layout_width="217dp"
-                    android:layout_height="44dp"
-                    android:gravity="center"
-                    android:text="Semestre"
-                    android:textColor="#000000"
-                    android:textSize="20sp"
-                    app:backgroundTint="@color/white"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnDerecho"
-                    android:layout_width="54dp"
-                    android:layout_height="45dp"
-                    android:gravity="center"
-                    app:backgroundTint="@color/white"
-                    app:icon="@drawable/ic_next"
-                    app:iconTint="@color/black"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.578"
-                    app:layout_constraintStart_toEndOf="@+id/btnSemestre"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="1.0" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <HorizontalScrollView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fillViewport="false">
-
-                <TableLayout
-                    android:id="@+id/tablaCalificaciones"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_table_light"
-                    android:padding="8dp"
-                    android:stretchColumns="1,2,3,4,5,6" />
-            </HorizontalScrollView>
-
-            <!-- Extraordinarios -->
-            <TextView
-                android:id="@+id/tvExtraordinariosLabel"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Extraordinarios"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:textColor="#000000"
-                android:layout_marginTop="24dp"
-                android:gravity="center" />
-
-            <HorizontalScrollView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fillViewport="false">
-
-                <TableLayout
-                    android:id="@+id/tablaExtraordinarios"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_table_light"
-                    android:padding="8dp"
-                    android:stretchColumns="1,2,3,4,5,6"
-                    android:layout_marginBottom="24dp">
-
-                </TableLayout>
-            </HorizontalScrollView>
-
-            <!-- Tipo de calificación -->
-
-            <!-- Promedio general -->
-            <TextView
-                android:id="@+id/txtPromedioGeneral"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="#000000"
-                android:visibility="gone"
-                android:layout_marginTop="16dp"
-                android:layout_gravity="center" />
-
-
-            <Button
-                android:id="@+id/btnDescargarPdf"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="16dp"
-                android:backgroundTint="#C1D8D2"
-                android:drawableStart="@drawable/ic_pdf_download"
-                android:elevation="4dp"
-                android:text="Descargar PDF de calificaciones"
-                android:textColor="#000000" />
-
-        </LinearLayout>
-    </ScrollView>
-    <!-- Overlay difuminado -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btnDescargarPdf"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|start"
+        android:layout_margin="24dp"
+        app:backgroundTint="@color/unpa_white"
+        app:tint="@color/unpa_green_medium"
+        android:src="@drawable/ic_pdf_download" />
     <View
         android:id="@+id/blurOverlaySpinner"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#CCFFFFFF"
         android:visibility="gone"
-        android:clickable="true"/>
+        android:clickable="true"
+        android:focusable="true"/>
 
-    <!-- Contenedor emergente para spinner -->
     <FrameLayout
         android:id="@+id/contenedorSpinner"
         android:layout_width="match_parent"
@@ -237,8 +111,6 @@
             android:id="@+id/rvSemestres"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="8dp"
-            android:visibility="visible" />
+            android:padding="8dp" />
     </FrameLayout>
-
 </FrameLayout>
