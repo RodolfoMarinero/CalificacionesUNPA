@@ -181,12 +181,12 @@
                     android:textColor="#000000"
                     android:textSize="14sp" />
 
-                <ImageView
-                    android:id="@+id/ivBarcode"
-                    android:layout_width="200dp"
-                    android:layout_height="80dp"
-                    android:contentDescription="@string/cd_barcode"
-                    android:src="@drawable/barcode_placeholder" />
+<!--                <ImageView-->
+<!--                    android:id="@+id/ivBarcode"-->
+<!--                    android:layout_width="200dp"-->
+<!--                    android:layout_height="80dp"-->
+<!--                    android:contentDescription="@string/cd_barcode"-->
+<!--                    android:src="@drawable/barcode_placeholder" />-->
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnDescargarHistorial"

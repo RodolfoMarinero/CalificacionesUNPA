@@ -5,11 +5,16 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" /> <!-- Para compatibilidad con versiones anteriores -->
+
     <uses-permission
-        android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" />
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" tools:node="remove" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" tools:node="remove" />
+
+    <uses-permission android:name="android.permission.CAMERA" tools:node="remove" />
+    <uses-feature android:name="android.hardware.camera" tools:node="remove" />
 
     <application
         android:name=".MyApplication"
@@ -33,14 +38,6 @@
             android:name=".ui.sescolares.EscolaresActivity"
             android:exported="false"
             android:theme="@style/Theme.CalificacionesUNPA.NoActionBar" />
-        <!--
- <activity
-            android:name=".ui.sescolares.EscolaresActitivty"
-            android:exported="false" />
-        <activity
-            android:name=".ui.sescolares.ActivityEscolares"
-            android:exported="false" />
-        -->
         <activity
             android:name=".ui.notificaciones.notificaciones_escolares"
             android:exported="false"
@@ -54,20 +51,17 @@
             android:label="CalificaionesUNPA"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" >
 
-            <!-- Definir un Intent Filter para iniciar la actividad de login al inicio -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- Actividad Principal (MainActivity) -->
-        <activity
-            android:name=".MainActivity"
-            android:exported="true"
-            android:theme="@style/Theme.CalificacionesUNPA.NoActionBar" >
+        </activity> <activity
+        android:name=".MainActivity"
+        android:exported="true"
+        android:theme="@style/Theme.CalificacionesUNPA.NoActionBar" >
 
-            <!-- Esta actividad debe ser accesible después de que el usuario haya iniciado sesión -->
-        </activity>
+    </activity>
         <activity
             android:name=".ui.recuperarContrasena.RecuperarContrasena"
             android:theme="@style/Theme.CalificacionesUNPA.NoActionBar" />

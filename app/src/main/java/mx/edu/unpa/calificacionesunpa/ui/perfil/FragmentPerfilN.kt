@@ -3,6 +3,8 @@ package mx.edu.unpa.calificacionesunpa.ui.perfil
 import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
@@ -21,8 +23,10 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.button.MaterialButton
-import com.google.zxing.BarcodeFormat
-import com.journeyapps.barcodescanner.BarcodeEncoder
+//import com.google.zxing.BarcodeFormat
+//import com.google.zxing.MultiFormatWriter
+//import com.google.zxing.common.BitMatrix
+//import com.google.zxing.BarcodeFormat
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -85,7 +89,7 @@ class FragmentPerfilN : Fragment() {
         tvMatricula = view.findViewById(R.id.tvMatriculaPerfil)
         tvCarrera = view.findViewById(R.id.tvCarreraPerfil)
         tvPromedio = view.findViewById(R.id.tvPromedioPerfil)
-        ivCodigoBarras = view.findViewById(R.id.ivBarcode)
+//        ivCodigoBarras = view.findViewById(R.id.ivBarcode)
         tvCodigoBarras = view.findViewById(R.id.tvBarcodeNumber)
         val btnBack = view.findViewById<Button>(R.id.btnBack)
         val btnCambiarPass = view.findViewById<TextView>(R.id.cambiarPass)
@@ -116,7 +120,7 @@ class FragmentPerfilN : Fragment() {
             tvMatricula.text = alumno.matricula
             tvCarrera.text = alumno.nombreCarrera
             tvCodigoBarras.text = alumno.matricula
-            generarCodigoBarras(alumno.matricula)
+//            generarCodigoBarras(alumno.matricula)
         }
 
         // --- LISTENERS DE DESCARGA ---
@@ -326,16 +330,37 @@ class FragmentPerfilN : Fragment() {
         startActivityForResult(intent, PICK_IMAGE_REQUEST)
     }
 
-    private fun generarCodigoBarras(texto: String) {
-        if (texto.isEmpty()) return
-        try {
-            val encoder = BarcodeEncoder()
-            val bitmap = encoder.encodeBitmap(texto, BarcodeFormat.CODE_128, 600, 200)
-            ivCodigoBarras.setImageBitmap(bitmap)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
+//    private fun generarCodigoBarras(texto: String) {
+//        if (texto.isEmpty()) return
+//
+//        try {
+//            val bitMatrix: BitMatrix = MultiFormatWriter().encode(
+//                texto,
+//                BarcodeFormat.CODE_128,
+//                600,
+//                200
+//            )
+//
+//            val width = bitMatrix.width
+//            val height = bitMatrix.height
+//            val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565)
+//
+//            for (x in 0 until width) {
+//                for (y in 0 until height) {
+//                    bitmap.setPixel(
+//                        x,
+//                        y,
+//                        if (bitMatrix[x, y]) Color.BLACK else Color.WHITE
+//                    )
+//                }
+//            }
+//
+//            ivCodigoBarras.setImageBitmap(bitmap)
+//
+//        } catch (e: Exception) {
+//            e.printStackTrace()
+//        }
+//    }
 
     private fun showLoading() {
         view?.findViewById<FrameLayout>(R.id.loadingContainer)?.visibility = View.VISIBLE
