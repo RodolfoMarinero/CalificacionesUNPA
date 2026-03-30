@@ -109,14 +109,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="Generación 2021-2026\nRodolfo, Maritza, Adrián, Amarany, César, Gerardo, Saúl, Yenedith, Carlos."
+                    android:text="Generación 2021-2026\nRodolfo, Maritza, Adrián, Amarany, César, Gerardo, Saúl, Yenedith, Carlos, Alam."
                     android:textColor="#444444" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:text="Asesoría técnica:\nIng. Ariel - Ingeniería en Computación"
+                    android:text="Asesoría técnica:\nEl profe Ariel - Ingeniería en Computación"
                     android:textColor="@color/unpa_bg_dark"
                     android:textStyle="bold" />
 
