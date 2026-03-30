@@ -56,7 +56,7 @@ class LoginActivity : AppCompatActivity() {
         etPassword = findViewById(R.id.cp_txtPassword)
         btnLogin = findViewById(R.id.cp_changepass)
         //btnRegistro = findViewById(R.id.btnRegistro)
-        tvForgotPassword = findViewById(R.id.btnRecuperar_contrasena)
+//        tvForgotPassword = findViewById(R.id.btnRecuperar_contrasena)
         val togglePassword: ImageView = findViewById(R.id.togglePassword)
 
         // Mostrar/ocultar contraseña
