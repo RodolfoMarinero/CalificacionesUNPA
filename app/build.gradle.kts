@@ -16,8 +16,8 @@ android {
         applicationId = "mx.edu.unpa.calificacionesunpa"
         minSdk = 28
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 3
+        versionName = "1.0.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -102,8 +102,11 @@ dependencies {
 
     implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
 
-    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
+//    implementation("com.google.zxing:core:3.5.3")
+
     implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+
+    implementation("com.applandeo:material-calendar-view:1.9.0")
 
 
 

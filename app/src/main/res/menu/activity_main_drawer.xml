@@ -33,6 +33,11 @@
             android:title="Calendario De Exámenes" />
 
         <item
+            android:id="@+id/nav_acerca_de"
+            android:icon="@android:drawable/ic_menu_info_details"
+            android:title="Acerca de" />
+
+        <item
             android:id="@+id/nav_logout"
             android:icon="@drawable/ic_logout"
             android:title="Cerrar sesión" />

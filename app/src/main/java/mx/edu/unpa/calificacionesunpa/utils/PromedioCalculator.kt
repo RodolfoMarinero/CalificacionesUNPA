@@ -5,25 +5,38 @@ import kotlin.math.round
 
 object PromedioCalculator {
 
-    var promedioGeneral: Double = 0.0
-        private set
-
+    /**
+     * Calcula el promedio general ignorando materias que aún no tienen calificación final.
+     * Esto evita que el promedio baje artificialmente al inicio del semestre.
+     */
     fun calcularPromedioGeneral(materias: List<Materia>): Double {
-        if (materias.isEmpty()) return 0.0
+        // 1. Filtramos solo las materias que NO son nulas y son mayores a 0
+        // (Asumiendo que 0.0 es una calificación válida, pero 'null' es "no calificada aún")
+        val materiasCalificadas = materias.filter { it.calificaciones.pFinal != null }
 
-        val suma = materias.sumOf { it.calificaciones.pFinal ?: 0.0 }
-        val promedio = suma / materias.size
-        return redondear(promedio)
+        if (materiasCalificadas.isEmpty()) return 0.0
+
+        // 2. Sumamos solo lo que ya está calificado
+        val suma = materiasCalificadas.sumOf { it.calificaciones.pFinal!! }
+
+        // 3. Dividimos entre el número de materias calificadas, NO entre el total
+        val promedio = suma / materiasCalificadas.size
+
+        return promedio
     }
 
+    /**
+     * Calcula el promedio de un semestre específico.
+     * Si una materia del semestre falta, podrías querer que regrese 0.0 o el promedio parcial.
+     * Aquí lo ajustamos para que sea consistente con el general.
+     */
     fun calcularPromedioSemestre(materias: List<Materia>): Double {
-        if (materias.any { it.calificaciones.pFinal == null }) return 0.0
-
-        val suma = materias.sumOf { it.calificaciones.pFinal ?: 0.0 }
-        val promedio = suma / materias.size
-        return redondear(promedio)
+        return calcularPromedioGeneral(materias)
     }
 
+    /**
+     * Redondea a un decimal (Ej: 8.56 -> 8.6)
+     */
     private fun redondear(valor: Double): Double {
         return round(valor * 10) / 10.0
     }
