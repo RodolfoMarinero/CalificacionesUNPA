@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Guardar en: res/color/chip_text_selector.xml -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_checked="true" android:color="#6C3FC5"/>
+    <item android:color="#6B7280"/>
+</selector>

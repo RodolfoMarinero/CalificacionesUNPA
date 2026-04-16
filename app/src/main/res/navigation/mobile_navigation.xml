@@ -60,25 +60,8 @@
         tools:layout="@layout/fragment_calendario_escolar" />
 
     <fragment
-        android:id="@+id/nav_ver_tutor"
-        android:name="mx.edu.unpa.calificacionesunpa.ui.tutor.VerTutorFragment"
-        android:label="Mi Tutor"
-        tools:layout="@layout/fragment_ver_tutor" />
-
-    <fragment
-        android:id="@+id/nav_solicitar_tutor"
-        android:name="mx.edu.unpa.calificacionesunpa.ui.tutor.SolicitarTutorFragment"
-        android:label="Seleccionar Tutor"
-        tools:layout="@layout/fragment_solicitar_tutor" />
-
-    <fragment
-        android:id="@+id/nav_historial_tutores"
-        android:name="mx.edu.unpa.calificacionesunpa.ui.tutor.HistorialTutoresFragment"
-        android:label="Historial de Tutores"
-        tools:layout="@layout/fragment_historial_tutores" />
-    <fragment
-        android:id="@+id/nav_actualizar_correo"
-        android:name="mx.edu.unpa.calificacionesunpa.ui.tutor.ActualizarCorreoFragment"
-        android:label="Actualizar Correo"
-        tools:layout="@layout/fragment_actualizar_correo" />
+        android:id="@+id/miTutoriaFragment"
+        android:name="mx.edu.unpa.calificacionesunpa.ui.tutoria.MiTutoriaFragment"
+        android:label="Mi Tutoría"
+        tools:layout="@layout/fragment_mi_tutoria"/>
 </navigation>

@@ -21,7 +21,8 @@ data class TutorAsignado(
     @SerializedName("carreraTutor") val carreraTutor: String? = null,
     @SerializedName("tipoAsignacion") val tipoAsignacion: String? = null,
     @SerializedName("fechaAsignacion") val fechaAsignacion: String? = null,
-    @SerializedName("mensaje") val mensaje: String? = null
+    @SerializedName("mensaje") val mensaje: String? = null,
+    @SerializedName("estadoTutor") val estadoTutor: String? = null
 )
 
 /**
@@ -49,7 +50,7 @@ data class SolicitudTutorRequest(
     @SerializedName("matricula") val matricula: String,
     @SerializedName("docenteId") val docenteId: Long,
     @SerializedName("periodo") val periodo: String,
-    @SerializedName("motivo") val motivo: String? = null
+    @SerializedName("motivo") val motivo: String?
 )
 
 /**
@@ -60,7 +61,8 @@ data class SolicitudResponse(
     @SerializedName("mensaje") val mensaje: String,
     @SerializedName("tutorSolicitado") val tutorSolicitado: String? = null,
     @SerializedName("periodo") val periodo: String? = null,
-    @SerializedName("error") val error: String? = null
+    @SerializedName("error") val error: String? = null,
+    @SerializedName("requiereMotivo")  val requiereMotivo: Boolean?,
 )
 /**
  * Item del historial de tutores

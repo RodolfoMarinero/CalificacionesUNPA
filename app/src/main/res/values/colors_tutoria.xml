@@ -1,0 +1,12 @@
+<resources>
+    <color name="purple_primary">#6C3FC5</color>
+    <color name="purple_light">#EDE9FE</color>
+    <color name="background_page">#F3F4F6</color>
+    <color name="background_card">#FFFFFF</color>
+    <color name="border_default">#E5E7EB</color>
+    <color name="text_primary">#111827</color>
+    <color name="text_secondary">#6B7280</color>
+    <color name="slot_green">#6C3FC5</color>
+    <color name="slot_amber">#F59E0B</color>
+    <color name="slot_red">#DC2626</color>
+</resources>

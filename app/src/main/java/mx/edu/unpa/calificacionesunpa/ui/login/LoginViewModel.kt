@@ -62,6 +62,17 @@ class LoginViewModel @Inject constructor(
                             val periodoActual = calcularPeriodoActual(alumno)
                             guardarPeriodoActual(periodoActual)
 
+                            val prefs2 = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+                            val editor = prefs2.edit()
+                                .putString("carrera_alumno", alumno.nombreCarrera ?: "")
+
+                            val correoGuardado = prefs2.getString("correo_actual", null)
+                            if (!alumno.correo.isNullOrBlank()) {
+                                editor.putString("correo_actual", alumno.correo)
+                            } else if (correoGuardado.isNullOrBlank()) {
+                                editor.putString("correo_actual", "")  // solo limpiar si nunca hubo nada
+                            }
+                            editor.apply()
                             Log.d("LoginViewModel", "Periodo actual calculado: $periodoActual")
                         }
 
