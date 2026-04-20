@@ -1,6 +1,5 @@
 package mx.edu.unpa.calificacionesunpa.ui.calificacionesanteriores
 
-import android.content.ActivityNotFoundException
 import android.content.ContentValues
 import android.content.Intent
 import android.graphics.Paint
@@ -17,7 +16,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
@@ -28,7 +26,6 @@ import mx.edu.unpa.calificacionesunpa.models.Materia
 import mx.edu.unpa.calificacionesunpa.ui.dd.SelectorSemestre
 import java.io.File
 import java.io.FileOutputStream
-import java.io.IOException
 import java.util.Locale
 
 @AndroidEntryPoint
@@ -75,123 +72,30 @@ class FragmentCalificacionesAnteriores : Fragment() {
         adaptador = CalificacionesAdapter(emptyList())
         rvCalificaciones.adapter = adaptador
 
-
-        ivPerfil = root.findViewById<ImageView?>(R.id.ivPerfil)
-
-        ivPerfil!!.setOnClickListener(View.OnClickListener { v: View? ->
-            val fragment = FragmentPerfilN()
-            requireActivity()
-                .getSupportFragmentManager()
-                .beginTransaction()
-                .replace(
-                    R.id.nav_host_fragment_content_main,
-                    fragment
-                ) // Usa el contenedor correcto
-                .addToBackStack(null)
-                .commit()
-        })
-
-
-
-        //profilePictureService = getInstance(requireContext(),StorageRepository())
-        loadProfileImage()
-
-        txtPromedioGeneral!!.setVisibility(View.GONE)
-
-        // 2) Inicializar providers
-        usuarioService = UsuarioService
-        promedioCalculatorService = PromedioCalculator
-
-        // 4) Traer alumno básico
-
-        alumnoActual = usuarioService?.alumnoActual
-
-        // Protegemos la app si el alumno es nulo
+        // 3. Datos del alumno
+        alumnoActual = usuarioService.alumnoActual
         if (alumnoActual == null) {
             Toast.makeText(requireContext(), "Error: Datos de alumno no cargados", Toast.LENGTH_SHORT).show()
             return root
         }
-
-        // Protegemos la app si las materias son nulas
         todasMaterias = alumnoActual?.materias?.toMutableList() ?: mutableListOf()
+        nombreCompleto = "${alumnoActual!!.nombre} ${alumnoActual!!.apPaterno} ${alumnoActual!!.apMaterno}"
 
-        if (todasMaterias.isNullOrEmpty()) {
-            Toast.makeText(requireContext(), "No hay materias registradas", Toast.LENGTH_SHORT).show()
-        } else {
-            Log.e("CalificacionesAnterioresAriel", "Lista Materias " + todasMaterias)
-            for (m in todasMaterias!!) {
-                Log.d("CalificacionesAnterioresAriel", "Materia " + m.materia)
+        // 4. Configurar semestres
+        setupSemestreSelector()
+        val ultimoCiclo = semestresMapa.keys.maxOrNull() ?: 0
+        usuarioService.seleccionarSemestre(ultimoCiclo)
+
+        // 5. Observar cambios de semestre
+        usuarioService.semestreSeleccionado.observe(viewLifecycleOwner) { semestre ->
+            if (semestre != null) {
+                idxCicloActual = semestre
+                loadGradesForCycle()
+                ocultarSpinnerSiVisible()
             }
-            promedioCalculatorService?.calcularPromedioGeneral(todasMaterias!!)
         }
 
-        txtMatricula?.setText(alumnoActual?.matricula ?: "Sin matrícula")
-        alumnoActual = usuarioService!!.alumnoActual
-
-// --- AGREGA ESTOS LOGS ---
-        Log.e("DEBUG_PERFIL", "Alumno completo: $alumnoActual")
-        Log.e("DEBUG_PERFIL", "Nombre: ${alumnoActual?.nombre}")
-        Log.e("DEBUG_PERFIL", "Paterno: ${alumnoActual?.apPaterno}")
-// -------------------------
-
-        nombre = alumnoActual!!.nombre + " " + alumnoActual!!.apPaterno + " " + alumnoActual!!.apMaterno
-        tvNombre!!.setText(nombre)
-
-// --- AGREGA ESTO PARA PROBAR ---
-// Si el nombre viene vacío o nulo, pon un texto de prueba para descartar error de diseño
-        if (nombre?.trim()?.isEmpty() == true || nombre?.contains("null") == true) {
-            tvNombre!!.text = "TEXTO DE PRUEBA (ROJO)"
-            tvNombre!!.setTextColor(android.graphics.Color.RED)}
-
-
-        btnAnterior = root.findViewById<MaterialButton?>(R.id.btnIzquierdo)
-        btnSiguiente = root.findViewById<MaterialButton?>(R.id.btnDerecho)
-        btnSemestreActual = root.findViewById<MaterialButton?>(R.id.btnSemestre)
-
-        contenedorSpinner = root.findViewById<RecyclerView?>(R.id.rvSemestres)
-        contenedorSpinner!!.setVisibility(View.VISIBLE)
-        containerSpinner = root.findViewById<FrameLayout?>(R.id.contenedorSpinner)
-        sombra = root.findViewById<View?>(R.id.blurOverlaySpinner)
-        sombra!!.setOnClickListener(View.OnClickListener { v: View? ->
-            ocultarSpinnerSiVisible()
-        })
-        //Observa ciclo actual
-        usuarioService!!.semestreSeleccionado.observe(
-            getViewLifecycleOwner(),
-            Observer { semestre: Int? ->
-                if (semestre != null) {
-                    Log.e("CalificacionesAnterioresAriel", "Observado cambio de semestre ")
-                    idxCicloActual = semestre
-                    loadGradesForCycle()
-                    ocultarSpinnerSiVisible()
-                }
-            })
-
-        //crear mapa de semestres y seleccionar el semestre actual
-        setupSemestreSelector()
-        val ultimoCiclo = semestresMapa!!.keys.stream().max(
-            Comparator.comparingInt<Int?>(
-                ToIntFunction { a: Int? -> a!! })
-        ).orElse(0)!!
-        usuarioService!!.seleccionarSemestre(ultimoCiclo)
-        btnSemestreActual!!.setText(semestresMapa!!.get(ultimoCiclo))
-        // 5) Listener para mostrar/ocultar el spinner
-        btnSemestreActual!!.setOnClickListener(View.OnClickListener { v: View? ->
-            llamarFragmento()
-        })
-        //Listeners para los botones de navegación
-        btnAnterior!!.setOnClickListener(View.OnClickListener { v: View? ->
-            if (tieneAnterior()) {
-                usuarioService!!.seleccionarSemestre(idxCicloActual - 1)
-            }
-        })
-        btnSiguiente!!.setOnClickListener(View.OnClickListener { v: View? ->
-            if (tieneSiguiente()) {
-                usuarioService!!.seleccionarSemestre(idxCicloActual + 1)
-            }
-        })
-
-        // 5. Listeners de navegación y Spinner
+        // 6. Listeners de navegación y Spinner
         btnAnterior.setOnClickListener { if (idxCicloActual > 1) usuarioService.seleccionarSemestre(idxCicloActual - 1) }
         btnSiguiente.setOnClickListener { if (idxCicloActual < semestresMapa.size) usuarioService.seleccionarSemestre(idxCicloActual + 1) }
 

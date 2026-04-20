@@ -35,18 +35,6 @@ class MainActivity : AppCompatActivity() {
         // Solicitar permisos
         solicitarPermisoNotificaciones()
 
-        // Destinos
-        appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.nav_home,
-                R.id.nav_calificaciones_anteriores,
-                R.id.nav_notificaciones,
-                R.id.nav_calendarioExamen,
-                R.id.miTutoriaFragment
-            ),
-            drawerLayout
-        )
-
         // 1. Conectar el ViewPager con el adaptador
         val pagerAdapter = MainPagerAdapter(this)
         binding.viewPager.adapter = pagerAdapter
@@ -77,6 +65,10 @@ class MainActivity : AppCompatActivity() {
                 4 -> {
 //                    tab.text = "Acerca De"
                     tab.setIcon(R.drawable.ic_assignment)
+                }
+                5 -> {
+//                    tab.text = "Mi Tutoría"
+                    tab.setIcon(R.drawable.ic_school)
                 }
             }
         }.attach()
