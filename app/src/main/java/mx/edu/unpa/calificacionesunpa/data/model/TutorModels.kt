@@ -34,7 +34,8 @@ data class DocenteDisponible(
     @SerializedName("correo") val correo: String,
     @SerializedName("carrera") val carrera: String,
     @SerializedName("tutoradosActuales") val tutoradosActuales: Long,
-    @SerializedName("maxTutorados") val maxTutorados: Int
+    @SerializedName("maxTutorados") val maxTutorados: Int,
+    @SerializedName("nivelAfinidad") val nivelAfinidad: Int = 999
 ) {
     val disponibilidad: String
         get() = "$tutoradosActuales/$maxTutorados"

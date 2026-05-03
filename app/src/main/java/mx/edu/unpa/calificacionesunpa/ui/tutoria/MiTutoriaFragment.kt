@@ -358,21 +358,26 @@ class MiTutoriaViewModel @Inject constructor(
                 val historialResp = api.obtenerHistorial(matricula)
                 val docentesResp  = api.obtenerDocentesDisponibles(matricula, periodo)
 
-                val ventanaAbierta = ventanaResp.isSuccessful &&
-                        ventanaResp.body()?.abierta == true
-
                 val tutor     = if (tutorResp.isSuccessful)     tutorResp.body()           else null
+                val yaCambio = tutor?.tipoAsignacion == "ELECCION_ALUMNO"
+                val ventanaAbierta = ventanaResp.isSuccessful &&
+                        ventanaResp.body()?.abierta == true &&
+                        !yaCambio
                 val historial = if (historialResp.isSuccessful) historialResp.body() ?: emptyList() else emptyList()
                 val docentes  = if (docentesResp.isSuccessful)  docentesResp.body() ?: emptyList() else emptyList()
 
                 val tuvieraTutorAntes = historial.any { it.periodo != periodo }
 
-                val carreraAlumno = carrera
+                val carreraAlumno = carrera.trim()
                 carrerasCache = docentes
-                    .map { it.carrera }
-                    .distinct()
-                    .map { c -> CarreraItem(c, c == carreraAlumno) }
-                    .sortedByDescending { it.esPropia }
+                    .groupBy { it.carrera }
+                    .entries
+                    .map { (carreraNombre, docs) ->
+                        val esPropia = carreraNombre.trim().equals(carreraAlumno, ignoreCase = true)
+                        val nivel = if (esPropia) 0 else docs.minOf { it.nivelAfinidad }
+                        CarreraItem(carreraNombre, esPropia, nivel)
+                    }
+                    .sortedWith(compareBy({ !it.esPropia }, { it.nivelAfinidad }))
 
                 state.value = TutoriaState.Loaded(
                     tutor             = tutor?.takeIf { it.tieneTutor },
@@ -456,7 +461,7 @@ sealed class TutoriaState {
     data class Error(val msg: String) : TutoriaState()
 }
 
-data class CarreraItem(val nombre: String, val esPropia: Boolean)
+data class CarreraItem(val nombre: String, val esPropia: Boolean, val nivelAfinidad: Int = 999)
 
 class Event<T>(private val content: T) {
     private var handled = false
